@@ -1,5 +1,6 @@
 package command;
 
+import dto.Filter;
 import dto.SessionAdminDto;
 import entities.Session;
 import org.apache.log4j.LogManager;
