@@ -1,6 +1,6 @@
 package service.impl;
 
-import command.Filter;
+import dto.Filter;
 import command.Operation;
 import dao.HallDao;
 import dao.MovieDao;

@@ -1,6 +1,6 @@
 package service;
 
-import command.Filter;
+import dto.Filter;
 import dto.SessionAdminDto;
 import dto.SessionDto;
 import entities.Session;
