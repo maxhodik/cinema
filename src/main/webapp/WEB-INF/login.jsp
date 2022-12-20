@@ -43,6 +43,7 @@
 <button>
 <a href="${pageContext.request.contextPath}"><fmt:message key="button.back"/> </a>
 <button>
-<a href="${pageContext.request.contextPath}/admin/movie"><fmt:message key="admin menu"/> </a>
+<a href="logout"><fmt:message key="Logout"/> </a>
+
 </body>
 </html>

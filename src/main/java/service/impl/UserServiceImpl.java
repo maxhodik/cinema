@@ -12,9 +12,11 @@ import static entities.Role.USER;
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
+    private PasswordEncoderService passwordEncoderService;
 
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, PasswordEncoderService passwordEncoderService) {
         this.userDao = userDao;
+        this.passwordEncoderService = passwordEncoderService;
     }
 
     @Override
@@ -25,7 +27,11 @@ public class UserServiceImpl implements UserService {
         }
         try {
             // todo add coder for password
-            User user = User.builder().login(name).password(password).role(USER).build();
+            User user = User.builder()
+                    .login(name)
+                    .password(passwordEncoderService.encode(password))
+                    .role(USER)
+                    .build();
             userDao.create(user);
             return user;
         } catch (DBException e) {
@@ -36,7 +42,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String name, String password) throws UserNotFoundException {
         User userFromDb = userDao.findEntityByLogin(name);
-        if (userFromDb != null && userFromDb.getPassword().equals(password)) {
+        if (userFromDb != null && userFromDb.getPassword().equals(passwordEncoderService.encode(password))) {
             return userFromDb;
         }
         throw new UserNotFoundException("User not found" + name);

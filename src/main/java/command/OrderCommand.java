@@ -4,6 +4,7 @@ import dto.OrderDto;
 import dto.SessionDto;
 import entities.Order;
 import entities.Session;
+import entities.User;
 import exceptions.DBException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -45,9 +46,10 @@ public class OrderCommand extends MultipleMethodCommand {
     public String performPost(HttpServletRequest request) {
         int seats = Integer.parseInt(request.getParameter("seats"));
         int id = Integer.parseInt(request.getParameter("id"));
+        String userLogin= (String) request.getSession().getAttribute("name");
         Order order;
         try {
-            order = orderService.submitOrder(id, seats);
+            order = orderService.submitOrder(id, seats, userLogin);
             if (order == null) {
                 return "WEB-INF/order.jsp";
             }

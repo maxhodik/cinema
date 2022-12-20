@@ -25,12 +25,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order submitOrder(int sessionId, int seats) throws DBException {
+    public Order submitOrder(int sessionId, int seats, String userLogin) throws DBException {
         Session session = sessionDao.findEntityById(sessionId);
         Hall hall = session.getHall();
        int hallId = hall.getId();
 // todo create user by Session
-        User user = userDao.findEntityByLogin("Max");
+        User user = userDao.findEntityByLogin(userLogin);
         int availableSeats = hall.getNumberAvailableSeats();
         int numberOfAvailableSeats = availableSeats - seats;
         if (numberOfAvailableSeats < 0) {

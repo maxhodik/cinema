@@ -1,18 +1,17 @@
 package service.impl;
 
 import dao.MovieDao;
-import dto.MovieDto;
 import entities.Movie;
 import exceptions.DBException;
-
 import exceptions.UserAlreadyExistException;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import service.MovieService;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MovieServiceImpl implements MovieService {
+    private static final Logger LOGGER = LogManager.getLogger(MovieServiceImpl.class);
     private MovieDao movieDao;
 
     public MovieServiceImpl(MovieDao movieDao) {
@@ -43,17 +42,17 @@ public class MovieServiceImpl implements MovieService {
     public Movie create(String name) throws DBException, UserAlreadyExistException {
         Movie movieFromDb = movieDao.findEntityByName(name);
         if (movieFromDb != null) {
+            LOGGER.info("Movie already exists name: " + name);
             throw new UserAlreadyExistException("Movie already exists");
         }
         try {
-           Movie movie = Movie.builder().name(name).build();
+            Movie movie = Movie.builder().name(name).build();
             movieDao.create(movie);
             return movie;
         } catch (DBException e) {
             throw new RuntimeException(e);
         }
     }
-
 
 
     @Override

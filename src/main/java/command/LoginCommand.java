@@ -1,6 +1,7 @@
 package command;
 
 
+import entities.User;
 import exceptions.UserNotFoundException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -32,7 +33,11 @@ public class LoginCommand extends MultipleMethodCommand {
             LOGGER.info("User not found with name=" + name);
             return "redirect:login";
         }
-
+        User user = userService.findEntityByLogin(name);
+        request.getSession().setAttribute("name", user.getLogin());
+        request.getSession().setAttribute("pass", user.getPassword());
+        request.getSession().setAttribute("role", user.getRole());
+        LOGGER.info("User logged success role: " + user.getRole());
         return "redirect:index.jsp";
     }
 

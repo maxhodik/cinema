@@ -2,6 +2,7 @@ package command;
 
 import dto.Filter;
 import dto.SessionAdminDto;
+import entities.Role;
 import entities.Session;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -40,7 +41,7 @@ public class ScheduleCommand extends MultipleMethodCommand {
    //     List<String> movieDtoList = getMovieDtoList(sessionDtoList);
         request.setAttribute("sessionAdminDto", sessionDtoList);
 //        User user=User.builder().build();
-        if(Boolean.parseBoolean(admin)){
+        if(request.getSession().getAttribute("role")== Role.ADMIN){
         return"WEB-INF/admin/schedule-admin.jsp";
         }
         return"WEB-INF/schedule.jsp";

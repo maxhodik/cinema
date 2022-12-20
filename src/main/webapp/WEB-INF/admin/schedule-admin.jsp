@@ -27,7 +27,7 @@
     <thead class="thead-dark">
     <form action="schedule?admin=true">
 
-       <th> <input type="radio" name="admin" value="true" checked /><fmt:message key="Admin"/> </th>
+
       <tr>
 
        <th> <input type="radio" name="orderBy" value="date" /><fmt:message key="Sort by Date"/> </th>
@@ -59,10 +59,10 @@
                        <td>
                     <div>
                         <button> <a href="${pageContext.request.contextPath}/admin/update-session?id=${sessionAdminDto.id}"><fmt:message key="Edit"/></a>
-                        </div>
-                        <div>
+                      </div>
+                      <div>
                             <form method="post" action="${pageContext.request.contextPath}/schedule/delete" >
-                                 <class="form-group">
+                                 <class="form-group" horizontal>
                                  <input hidden type="number" name="id" value="${sessionAdminDto.id}"/>
                                  <input class="btn btn-primary" type="submit" value="<fmt:message key="delete"/>">
                               </form>
@@ -84,6 +84,7 @@
 </div>
 <hr>
 <button> <a href="/cinema"> <fmt:message key="To main page"/></a>
+<button> <a href="${pageContext.request.contextPath}/admin/movie"><fmt:message key="admin menu"/> </a>
 <button> <a href="${pageContext.request.contextPath}/admin/analise"> <fmt:message key="Analise"/></a>
 </body>
 </html>

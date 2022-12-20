@@ -29,7 +29,7 @@ public class Servlet extends HttpServlet {
         ScheduleServiceImpl scheduleService = new ScheduleServiceImpl(sessionDao, hallDao, movieDao,orderDao);
         UserDao userDao = SqlDaoFactory.createUserDao();
         HallService hallService= new HallServiceImpl(hallDao);
-        UserServiceImpl userService = new UserServiceImpl(userDao);
+        UserServiceImpl userService = new UserServiceImpl(userDao, new PasswordEncoderService());
         MovieServiceImpl movieService = new MovieServiceImpl(movieDao);
         ScheduleCommand scheduleCommand = new ScheduleCommand(scheduleService);
         commands.put("register", new RegisterCommand(userService));
@@ -46,6 +46,7 @@ public class Servlet extends HttpServlet {
         commands.put("admin/add-session",new ScheduleAddCommand (scheduleService, movieService, hallService ));
         commands.put("admin/update-session", new ScheduleUpdateCommand(scheduleService, movieService, hallService ));
         commands.put("admin/analise", new AnaliseCommand(scheduleService, movieService, hallService ));
+        commands.put("logout", new LogOutCommand());
 
 
 
