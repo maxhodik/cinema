@@ -1,25 +1,18 @@
 package service.impl;
 
-import dto.Filter;
 import command.Operation;
-import dao.HallDao;
-import dao.MovieDao;
-import dao.OrderDao;
 import dao.SessionDao;
+import dto.Filter;
 import dto.SessionAdminDto;
 import dto.SessionDto;
-import entities.Hall;
-import entities.Movie;
-import entities.Order;
-import entities.Session;
+import entities.*;
 import exceptions.DBException;
+import service.HallService;
+import service.MovieService;
+import service.OrderService;
 import service.ScheduleService;
-import service.strategy.Factory;
-import service.strategy.FactoryImpl;
-import service.strategy.SortStrategy;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,16 +22,16 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class ScheduleServiceImpl implements ScheduleService {
-    private SessionDao sessionDao;
-    private HallDao hallDao;
-    private MovieDao movieDao;
-    private OrderDao orderDao;
+    private final SessionDao sessionDao;
+    private final HallService hallService;
+    private final MovieService movieService;
+    private final OrderService orderService;
 
-    public ScheduleServiceImpl(SessionDao sessionDao, HallDao hallDao, MovieDao movieDao, OrderDao orderDao) {
+    public ScheduleServiceImpl(SessionDao sessionDao, HallService hallService, MovieService movieService, OrderService orderService) {
         this.sessionDao = sessionDao;
-        this.hallDao = hallDao;
-        this.movieDao = movieDao;
-        this.orderDao = orderDao;
+        this.hallService = hallService;
+        this.movieService = movieService;
+        this.orderService = orderService;
     }
 
     @Override
@@ -77,17 +70,20 @@ public class ScheduleServiceImpl implements ScheduleService {
             sessions = sessionDao.findAllFilterByAvailableViewing(sqlFilters, sqlColumn);
         }
         List<SessionAdminDto> sessionAdminDtoList = getSessionAdminDtoList(sessions);
-        // 1-получаем фактори
-        // 2-получаем из фактори стратегию по ордеру
-        // 3-соритируем по выбранной стратегии
-        // 4 - возвращаем сотрированный лист
-if (orderBy == null){return sessionAdminDtoList;}
-        Factory factory = new FactoryImpl();
-        SortStrategy strategy = factory.defineStrategy(orderBy);
-        if ( strategy== null) {
-            return sessionAdminDtoList;
-        }
-        return strategy.sort(sessionAdminDtoList);
+//        // 1-получаем фактори
+//        // 2-получаем из фактори стратегию по ордеру
+//        // 3-соритируем по выбранной стратегии
+//        // 4 - возвращаем сотрированный лист
+//        if (orderBy == null) {
+//            return sessionAdminDtoList;
+//        }
+//        Factory factory = new FactoryImpl();
+//        SortStrategy strategy = factory.defineStrategy(orderBy);
+//        if (strategy == null) {
+//            return sessionAdminDtoList;
+//        }
+//        return strategy.sort(sessionAdminDtoList);
+        return sessionAdminDtoList;
     }
 
 
@@ -172,31 +168,65 @@ if (orderBy == null){return sessionAdminDtoList;}
     }
 
     @Override
+    public boolean updateStatus(Session session) {
+        //todo transaction
+        Session updetedSession = Session.builder()
+                .id(session.getId())
+                .data(session.getDate())
+                .time(session.getTime())
+                .movie(session.getMovie())
+                .hall(session.getHall())
+                .status(Status.CANCELED)
+                .build();
+        sessionDao.update(updetedSession);
+       List<Order> orders = orderService.findAllBySessionId(updetedSession.getId());
+        for (Order o : orders) {
+            Order updetedOrder = Order.builder()
+                    .id(o.getId())
+                    .user(o.getUser())
+                    .session(o.getSession())
+                    .price(o.getPrice())
+                    .numberOfSeats(o.getNumberOfSeats())
+                    .state(State.CANCELED)
+                    .build();
+            orderService.update(updetedOrder);
+        }
+       return true;
+    }
+
+    @Override
     public boolean update(SessionDto sessionDto) {
         //todo transaction
+        // todo check orders. If bought tickets > new capacity --> throw error
         int sessionDtoId = sessionDto.getId();
         Session session = sessionDao.findEntityById(sessionDtoId);
         String movieName = sessionDto.getMovieName();
         int numberOfSeats = sessionDto.getNumberOfSeats();
-        LocalDate date = sessionDto.getDate();
-        LocalTime time = sessionDto.getTime();
         Hall hall = session.getHall();
-        hall = getHall(sessionDtoId, numberOfSeats, hall);
+//        hall = getHall(sessionDtoId, numberOfSeats, hall);
+        Hall updatedHall = hallService.changeHallCapacity(hall, numberOfSeats);
+//        hallDao.update(hall);
+        //todo validate movie name
         Movie movie = session.getMovie();
         movie.setName(movieName);
-        hallDao.update(hall);
-        session = Session.builder()
-                .id(sessionDtoId)
-                .data(date)
-                .time(time)
-                .movie(movie)
-                .hall(hall)
-                .build();
+        session = buildSession(sessionDto, hall, movie);
+        // todo update session and hall in transaction
         return sessionDao.update(session);
     }
 
+    private static Session buildSession(SessionDto sessionDto, Hall hall, Movie movie) {
+        return Session.builder()
+                .id(sessionDto.getId())
+                .data(sessionDto.getDate())
+                .time(sessionDto.getTime())
+                .status(sessionDto.getStatus())
+                .movie(movie)
+                .hall(hall)
+                .build();
+    }
+
     private Hall getHall(int sessionDtoId, int numberOfSeats, Hall hall) {
-        List<Order> entityBySessionId = orderDao.findEntityBySessionId(sessionDtoId);
+        List<Order> entityBySessionId = orderService.findAllBySessionId(sessionDtoId);
         int numberOfSoldSeats = 0;
         for (Order orders : entityBySessionId) {
             numberOfSoldSeats += orders.getNumberOfSeats();
@@ -211,22 +241,12 @@ if (orderBy == null){return sessionAdminDtoList;}
 
     @Override
     public boolean create(SessionDto sessionDto) throws DBException {
-        Session session;
         String movieName = sessionDto.getMovieName();
         int numberOfSeats = sessionDto.getNumberOfSeats();
-        LocalDate date = sessionDto.getDate();
-        LocalTime time = sessionDto.getTime();
-        Hall hall = Hall.builder().numberSeats(numberOfSeats).numberAvailableSeats(numberOfSeats).build();
-        int hallId = hallDao.createId(hall);
-        hall = hallDao.findEntityById(hallId);
+        Hall hall = hallService.createWithCapacity(numberOfSeats);
 
-        Movie movie = movieDao.findEntityByName(movieName);
-        session = Session.builder()
-                .data(date)
-                .time(time)
-                .movie(movie)
-                .hall(hall)
-                .build();
+        Movie movie = movieService.findEntityByName(movieName);
+        Session session = buildSession(sessionDto, hall, movie);
         return sessionDao.create(session);
     }
 
@@ -238,8 +258,9 @@ if (orderBy == null){return sessionAdminDtoList;}
         LocalDate date = session.getDate();
         LocalTime time = session.getTime();
         DayOfWeek dayOfWeek = date.getDayOfWeek();
-        int numberOfSeats = session.getHall().getNumberSeats();
-        SessionDto sessionDto = new SessionDto(sessionId, movieName, date, time, numberOfSeats);
+        Status status = session.getStatus();
+        int numberOfSeats = session.getHall().getCapacity();
+        SessionDto sessionDto = new SessionDto(sessionId, movieName, date, time, status, numberOfSeats);
         return sessionDto;
     }
 
@@ -247,18 +268,20 @@ if (orderBy == null){return sessionAdminDtoList;}
         List<SessionAdminDto> sessionDtoList = new ArrayList<>();
         for (Session s : allSortedSessions) {
             int numberAvailableSeats = s.getHall().getNumberAvailableSeats();
-            int capacity = s.getHall().getNumberSeats();
-            int numberOfSoldSeats = capacity - numberAvailableSeats;
-            BigDecimal attendance = new BigDecimal((float) numberOfSoldSeats / capacity * 100);
+            int capacity = s.getHall().getCapacity();
+            int numberOfSoldSeats = s.getHall().getNumberOfSoldSeats();
+            BigDecimal attendance = s.getHall().getAttendance();
             SessionAdminDto sessionAdminDto = new SessionAdminDto(s.getId(),
                     s.getMovie().getName(),
                     s.getDate(),
                     s.getTime(),
                     numberAvailableSeats,
-                    capacity);
+                    numberOfSoldSeats,
+                    capacity,
+                    attendance,
+                    s.getStatus());
             sessionAdminDto.setDayOfWeek(s.getDate().getDayOfWeek());
-            sessionAdminDto.setNumberOfSoldSeats(capacity - numberAvailableSeats);
-            sessionAdminDto.setAttendance(attendance.setScale(2, RoundingMode.HALF_UP));
+
             sessionDtoList.add(sessionAdminDto);
         }
         return sessionDtoList;

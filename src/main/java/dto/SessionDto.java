@@ -1,5 +1,7 @@
 package dto;
 
+import entities.Status;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -9,16 +11,17 @@ public class SessionDto {
     private String movieName;
     private LocalDate date;
     private LocalTime time;
-
+    private Status status;
     private int numberOfSeats;
     private DayOfWeek dayOfWeek;
 
-    public SessionDto(int id, String movieName, LocalDate date, LocalTime time, int numberOfSeats) {
+    public SessionDto(int id, String movieName, LocalDate date, LocalTime time, Status status, int numberOfSeats) {
         this.id = id;
         this.movieName = movieName;
         this.date = date;
         this.time = time;
-        this.numberOfSeats=numberOfSeats;
+        this.status = status;
+        this.numberOfSeats = numberOfSeats;
 
     }
 
@@ -43,6 +46,14 @@ public class SessionDto {
 
     public DayOfWeek getDayOfWeek() {
         return dayOfWeek;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public void setDayOfWeek (DayOfWeek dayOfWeek) {

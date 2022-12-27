@@ -1,11 +1,11 @@
 package dao.impl;
 
+import dao.Constants;
 import dao.OrderDao;
 import dao.maper.ObjectMapper;
 import dao.maper.OrderMapper;
 import dao.maper.SessionMapper;
 import dao.maper.UserMapper;
-import dao.Constants;
 import entities.Order;
 import entities.Session;
 import entities.User;
@@ -71,18 +71,17 @@ public class SqlOrderDao implements OrderDao {
     }
 
     @Override
-    public List<Order> findEntityBySessionId(Integer id) {
+    public List<Order> findAllBySessionId(Integer id) {
         List<Order> orders = new ArrayList<>();
         try (Connection con = connectionPoolHolder.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_ORDER_BY_SESSION_ID);) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
-            while (rs.next())
-            {
+            while (rs.next()) {
                 mapper = new OrderMapper();
                 Order order = mapper.extractFromResultSet(rs);
-//                order.setSession(sessionMapper.extractFromResultSet(rs));
-//                order.setUser(userMapper.extractFromResultSet(rs));
+                order.setSession(sessionMapper.extractFromResultSet(rs));
+                order.setUser(userMapper.extractFromResultSet(rs));
                 orders.add(order);
             }
             return orders;

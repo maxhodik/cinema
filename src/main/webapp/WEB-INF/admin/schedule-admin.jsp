@@ -38,6 +38,8 @@
     <th>
      <input type="radio" name="orderBy" value="number_available_seats"  /><fmt:message key="Sort by number of available seats"/>
     <input type="checkbox" name="number_available_seats" value = "true"><fmt:message key="Filter by number of available seats"/></th>
+    <th> <input type="checkbox" name="status" value = "active"> <fmt:message key="Filter by status"/></th>
+
    </div>
        </tr>
       <input type="submit" value="Submit" />
@@ -56,6 +58,7 @@
                           <td>${sessionAdminDto.time}</td>
                            <td>${sessionAdminDto.movieName}</td>
                           <td>${sessionAdminDto.numberOfAvailableSeats}</td>
+                          <td>${sessionAdminDto.status}</td>
                        <td>
                     <div>
                         <button> <a href="${pageContext.request.contextPath}/admin/update-session?id=${sessionAdminDto.id}"><fmt:message key="Edit"/></a>
@@ -64,7 +67,7 @@
                             <form method="post" action="${pageContext.request.contextPath}/schedule/delete" >
                                  <class="form-group" horizontal>
                                  <input hidden type="number" name="id" value="${sessionAdminDto.id}"/>
-                                 <input class="btn btn-primary" type="submit" value="<fmt:message key="delete"/>">
+                                 <input class="btn btn-primary" type="submit" value="<fmt:message key="cancel"/>">
                               </form>
                         </div>
                     </td>

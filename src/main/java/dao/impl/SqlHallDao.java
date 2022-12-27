@@ -66,7 +66,6 @@ public class SqlHallDao implements HallDao {
              PreparedStatement stmt = con.prepareStatement(Constants.DELETE_HALL_BY_ID);) {
             stmt.setInt(1, entity.getId());
             return stmt.executeUpdate() != 0;
-
         } catch (SQLException e) {
             throw new DBConnectionException(e);
         }
@@ -76,8 +75,10 @@ public class SqlHallDao implements HallDao {
     public boolean create(Hall entity) throws DBException {
         try (Connection con = connectionPoolHolder.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_HALLS);) {
-            stmt.setInt(1, entity.getNumberSeats());
+            stmt.setInt(1, entity.getCapacity());
             stmt.setInt(2, entity.getNumberAvailableSeats());
+            stmt.setInt(3, entity.getNumberOfSoldSeats());
+            stmt.setBigDecimal(4, entity.getAttendance());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
             throw new DBException("Hall already exists:" + entity.getId(), e);
@@ -85,15 +86,19 @@ public class SqlHallDao implements HallDao {
 
     }
     @Override
-    public int createId (Hall entity) throws DBException {
+    public Hall createAndReturnWithId(Hall entity) throws DBException {
         try (Connection con = connectionPoolHolder.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_HALLS, Statement.RETURN_GENERATED_KEYS);) {
-            stmt.setInt(1, entity.getNumberSeats());
+            stmt.setInt(1, entity.getCapacity());
             stmt.setInt(2, entity.getNumberAvailableSeats());
+            stmt.setInt(3, entity.getNumberOfSoldSeats());
+            stmt.setBigDecimal(4, entity.getAttendance());
+
             stmt.executeUpdate();
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
+                    entity.setId(generatedKeys.getInt(1));
+                    return entity;
                 }
                 else {
                     throw new SQLException("Creating  hall failed, no ID obtained.");
@@ -109,9 +114,12 @@ public class SqlHallDao implements HallDao {
     public boolean update(Hall entity) {
         try (Connection con = connectionPoolHolder.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_HALL);) {
-            stmt.setInt(1, entity.getNumberSeats());
+            stmt.setInt(1, entity.getCapacity());
             stmt.setInt(2, entity.getNumberAvailableSeats());
-            stmt.setInt(3, entity.getId());
+            stmt.setInt(3, entity.getNumberOfSoldSeats());
+            stmt.setBigDecimal(4, entity.getAttendance());
+
+            stmt.setInt(5, entity.getId());
             return stmt.executeUpdate() != 0;
 
         } catch (SQLException e) {

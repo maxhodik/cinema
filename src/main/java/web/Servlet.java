@@ -26,17 +26,18 @@ public class Servlet extends HttpServlet {
         HallDao hallDao = SqlDaoFactory.createHallDao();
         MovieDao movieDao = SqlDaoFactory.createMovieDao();
         OrderDao orderDao = SqlDaoFactory.createOrderDao();
-        ScheduleServiceImpl scheduleService = new ScheduleServiceImpl(sessionDao, hallDao, movieDao,orderDao);
+        OrderServiceImpl orderService=new OrderServiceImpl(orderDao);
         UserDao userDao = SqlDaoFactory.createUserDao();
         HallService hallService= new HallServiceImpl(hallDao);
         UserServiceImpl userService = new UserServiceImpl(userDao, new PasswordEncoderService());
         MovieServiceImpl movieService = new MovieServiceImpl(movieDao);
+        ScheduleServiceImpl scheduleService = new ScheduleServiceImpl(sessionDao,  hallService, movieService, orderService);
         ScheduleCommand scheduleCommand = new ScheduleCommand(scheduleService);
         commands.put("register", new RegisterCommand(userService));
         commands.put("login", new LoginCommand(userService));
         commands.put("schedule", scheduleCommand);
         commands.put("order", new OrderCommand(new OrderServiceImpl(orderDao,
-                hallDao, sessionDao, userDao), scheduleService, userService));
+                hallDao, hallService, sessionDao, userDao), scheduleService, userService));
         commands.put("admin/movie", new MovieCommand(movieService));
 
         commands.put("admin/movie/delete", new MovieDeleteCommand(movieService));

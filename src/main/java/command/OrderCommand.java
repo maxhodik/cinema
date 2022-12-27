@@ -6,6 +6,7 @@ import entities.Order;
 import entities.Session;
 import entities.User;
 import exceptions.DBException;
+import exceptions.NotEnoughAvailableSeats;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.OrderService;
@@ -53,7 +54,7 @@ public class OrderCommand extends MultipleMethodCommand {
             if (order == null) {
                 return "WEB-INF/order.jsp";
             }
-        } catch (DBException e) {
+        } catch (DBException | NotEnoughAvailableSeats e) {
 
             throw new RuntimeException(e);
         }

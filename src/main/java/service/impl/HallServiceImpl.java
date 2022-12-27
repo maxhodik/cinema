@@ -5,6 +5,8 @@ import entities.Hall;
 import exceptions.DBException;
 import service.HallService;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class HallServiceImpl implements HallService {
@@ -38,4 +40,46 @@ public class HallServiceImpl implements HallService {
     public boolean update(Hall entity) {
         return hallDao.update(entity);
     }
+
+    @Override
+    public Hall changeHallCapacity(Hall hallToChange, int newCapacity) {
+        int numberOfSoldSeats = hallToChange.getNumberOfSoldSeats();
+        int numberOfAvailableSeats = newCapacity - numberOfSoldSeats;
+
+        BigDecimal attendance = new BigDecimal((float) numberOfSoldSeats / newCapacity * 100);
+        attendance = attendance.setScale(2, RoundingMode.HALF_UP);
+        // todo calculate hall params based on new capacity
+        Hall hall = Hall.builder()
+                .id(hallToChange.getId())
+                .numberSeats(newCapacity)
+                .numberAvailableSeats(numberOfAvailableSeats)
+                .numberOfSoldSeats(numberOfSoldSeats).attendance(attendance).build();
+        return hall;
+    }
+
+    @Override
+    public Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats) {
+        int capacity = hallToChange.getCapacity();
+        int numberOfSoldSeats = capacity - newAvailableSeats;
+
+        BigDecimal attendance = new BigDecimal((float) numberOfSoldSeats / capacity * 100);
+        attendance = attendance.setScale(2, RoundingMode.HALF_UP);
+        // todo calculate hall params based on new capacity
+        Hall hall = Hall.builder()
+                .id(hallToChange.getId())
+                .numberSeats(capacity)
+                .numberAvailableSeats(newAvailableSeats)
+                .numberOfSoldSeats(numberOfSoldSeats).attendance(attendance).build();
+        return hall;
+    }
+
+    @Override
+    //todo check exceptions
+    public Hall createWithCapacity(int seatsCapacity) throws DBException {
+        Hall hall = Hall.builder().numberSeats(seatsCapacity).numberAvailableSeats(seatsCapacity).build();
+        hall = hallDao.createAndReturnWithId(hall);
+        return hall;
+    }
+
 }
+

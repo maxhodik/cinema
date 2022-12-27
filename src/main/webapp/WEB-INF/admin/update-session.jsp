@@ -30,6 +30,8 @@
         <th scope="col"><fmt:message key="Date"/>"${sessionDto.date}"</th>
         <th scope="col"> <fmt:message key="time"/></th>
         <th scope="col"><fmt:message key="movie"/></th>
+
+
         <th scope="col"><fmt:message key="seats"/>"${sessionDto.numberOfSeats}"</th>
     </tr>
     </thead>
@@ -47,8 +49,10 @@
                         <td><input  type="date"   name="date" placeholder="${sessionDto.date}"><br/></td>
                         <td><input  type="time"   name="time" placeholder="${sessionDto.time}"><br/></td>
                         <td><input  type="text" name="movieName" placeholder="${sessionDto.movieName}"><br/></td>
+
+
                         <td><input  type="number"  name="seats" placeholder="${sessionDto.numberOfSeats}"><br/></td>
-                          <input class="btn btn-primary" type="submit" value="<fmt:message key="submit"/>">
+                         <input class="btn btn-primary" type="submit" value="<fmt:message key="submit"/>">
 
                   </form>
               </tr>

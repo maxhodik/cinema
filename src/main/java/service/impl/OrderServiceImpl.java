@@ -7,35 +7,46 @@ import dao.UserDao;
 import dto.OrderDto;
 import entities.*;
 import exceptions.DBException;
+import exceptions.NotEnoughAvailableSeats;
 import exceptions.SaveOrderException;
+import service.HallService;
 import service.OrderService;
+
+import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
     private OrderDao orderDao;
     private HallDao hallDao;
+    private HallService hallService;
     private SessionDao sessionDao;
     private UserDao userDao;
 
-    public OrderServiceImpl(OrderDao orderDao, HallDao hallDao, SessionDao sessionDao, UserDao userDao) {
+    public OrderServiceImpl(OrderDao orderDao, HallDao hallDao, HallService hallService, SessionDao sessionDao, UserDao userDao) {
         this.orderDao = orderDao;
-        this.sessionDao = sessionDao;
         this.hallDao = hallDao;
+        this.hallService = hallService;
+        this.sessionDao = sessionDao;
         this.userDao = userDao;
-
     }
 
+    public OrderServiceImpl(OrderDao orderDao) {
+        this.orderDao = orderDao;
+    }
+
+
     @Override
-    public Order submitOrder(int sessionId, int seats, String userLogin) throws DBException {
+    public Order submitOrder(int sessionId, int seats, String userLogin) throws DBException, NotEnoughAvailableSeats {
+   // todo transaction
         Session session = sessionDao.findEntityById(sessionId);
         Hall hall = session.getHall();
-       int hallId = hall.getId();
-// todo create user by Session
+        int hallId = hall.getId();
         User user = userDao.findEntityByLogin(userLogin);
         int availableSeats = hall.getNumberAvailableSeats();
         int numberOfAvailableSeats = availableSeats - seats;
         if (numberOfAvailableSeats < 0) {
-            return null;
-        }
+                throw new NotEnoughAvailableSeats("Not enough available seats");
+            }
+
         Order order = Order.builder()
                 .state(State.getByNameIgnoringCase("NEW"))
                 .session(session)
@@ -43,10 +54,10 @@ public class OrderServiceImpl implements OrderService {
                 .user(user)
                 .price(100).build();
         if (create(order)) {
-            hall.setNumberAvailableSeats(numberOfAvailableSeats);
+            hall = hallService.changeHallNumberOfAvailableSeats(hall, numberOfAvailableSeats);
             hallDao.update(hall);
         }
-return order;
+        return order;
     }
 
     @Override
@@ -61,9 +72,10 @@ return order;
 
     @Override
     public boolean update(Order entity) {
-        return false;
+        return orderDao.update(entity);
     }
-@Override
+
+    @Override
     public OrderDto getOrderDto(Order order) {
 
         int orderId = order.getId();
@@ -71,5 +83,15 @@ return order;
         int numberOfSeats = order.getNumberOfSeats();
         int price = order.getPrice();
         return new OrderDto(orderId, numberOfSeats, price, login);
+    }
+
+    @Override
+    public List<Order> findAllBySessionId(Integer id) {
+        return orderDao.findAllBySessionId(id);
+    }
+
+    @Override
+    public Order findEntityById(Integer id) {
+        return orderDao.findEntityById(id);
     }
 }

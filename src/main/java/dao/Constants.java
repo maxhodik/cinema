@@ -23,20 +23,20 @@ public class Constants {
     public static final String FIND_ALL_SESSIONS_FILTER_BY_SORTED_BY = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id WHERE ";
     public static final String FIND_ALL_SESSIONS = "SELECT *  FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id";
     public static final String DELETE_SESSION_BY_ID = "DELETE FROM sessions WHERE id =?";
-    public static final String INSERT_INTO_HALLS = "INSERT INTO `mydb`.`halls`(`id`,`number_seats`,`number_available_seats`) VALUES(default,?,?);";
+    public static final String INSERT_INTO_HALLS = "INSERT INTO `mydb`.`halls`(`id`,`number_seats`,`number_available_seats`, `number_sold_seats`, `attendance`) VALUES(default,?,?,?,?);";
     public static final String FIND_MOVIE_BY_ID = "SELECT * FROM mydb.movies where id =?";
     public static final String FIND_HALL_BY_ID = "SELECT * FROM `mydb`.`halls` WHERE id=?";
     public static final String DELETE_HALL_BY_ID = "DELETE FROM halls where id=?";
     public static final String INSERT_INTO_SESSIONS = "INSERT INTO sessions (id, `date`, movie_id, hall_id, `time`) VALUES (default,?,?,?,?)";
-    public static final String UPDATE_SESSIONS = "UPDATE `mydb`.`sessions` SET `date` = ? , `movie_id` = ? , `hall_id` = ?, `time` = ? WHERE `id` =?";
+    public static final String UPDATE_SESSIONS = "UPDATE `mydb`.`sessions` SET `date` = ? , `movie_id` = ? , `hall_id` = ?, `time` = ?, `status` = ? WHERE `id` =?";
     public static final String FIND_ALL_ORDERS = "SELECT * FROM mydb.orders;";
     public static final String FIND_ORDER_BY_ID = "SELECT * FROM orders WHERE id =?";
     public static final String FIND_SESSION_BY_ID = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id WHERE sessions.id=?";
     public static final String DELETE_ORDER_BY_ID = "DELETE FROM orders where id=?";
     public static final String INSERT_INTO_ORDER = "INSERT INTO `mydb`.`orders` (`id`,`state`,`number_of_seats`,`price`,`user_id`,`sessions_id`)VALUES(default,?,?,?,?,?)";
     public static final String UPDATE_ORDERS = "UPDATE `mydb`.`orders` SET `state` = ?,`number_of_seats` = ?,`price` = ?,`user_id` = ?,`sessions_id` = ? WHERE `id` = ?";
-    public static final String UPDATE_HALL = "UPDATE mydb.halls SET number_seats = ?, number_available_seats = ? WHERE id = ?;";
+    public static final String UPDATE_HALL = "UPDATE mydb.halls SET number_seats = ?, number_available_seats = ?, number_sold_seats=? , attendance=?  WHERE id = ?;";
     public static final String FIND_ALL_SESSIONS_SORTED_ORDER_BY = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id order by ";
     public static final String FIND_ALL_MOVIES_SORTED_BY_NAME = "SELECT * FROM mydb.movies order by name";
-    public static final String FIND_ORDER_BY_SESSION_ID = "SELECT * FROM orders WHERE sessions_id =?";
+    public static final String FIND_ORDER_BY_SESSION_ID = "SELECT * FROM orders left join users on user_id=users.id join sessions on sessions_id= sessions.id left join movies on movie_id=movies.id join halls on hall_id= halls.id where sessions_id=?;";
 }

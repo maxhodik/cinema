@@ -10,7 +10,7 @@ public class OrderMapper implements ObjectMapper<Order>{
 
     @Override
     public Order extractFromResultSet(ResultSet rs) throws SQLException {
-        return Order.builder().id(rs.getInt("id"))
+        return Order.builder().id(rs.getInt("orders.id"))
                 .state(State.getByNameIgnoringCase(rs.getString("orders.state")))
                 .numberOfSeats(rs.getInt("number_of_seats"))
                 .price(rs.getInt("price")).build();

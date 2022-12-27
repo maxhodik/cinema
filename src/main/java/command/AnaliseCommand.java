@@ -65,6 +65,8 @@ public class AnaliseCommand extends MultipleMethodCommand {
         addFilterIfNeeded(dates, filters, "date", BETWEEN);
         String[] movies = request.getParameterValues("movie");
         addFilterIfNeeded(movies, filters, "movie", IN);
+        String[] statuses = request.getParameterValues("status");
+        addFilterIfNeeded(statuses, filters, "status", IN);
         String[] days = request.getParameterValues("day");
         addFilterIfNeeded(days, filters, "day", IN);
         String[] times = request.getParameterValues("time");

@@ -29,7 +29,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Movie findEntityByLogin(String name) {
+    public Movie findEntityByName(String name) {
         return movieDao.findEntityByName(name);
     }
 

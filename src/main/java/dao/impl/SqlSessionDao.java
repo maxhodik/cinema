@@ -101,11 +101,13 @@ public class SqlSessionDao implements SessionDao {
     public boolean update(Session entity) {
         try (Connection con = connectionPoolHolder.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_SESSIONS);) {
-            stmt.setDate(1, Date.valueOf(entity.getDate()));
-            stmt.setInt(2, entity.getMovie().getId());
-            stmt.setInt(3, entity.getHall().getId());
-            stmt.setTime(4, Time.valueOf(entity.getTime()));
-            stmt.setInt(5, entity.getId());
+            int k=0;
+            stmt.setDate(++k, Date.valueOf(entity.getDate()));
+            stmt.setInt(++k, entity.getMovie().getId());
+            stmt.setInt(++k, entity.getHall().getId());
+            stmt.setTime(++k, Time.valueOf(entity.getTime()));
+            stmt.setString(++k, entity.getStatus().toString());
+            stmt.setInt(++k, entity.getId());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
             throw new DBConnectionException(e);

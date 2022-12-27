@@ -1,7 +1,11 @@
 package entities;
 
 
-import java.time.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class Session {
     private int id;
@@ -9,7 +13,18 @@ public class Session {
     private Hall hall;
     private LocalDate date;
     private LocalTime time;
+    private Status status;
 
+
+    public Session(int id, Movie movie, Hall hall, LocalDate date, LocalTime time, Status status) {
+        this.id = id;
+        this.movie = movie;
+        this.hall = hall;
+        this.date = date;
+        this.time = time;
+        this.status = status;
+
+    }
 
     public Session(Builder builder) {
         this.id = builder.id;
@@ -17,19 +32,21 @@ public class Session {
         this.hall = builder.hall;
         this.date = builder.date;
         this.time = builder.time;
+        this.status=builder.status;
 
     }
 
 
     @Override
     public String toString() {
-        return "Session{" +
-                "id=" + id +
-                ", movie=" + movie +
-                ", hall=" + hall +
-                ", date=" + date +
-                ", time=" + time +
-                '}';
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("movie", movie)
+                .append("hall", hall)
+                .append("date", date)
+                .append("time", time)
+                .append("status", status)
+                .toString();
     }
 
 
@@ -61,6 +78,14 @@ public class Session {
         return time;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public void setTime(LocalTime time) {
         this.time = time;
     }
@@ -72,9 +97,11 @@ public class Session {
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
     public static Builder builder() {
         return new Builder();
     }
+
     public static class Builder {
         private int id;
         private Movie movie;
@@ -83,36 +110,47 @@ public class Session {
         private DayOfWeek dayOfWeek;
 
         private LocalTime time;
+        private Status status;
 
-        public Builder id (int id) {
+
+        public Builder id(int id) {
             this.id = id;
             return this;
         }
 
-        public Builder movie (Movie movie) {
+        public Builder movie(Movie movie) {
             this.movie = movie;
             return this;
         }
 
-        public Builder hall (Hall hall) {
+        public Builder hall(Hall hall) {
             this.hall = hall;
             return this;
         }
 
-        public Builder data (LocalDate date) {
+        public Builder data(LocalDate date) {
             this.date = date;
             return this;
         }
-        public Builder dayOfWeek (DayOfWeek dayOfWeek){
-            this.dayOfWeek=dayOfWeek;
+
+        public Builder dayOfWeek(DayOfWeek dayOfWeek) {
+            this.dayOfWeek = dayOfWeek;
             return this;
         }
 
-        public Builder time (LocalTime time) {
+        public Builder time(LocalTime time) {
             this.time = time;
             return this;
 
         }
-        public Session build (){return new Session(this);}
+        public Builder status (Status status){
+            this.status=status;
+            return this;
+        }
+
+        public Session build() {
+            return new Session(this);
+        }
     }
 }
+

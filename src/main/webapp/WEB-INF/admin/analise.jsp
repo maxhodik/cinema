@@ -72,13 +72,15 @@
                   </c:when>
                 <c:otherwise>
                 <c:forEach var="movieDto" items="${movieDto}">
-                    <li> <input type="checkbox" name="movie" value = ${movieDto}>${movieDto}</li>
+                    <li> <input type="checkbox" name="movie" value="${movieDto}">${movieDto}</li>
                 </c:forEach>
                    </c:otherwise>
                       </c:choose>
             </ul>
-           </div> <input type="radio" name="orderBy" value="movie" /><fmt:message key="Sort by Movie"/>
+           </div>
+           <input type="radio" name="orderBy" value="movie" /><fmt:message key="Sort by Movie"/>
            </th>
+           <th scope="col"><input type="checkbox" name="status" value="ACTIVE"/> <fmt:message key="Filter by status"/></th>
            <th scope="col"><input type="radio" name="orderBy" value="number_available_seats"/> <fmt:message key="Sort by number of available seats"/></th>
            <th scope="col"><input type="radio" name="orderBy" value="number_sold_seats"/>  <fmt:message key="Sort by number of sold seats"/></a></th>
            <th scope="col"><input type="radio" name="orderBy" value="capacity"/>  <fmt:message key="Sort by hall capacity"/></a></th>
@@ -100,6 +102,7 @@
                     <td>${sessionAdminDto.dayOfWeek}</td>
                     <td>${sessionAdminDto.time}</td>
                     <td>${sessionAdminDto.movieName}</td>
+                    <td>${sessionAdminDto.status}</td>
                     <td>${sessionAdminDto.numberOfAvailableSeats}</td>
                     <td>${sessionAdminDto.numberOfSoldSeats}</td>
                     <td>${sessionAdminDto.capacity}</td>

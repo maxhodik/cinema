@@ -4,10 +4,12 @@ public class Movie {
     private int id;
 
     private String name;
+    private Status status;
 
     public Movie(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
+        this.status=builder.status;
     }
 
     public static Builder builder() {
@@ -40,6 +42,7 @@ public class Movie {
 
 
     public static class Builder {
+        public Status status;
         private int id;
 
         private String name;
@@ -57,6 +60,10 @@ public class Movie {
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+        public Builder status (Status status){
+            this.status=status;
             return this;
         }
 

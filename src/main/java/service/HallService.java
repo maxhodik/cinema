@@ -11,4 +11,9 @@ public interface HallService {
      boolean delete(Hall entity);
      boolean create(Hall entity) throws DBException;
     boolean update(Hall entity);
+    Hall changeHallCapacity(Hall hallToChange, int newCapacity);
+    Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats);
+
+    Hall createWithCapacity(int seatsCapacity) throws DBException;
+
 }

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+import static command.Operation.IN;
 import static command.Operation.IS;
 
 public class ScheduleCommand extends MultipleMethodCommand {
@@ -27,9 +28,11 @@ public class ScheduleCommand extends MultipleMethodCommand {
     public String performGet(HttpServletRequest request) {
         List<Session> allSortedSessions;
         String orderBy = request.getParameter("orderBy");
-        String admin = request.getParameter("admin");
+//        String admin = request.getParameter("admin");
         String[] select = request.getParameterValues("number_available_seats");
         List<Filter> filters = new ArrayList<>();
+        String[] status = request.getParameterValues("status");
+        addFilterIfNeeded(status, filters, "status", IN);
         if (select != null && select.length != 0) {
             filters.add(new Filter("number_available_seats", List.of(select), IS));
         }
@@ -51,5 +54,14 @@ public class ScheduleCommand extends MultipleMethodCommand {
 public String performPost(HttpServletRequest request){
         return"admin/schedule-admin.jsp";
         }
-
+    private static void addFilterIfNeeded(String[] dates, List<Filter> filters, String date, Operation operation) {
+        if (dates != null) {
+            for (String d : dates) {
+                if (d.isEmpty()) {
+                    return;
+                }
+            }
+            filters.add(new Filter(date, List.of(dates), operation));
+        }
+    }
         }

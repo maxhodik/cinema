@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface OrderDao extends GenericDao<Integer, Order> {
 
-    List<Order> findEntityBySessionId(Integer id);
+    List<Order> findAllBySessionId(Integer id);
+    Order findEntityById(Integer id);
 }

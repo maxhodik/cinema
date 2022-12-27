@@ -25,6 +25,7 @@ public interface ScheduleService {
     Session findEntityById(Integer id);
     boolean delete(Session entity);
     boolean update(SessionDto sessionDto);
+    boolean updateStatus (Session session);
     boolean create(SessionDto sessionDto) throws DBException;
     SessionDto getSessionDto(int id);
     List<SessionAdminDto> getSessionAdminDtoList(List<Session> allSortedSessions);
