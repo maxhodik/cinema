@@ -1,10 +1,7 @@
 package command;
 
-import dto.OrderDto;
 import dto.SessionDto;
 import entities.Order;
-import entities.Session;
-import entities.User;
 import exceptions.DBException;
 import exceptions.NotEnoughAvailableSeats;
 import org.apache.log4j.LogManager;
@@ -15,22 +12,24 @@ import service.UserService;
 import service.impl.OrderServiceImpl;
 import service.impl.ScheduleServiceImpl;
 import service.impl.UserServiceImpl;
+import web.form.OrderForm;
+import web.form.validation.OrderFormValidator;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 public class OrderCommand extends MultipleMethodCommand {
     private static final Logger LOGGER = LogManager.getLogger(OrderCommand.class);
     private OrderService orderService;
     private ScheduleService scheduleService;
     private UserService userService;
+    private OrderFormValidator orderValidator;
 
 
-    public OrderCommand(OrderServiceImpl orderService, ScheduleServiceImpl scheduleService, UserServiceImpl userService) {
+    public OrderCommand(OrderServiceImpl orderService, ScheduleServiceImpl scheduleService, UserServiceImpl userService, OrderFormValidator orderValidator) {
         this.orderService = orderService;
         this.scheduleService = scheduleService;
         this.userService = userService;
+        this.orderValidator = orderValidator;
     }
 
 
@@ -46,6 +45,11 @@ public class OrderCommand extends MultipleMethodCommand {
     @Override
     public String performPost(HttpServletRequest request) {
         int seats = Integer.parseInt(request.getParameter("seats"));
+        OrderForm orderForm= new OrderForm(seats);
+        if (orderValidator.validate(orderForm)) {
+            request.setAttribute("errors", true);
+            return "WEB-INF/order.jsp";
+        }
         int id = Integer.parseInt(request.getParameter("id"));
         String userLogin= (String) request.getSession().getAttribute("name");
         Order order;

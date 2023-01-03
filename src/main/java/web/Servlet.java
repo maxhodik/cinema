@@ -5,6 +5,7 @@ import dao.*;
 import dao.impl.SqlDaoFactory;
 import service.HallService;
 import service.impl.*;
+import web.form.validation.*;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -26,29 +27,32 @@ public class Servlet extends HttpServlet {
         HallDao hallDao = SqlDaoFactory.createHallDao();
         MovieDao movieDao = SqlDaoFactory.createMovieDao();
         OrderDao orderDao = SqlDaoFactory.createOrderDao();
-        OrderServiceImpl orderService=new OrderServiceImpl(orderDao);
+        OrderServiceImpl orderService = new OrderServiceImpl(orderDao);
         UserDao userDao = SqlDaoFactory.createUserDao();
-        HallService hallService= new HallServiceImpl(hallDao);
+        HallService hallService = new HallServiceImpl(hallDao);
         UserServiceImpl userService = new UserServiceImpl(userDao, new PasswordEncoderService());
         MovieServiceImpl movieService = new MovieServiceImpl(movieDao);
-        ScheduleServiceImpl scheduleService = new ScheduleServiceImpl(sessionDao,  hallService, movieService, orderService);
+        ScheduleServiceImpl scheduleService = new ScheduleServiceImpl(sessionDao, hallService, movieService, orderService);
         ScheduleCommand scheduleCommand = new ScheduleCommand(scheduleService);
-        commands.put("register", new RegisterCommand(userService));
+
+        MovieFormValidator movieValidator = new MovieFormValidator();
+
+        SessionFormValidator sessionValidator = new SessionFormValidator();
+
+        commands.put("register", new RegisterCommand(userService, new UserFormValidator()));
         commands.put("login", new LoginCommand(userService));
         commands.put("schedule", scheduleCommand);
         commands.put("order", new OrderCommand(new OrderServiceImpl(orderDao,
-                hallDao, hallService, sessionDao, userDao), scheduleService, userService));
+                hallDao, hallService, sessionDao, userDao), scheduleService, userService, new OrderFormValidator()));
         commands.put("admin/movie", new MovieCommand(movieService));
-
         commands.put("admin/movie/delete", new MovieDeleteCommand(movieService));
-        commands.put("admin/movie/update-movie", new MovieUpdateCommand(movieService));
-        commands.put("admin/movie/add-movie", new MovieAddCommand(movieService));
-        commands.put("schedule/delete",new ScheduleDeleteCommand(scheduleService));
-        commands.put("admin/add-session",new ScheduleAddCommand (scheduleService, movieService, hallService ));
-        commands.put("admin/update-session", new ScheduleUpdateCommand(scheduleService, movieService, hallService ));
-        commands.put("admin/analise", new AnaliseCommand(scheduleService, movieService, hallService ));
+        commands.put("admin/movie/update-movie", new MovieUpdateCommand(movieService, movieValidator));
+        commands.put("admin/movie/add-movie", new MovieAddCommand(movieService, movieValidator));
+        commands.put("schedule/delete", new ScheduleDeleteCommand(scheduleService));
+        commands.put("admin/add-session", new ScheduleAddCommand(scheduleService, movieService, hallService, sessionValidator));
+        commands.put("admin/update-session", new ScheduleUpdateCommand(scheduleService, movieService, hallService, sessionValidator));
+        commands.put("admin/analise", new AnaliseCommand(scheduleService, movieService, hallService, new AnaliseFormValidator()));
         commands.put("logout", new LogOutCommand());
-
 
 
     }

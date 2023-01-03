@@ -12,15 +12,64 @@
 <fmt:setBundle basename="message"/>
 
 <html lang="${param.lang}">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Cinema</title>
-</head>
+ <head>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+              <a class="navbar-brand"href="/cinema"> <fmt:message key="To main page"/></a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/login"><fmt:message key="button.login"/></a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/register"><fmt:message key="button.registration"/></a>
+                   </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                     <fmt:message key="label.language"/>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
+                      <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                  </li>
+                </ul>
+                <form>
+                 <class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <fmt:message key="label.language"/>
+                       </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
+                        <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
+                       </ul>
+
+                </form>
+              </div>
+            </div>
+          </nav>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Cinema</title>
+    </head>
 <body>
-<ul>
-    <li><button><a href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-    <li><button><a href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-</ul>
+
+<c:if test="${sessionScope.exception == true}">
+    <label class="alert alert-info"> <fmt:message key="alert.user.already.exist"/></label>
+</c:if>
+<c:remove var="exception" scope="session"/>
+
+<c:if test="${errors}">
+    <p>Not Valid</p>
+</c:if>
 <div class="container">
 
 <div class="form-group">
@@ -49,8 +98,6 @@
 
 </div>
 </div>
-<br>
 
-<button> <a href="/cinema"> <fmt:message key="To main page"/></a>
 </body>
 </html>

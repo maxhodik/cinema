@@ -12,16 +12,70 @@
 <fmt:setBundle basename="message"/>
 
 <html lang="${param.lang}">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Cinema</title>
-</head>
-<body>
-<ul>
-    <li><button><a href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-    <li><button><a href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-</ul>
 
+ <head>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+              <a class="navbar-brand"href="/cinema"> <fmt:message key="To main page"/></a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/login"><fmt:message key="button.login"/></a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/register"><fmt:message key="button.registration"/></a>
+                   </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                     <fmt:message key="label.language"/>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
+                      <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                  </li>
+                </ul>
+                <form>
+                 <class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <fmt:message key="label.language"/>
+                       </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
+                        <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
+                       </ul>
+
+                </form>
+              </div>
+            </div>
+          </nav>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Cinema</title>
+    </head>
+
+<body>
+
+ <form action="schedule">
+                 <class="item dropdown">
+                      <a class="btn btn-outline-secondary dropdown-toggle"  id="Dropdown" role="button" data-bs-toggle="dropdown" >
+                        <fmt:message key="label.sort"/>
+                       </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="?orderBy=date"> <fmt:message key="Sort by Date"/></a></li>
+                        <li><a class="dropdown-item" href="?orderBy=time"> <fmt:message key="Sort by time"/></a></li>
+                        <li><a class="dropdown-item" href="?orderBy=movie"> <fmt:message key="Sort by movie"/></a></li>
+                        <li><a class="dropdown-item" href="?orderBy=number_available_seats"> <fmt:message key="Sort by number of available seats"/></a><li>
+</ul>
+              </form>
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
     <thead class="thead-dark">
 <form action="schedule">
@@ -38,17 +92,12 @@
 
     </tr> --!>
     <tr>
-    <th> <input type="radio" name="orderBy" value="date" /><fmt:message key="Sort by Date"/> </th>
-    <th> <input type="radio" name="orderBy" value="time"  /><fmt:message key="Sort by time"/> </th>
-    <th> <input type="radio" name="orderBy" value="movie"  /><fmt:message key="Sort by movie"/></th>
+    <th><fmt:message key="Date"/> </th>
+    <th> <fmt:message key="time"/> </th>
+    <th> <fmt:message key="movie"/></th>
 <div>
- <th> <input type="radio" name="orderBy" value="number_available_seats"  /><fmt:message key="Sort by number of available seats"/>
- <input type="checkbox" name="number_available_seats" value = "true"><fmt:message key="Filter by number of available seats"/></th>
+ <th> <fmt:message key="number of available seats"/>
 </div>
-
-
-
-
     </tr>
 
     </thead>
@@ -73,12 +122,28 @@
         </c:otherwise>
     </c:choose>
     </tbody>
-<input type="submit" value="Submit" />
+
 </table>
 
 </form>
-<br>
-<hr>
-<button> <a href="/cinema"> <fmt:message key="To main page"/></a>
+
 </body>
+
 </html>
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>

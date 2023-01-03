@@ -1,4 +1,4 @@
-package web.filters;
+package web.filter;
 
 import entities.Role;
 
@@ -41,7 +41,7 @@ public class AuthFilter implements Filter {
             } else if (path.matches(".*/cinema/.*")) {
                 filterChain.doFilter(request, response);
             } else {
-                //todo 404page
+                //todo 404 page
                 resp.sendRedirect("/cinema");
             }
         }

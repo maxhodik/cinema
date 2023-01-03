@@ -8,10 +8,12 @@ import org.apache.log4j.Logger;
 import service.HallService;
 import service.MovieService;
 import service.ScheduleService;
+import web.form.validation.AnaliseFormValidator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static command.Operation.*;
@@ -22,11 +24,14 @@ public class AnaliseCommand extends MultipleMethodCommand {
     private ScheduleService scheduleService;
     private MovieService movieService;
     private HallService hallService;
+    private AnaliseFormValidator analiseValidator;
 
-    public AnaliseCommand(ScheduleService scheduleService, MovieService movieService, HallService hallService) {
+    public AnaliseCommand(ScheduleService scheduleService, MovieService movieService,
+                          HallService hallService, AnaliseFormValidator analiseValidator) {
         this.scheduleService = scheduleService;
         this.hallService = hallService;
         this.movieService = movieService;
+        this.analiseValidator = analiseValidator;
     }
 
     @Override
@@ -60,7 +65,14 @@ public class AnaliseCommand extends MultipleMethodCommand {
 
     @Override
     public String performPost(HttpServletRequest request) {
-        List<Filter> filters = new ArrayList<>();
+
+        if (request.getParameter("reset")!= null && request.getParameter("reset").equals("true")){
+            request.getSession().setAttribute("filters" , null );
+        }
+        List<Filter> filters = (List<Filter>) request.getSession().getAttribute("filters");
+        if (filters == null || filters.isEmpty()) {
+            filters = new ArrayList<>();
+        }
         String[] dates = request.getParameterValues("date");
         addFilterIfNeeded(dates, filters, "date", BETWEEN);
         String[] movies = request.getParameterValues("movie");
@@ -73,6 +85,13 @@ public class AnaliseCommand extends MultipleMethodCommand {
         addFilterIfNeeded(times, filters, "time", BETWEEN);
         String orderBy = request.getParameter("orderBy");
         //todo string validation
+//        AnaliseForm analiseForm = new AnaliseForm(LocalDate.parse(dates[0]), LocalDate.parse(dates[1]),
+//                LocalTime.parse(times[0]), LocalTime.parse(times[1]));
+//        if (analiseValidator.validate(analiseForm)) {
+//            request.setAttribute("errors", true);
+//            return "/WEB-INF/admin/analise.jsp";
+//        }
+        request.getSession().setAttribute("filters", filters);
         List<SessionAdminDto> sessionDtoList = scheduleService.findAllFilterByAndOrderBy(filters, orderBy);
 //            List<Session> allSortedSessions;
 //        if (web.filters.size() != 0) {
@@ -93,15 +112,29 @@ public class AnaliseCommand extends MultipleMethodCommand {
         return movieDtoList;
     }
 
-    private static void addFilterIfNeeded(String[] dates, List<Filter> filters, String date, Operation operation) {
-        if (dates != null) {
-            for (String d : dates) {
+    private void addFilterIfNeeded(String[] filterValues, List<Filter> filters, String columnName, Operation operation) {
+        // 1 find filter by column in existed filters
+        // 2 if exist
+        //    replace on filterValues
+        //    otherwise add filterValues
+
+        if (filterValues != null) {
+
+            // todo recheck if this for needed
+            for (String d : filterValues) {
                 if (d.isEmpty()) {
+
                     return;
                 }
             }
-            filters.add(new Filter(date, List.of(dates), operation));
+            replaceFiltersIfPresent(filterValues, filters, columnName);
+            filters.add(new Filter(columnName, List.of(filterValues), operation));
         }
+    }
+
+    private void replaceFiltersIfPresent(String[] filterValues, List<Filter> filters, String columnName) {
+        Optional<Filter> filterByColumn = filters.stream().filter(filter -> filter.getColumn().equals(columnName)).findFirst();
+        filterByColumn.ifPresent(filter -> filter.setValues(List.of(filterValues)));
     }
 
 }

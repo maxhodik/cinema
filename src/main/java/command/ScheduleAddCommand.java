@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 import service.HallService;
 import service.MovieService;
 import service.ScheduleService;
+import web.form.SessionForm;
+import web.form.validation.SessionFormValidator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -24,11 +26,13 @@ public class ScheduleAddCommand extends MultipleMethodCommand {
     private ScheduleService scheduleService;
     private HallService hallService;
     private MovieService movieService;
+   private SessionFormValidator sessionValidator;
 
-    public ScheduleAddCommand(ScheduleService scheduleService, MovieService movieService, HallService hallService) {
+    public ScheduleAddCommand(ScheduleService scheduleService, MovieService movieService, HallService hallService, SessionFormValidator sessionValidator) {
         this.scheduleService = scheduleService;
         this.hallService = hallService;
         this.movieService = movieService;
+      this.sessionValidator = sessionValidator;
     }
     @Override
     protected String performGet(HttpServletRequest request) {
@@ -44,6 +48,11 @@ public class ScheduleAddCommand extends MultipleMethodCommand {
         String movieName = request.getParameter("movieName");
         int numberOfSeats = Integer.parseInt(request.getParameter("seats"));
         Status status=ACTIVE;
+        SessionForm sessionForm = new SessionForm(movieName,numberOfSeats,date,time);
+        if (sessionValidator.validate(sessionForm)) {
+            request.setAttribute("errors", true);
+            return "/WEB-INF/admin/add-session.jsp";
+        }
         int id=-1;
         SessionDto sessionDto = new SessionDto(id, movieName, date, time, status, numberOfSeats);
         try {
@@ -51,7 +60,7 @@ public class ScheduleAddCommand extends MultipleMethodCommand {
         } catch (DBException e) {
             throw new RuntimeException(e);
         }
-        return "/WEB-INF/admin/add-session.jsp";
+        return "redirect:schedule?admin=true";
     }
     private  List<String> getMovieDtoList() {
         List<Movie> movies= movieService.findAll();
