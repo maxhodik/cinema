@@ -49,16 +49,13 @@
                   <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/analise"> <fmt:message key="Analise"/></a>
                   </li>
                 </ul>
-                <form>
-                 <class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <fmt:message key="label.language"/>
-                       </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                        <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                       </ul>
-                </form>
+               <form class="nav-item">
+                          <label for="records"><fmt:message key="number.records"/></label>
+                               <input class="col-2" type="number" min="1" name="records" id="records"
+                               value="${not empty requestScope.records ? requestScope.records : "5"}">
+                                      <input type="hidden" name="offset" value="0">
+                               <button type="submit" class="btn btn-dark mt-2 mb-3"><fmt:message key="submit"/></button>
+               </form>
               </div>
             </div>
           </nav>
@@ -66,40 +63,38 @@
         <title>Cinema</title>
     </head>
 <body>
- <form action="schedule?admin=true">
+ <form action="schedule">
 <div>
  <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                               <li class="nav-item dropdown">
-<a>
-
-
-              <form method="get" action="schedule?admin=true">
+    <a>
+              <form method="get" action="schedule">
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-
-
- <li class="nav-item dropdown">
+         <li class="nav-item dropdown">
                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <fmt:message key="Filter by"/>
-                  </a>
+     </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                  <li>  <input type="checkbox" name="status" value="ACTIVE"/> <fmt:message key="Filter by status"/></li>
-                    <li><input type="checkbox" name="number_available_seats" value = "true"><fmt:message key="Filter by number of available seats"/></li>
+                  <li><input type="checkbox" name="status" value="ACTIVE"/> <fmt:message key="Filter by status"/></li>
+                  <li><input type="checkbox" name="number_available_seats" value = "true"><fmt:message key="Filter by number of available seats"/></li>
               </ul
                </li>
          <li class="nav-item">
-
+                           <input type="hidden" name="offset" value="0">
+                           <input type="hidden" name="records" value="${requestScope.records}">
             <input  class="btn btn-secondary" type="submit" value="Submit" />
             </li>
             </form>
             <li >
- <form method="get" action="schedule?admin=true">
+ <form method="get" action="schedule">
   <input hidden type="text" name="reset" value="true"/>
+  <input type="hidden" name="offset" value="0">
+  <input type="hidden" name="records" value="${requestScope.records}">
   <input class="btn btn-secondary" type="submit" value="<fmt:message key="reset"/>">
       </form>
    </li>
@@ -111,42 +106,41 @@
         <title>Cinema</title>
 </div>
        </form>
- <form method="get" action="schedule?admin=true">
-             <class="item dropdown">
-    <a class="btn btn-outline-secondary dropdown-toggle"  id="Dropdown" role="button" data-bs-toggle="dropdown" >
-        <fmt:message key="label.sort"/>
-       </a>
-     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-<li><a class="dropdown-item" href="?orderBy=date"> <fmt:message key="Sort by Date"/></a></li>
-                        <li><a class="dropdown-item" href="?orderBy=time"> <fmt:message key="Sort by time"/></a></li>
-                        <li><a class="dropdown-item" href="?orderBy=movie"> <fmt:message key="Sort by movie"/></a></li>
-                        <li><a class="dropdown-item" href="?orderBy=number_available_seats"> <fmt:message key="Sort by number of available seats"/></a><li>
-
-      </ul>
-          <input  class="btn btn-secondary" type="submit" value="Submit" />
+  <form action="schedule">
+                  <class="item dropdown">
+                       <a class="btn btn-outline-secondary dropdown-toggle"  id="Dropdown" role="button" data-bs-toggle="dropdown" >
+                         <fmt:message key="label.sort"/>
+                        </a>
+                       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                         <thead>
+                         <c:set var="base" value="schedule?"/>
+                      <c:set var="orderByDate" value="orderBy=date"/>
+                      <c:set var="orderByTime" value="orderBy=time"/>
+                      <c:set var="orderByMovie" value="orderBy=movie"/>
+                      <c:set var="orderBySeats" value="orderBy=number_available_seats"/>
+                      <c:set var="limits" value="&offset=0&records=${records}"/>
+                         <li><a class="dropdown-item" href="${base.concat(orderByDate).concat(limits)}"> <fmt:message key="Sort by Date"/></a></li>
+                         <li><a class="dropdown-item" href="${base.concat(orderByTime).concat(limits)}"> <fmt:message key="Sort by time"/></a></li>
+                         <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="Sort by movie"/></a></li>
+                         <li><a class="dropdown-item" href="${base.concat(orderBySeats).concat(limits)}"> <fmt:message key="Sort by number of available seats"/></a><li>
+ </ul>
+   </thead>
+               </form>
       </form>
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
     <thead class="thead-dark">
-
-
-      <tr>
-
+     <tr>
        <th> <fmt:message key="Date"/> </th>
        <th> <fmt:message key="time"/> </th>
        <th><fmt:message key="movie"/></th>
-
    <div>
     <th>
      <fmt:message key="number of available seats"/></th>
     <th> <fmt:message key="status"/></th>
-
    </div>
        </tr>
-
 </form>
     </thead>
-
        <tbody>
        <c:choose>
            <c:when test="${sessionAdminDto.isEmpty()}">
@@ -176,12 +170,67 @@
             </c:forEach>
         </c:otherwise>
     </c:choose>
-
     </tbody>
-
-
 </table>
+<c:choose>
+ <c:when test="${not empty orderBy}">
+           <c:set var="href" scope="request"
+                         value="schedule?orderBy=${orderBy}&"/>
+ </c:when>
+ <c:otherwise>
+          <c:set var="href" scope="request"
+                                  value="schedule?"/>
+ </c:otherwise>
+</c:choose>
+</form>
 
 
+<body>
+<ul class="pagination justify-content-center">
+    <c:if test="${requestScope.end > 3}">
+        <li class="page-item">
+            <a class="page-link link-dark" href="${requestScope.href}offset=0&records=${requestScope.records}">
+                1
+            </a>
+        </li>
+        <c:if test="${requestScope.end > 4}">
+            <li class="page-item">
+                <c:set var="currentOffset" value="${(requestScope.start - 2) * requestScope.records}"/>
+                <a class="page-link link-dark"
+                   href="${requestScope.href}offset=${currentOffset}&records=${requestScope.records}">
+                    ...
+                </a>
+            </li>
+        </c:if>
+    </c:if>
+    <c:forEach var="page" begin="${requestScope.start}" end="${requestScope.end}">
+        <li class="page-item">
+            <c:set var="currentOffset" value="${(page - 1) * requestScope.records}"/>
+            <a class="page-link ${requestScope.currentPage eq page ? 'dark-active' : 'link-dark'}"
+               href="${requestScope.href}offset=${currentOffset}&records=${requestScope.records}">
+                    ${page}
+            </a>
+        </li>
+    </c:forEach>
+    <c:if test="${requestScope.end < requestScope.pages}">
+        <c:if test="${requestScope.end + 1 < requestScope.pages}">
+            <li class="page-item">
+                <c:set var="currentOffset" value="${(requestScope.end) * requestScope.records}"/>
+                <a class="page-link link-dark"
+                   href="${requestScope.href}offset=${currentOffset}&records=${requestScope.records}">
+                    ...
+                </a>
+            </li>
+        </c:if>
+        <li class="page-item">
+            <a class="page-link link-dark"
+                href="${requestScope.href}offset=${(requestScope.pages - 1) * requestScope.records}&records=${requestScope.records}">
+                    ${requestScope.pages}
+                </a>
+        </li>
+    </c:if>
+</ul>
+</nav>
+</body>
 </body>
 </html>

@@ -47,7 +47,7 @@
                   </li>
                 </ul>
                 <form>
-                 < class="nav-item dropdown">
+                 <class="nav-item dropdown">
                       <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <fmt:message key="label.language"/>
                        </a>
@@ -69,10 +69,7 @@
     <title>Cinema</title>
 </head>
 <body>
-<ul>
-    <li><button><a href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-    <li><button><a href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-</ul>
+
 <div class="container">
 
 <div class="form-group">
@@ -95,8 +92,6 @@
 
 </div>
 </div>
-<br>
 
-<button> <a href="/cinema"> <fmt:message key="To main page"/></a>
 </body>
 </html>

@@ -1,11 +1,13 @@
 package service.impl;
 
+
 import command.Operation;
 import dao.SessionDao;
 import dto.Filter;
 import dto.SessionAdminDto;
 import dto.SessionDto;
 import entities.*;
+import exceptions.DAOException;
 import exceptions.DBException;
 import service.HallService;
 import service.MovieService;
@@ -60,15 +62,15 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<SessionAdminDto> findAllFilterByAndOrderBy(List<Filter> filters, String orderBy) {
+    public List<SessionAdminDto> findAllFilterByAndOrderBy(List<Filter> filters, String orderBy, String limits) {
         List<Session> sessions;
-        if (filters.size() == 0) {
-            sessions = findAllOrderBy(orderBy);
-        } else {
+//        if (filters.size() == 0) {
+//            sessions = findAllOrderBy(orderBy);
+//        } else {
             String sqlFilters = convertFiltersToSqlQuery(filters);
             String sqlColumn = getSqlColumn(orderBy);
-            sessions = sessionDao.findAllFilterByAvailableViewing(sqlFilters, sqlColumn);
-        }
+            sessions = sessionDao.findAllFilterByAvailableViewing(sqlFilters, sqlColumn, limits);
+//        }
         List<SessionAdminDto> sessionAdminDtoList = getSessionAdminDtoList(sessions);
 //        // 1-получаем фактори
 //        // 2-получаем из фактори стратегию по ордеру
@@ -88,9 +90,14 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 
     private String convertFiltersToSqlQuery(List<Filter> filters) {
-        StringBuilder queryBuilder = new StringBuilder(" ");
+        if (filters == null || filters.isEmpty()) {
+            return "";
+        }
+        StringBuilder queryBuilder = new StringBuilder(" WHERE ");
+        int i=0;
         for (Filter filter : filters) {
-            if (queryBuilder.length() > 1) {
+          i++;
+            if (i > 1) {
                 queryBuilder.append(" AND ");
             }
             String column = getSqlColumn(filter.getColumn());
@@ -179,7 +186,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .status(Status.CANCELED)
                 .build();
         sessionDao.update(updetedSession);
-       List<Order> orders = orderService.findAllBySessionId(updetedSession.getId());
+        List<Order> orders = orderService.findAllBySessionId(updetedSession.getId());
         for (Order o : orders) {
             Order updetedOrder = Order.builder()
                     .id(o.getId())
@@ -191,7 +198,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                     .build();
             orderService.update(updetedOrder);
         }
-       return true;
+        return true;
     }
 
     @Override
@@ -287,5 +294,20 @@ public class ScheduleServiceImpl implements ScheduleService {
         return sessionDtoList;
     }
 
+    @Override
+    public int getNumberOfRecords(List<Filter> filters) {
+
+        String sqlFilters = convertFiltersToSqlQuery(filters);
+
+        int numberOfRecords;
+
+        try {
+            numberOfRecords = sessionDao.getNumberOfRecords(sqlFilters);
+        } catch (DAOException e) {
+            throw new RuntimeException(e);
+        }
+        return numberOfRecords;
+    }
 }
+
 

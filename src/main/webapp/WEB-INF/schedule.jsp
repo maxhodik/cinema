@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="my" uri = "tags/addParam.tld"%>
+<%@ taglib prefix="pgn" uri = "tags/pagination.tld"%>
 <%@ page isELIgnored="false" %>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
@@ -8,7 +10,7 @@
 <c:if test="${not empty param.lang}">
     <fmt:setLocale value="${param.lang}" scope="session"/>
 </c:if>
-
+<c:set var="queryString" value="${pageContext.request.queryString}" />
 <fmt:setBundle basename="message"/>
 
 <html lang="${param.lang}">
@@ -40,29 +42,26 @@
                       <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
                     </ul>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                  </li>
                 </ul>
-                <form>
-                 <class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <fmt:message key="label.language"/>
-                       </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                        <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                       </ul>
-
+                 <form class="nav-item">
+                              <label for="records"><fmt:message key="number.records"/></label>
+                            <input class="col-2" type="number" min="1" name="records" id="records"
+                            value="${not empty requestScope.records ? requestScope.records : "5"}">
+                              <input type="hidden" name="offset" value="0">
+                            <button type="submit" class="btn btn-dark mt-2 mb-3"><fmt:message key="submit"/></button>
                 </form>
               </div>
             </div>
+
           </nav>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cinema</title>
+
     </head>
 
 <body>
+<h1>"${queryString}"</h1>
+<!--<h1>"${requestScope}"</h1> --!>
 
  <form action="schedule">
                  <class="item dropdown">
@@ -70,27 +69,24 @@
                         <fmt:message key="label.sort"/>
                        </a>
                       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="?orderBy=date"> <fmt:message key="Sort by Date"/></a></li>
-                        <li><a class="dropdown-item" href="?orderBy=time"> <fmt:message key="Sort by time"/></a></li>
-                        <li><a class="dropdown-item" href="?orderBy=movie"> <fmt:message key="Sort by movie"/></a></li>
-                        <li><a class="dropdown-item" href="?orderBy=number_available_seats"> <fmt:message key="Sort by number of available seats"/></a><li>
+                        <thead>
+                        <c:set var="base" value="schedule?"/>
+                     <c:set var="orderByDate" value="orderBy=date"/>
+                     <c:set var="orderByTime" value="orderBy=time"/>
+                     <c:set var="orderByMovie" value="orderBy=movie"/>
+                     <c:set var="orderBySeats" value="orderBy=number_available_seats"/>
+                     <c:set var="limits" value="&offset=0&records=${records}"/>
+                        <li><a class="dropdown-item" href="${base.concat(orderByDate).concat(limits)}"> <fmt:message key="Sort by Date"/></a></li>
+                        <li><a class="dropdown-item" href="${base.concat(orderByTime).concat(limits)}"> <fmt:message key="Sort by time"/></a></li>
+                        <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="Sort by movie"/></a></li>
+                        <li><a class="dropdown-item" href="${base.concat(orderBySeats).concat(limits)}"> <fmt:message key="Sort by number of available seats"/></a><li>
 </ul>
+  </thead>
               </form>
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
     <thead class="thead-dark">
 <form action="schedule">
-   <!-- <tr>
-        <th scope="col"><class="button" type="submit"> <a href="?orderBy=date"> <fmt:message key="Sort by Date"/></a></th>
-        <th scope="col"><button> <a href="?orderBy=time"> <fmt:message key="Sort by time"/></a></th>
-        <th scope="col"><button> <a href="?orderBy=movie"> <fmt:message key="Sort by movie"/></a></th>
-        <th class="btn-group btn-group-vertical"
-<div>
-        <button  scope="col"><a href="?orderBy=number_available_seats"> <fmt:message key="Sort by number of available seats"/></a>
-        <button  scope="col"> <input type="checkbox" name="id" value = "number_available_seats > 0"><fmt:message key="Filter by number of available seats"/> </a>
-        </th>
-</div>
 
-    </tr> --!>
     <tr>
     <th><fmt:message key="Date"/> </th>
     <th> <fmt:message key="time"/> </th>
@@ -124,26 +120,18 @@
     </tbody>
 
 </table>
-
+<c:choose>
+ <c:when test="${not empty orderBy}">
+           <c:set var="href" scope="request"
+                         value="schedule?orderBy=${orderBy}&"/>
+ </c:when>
+ <c:otherwise>
+          <c:set var="href" scope="request"
+                                  value="schedule?"/>
+ </c:otherwise>
+</c:choose>
 </form>
-
+<c:import url="pagination.jsp"/>
 </body>
 
 </html>
-<nav aria-label="Page navigation example">
-  <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  </ul>
-</nav>

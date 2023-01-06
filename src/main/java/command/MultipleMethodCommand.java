@@ -1,5 +1,7 @@
 package command;
 
+
+
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class MultipleMethodCommand implements Command {

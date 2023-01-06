@@ -33,7 +33,8 @@ public class Servlet extends HttpServlet {
         UserServiceImpl userService = new UserServiceImpl(userDao, new PasswordEncoderService());
         MovieServiceImpl movieService = new MovieServiceImpl(movieDao);
         ScheduleServiceImpl scheduleService = new ScheduleServiceImpl(sessionDao, hallService, movieService, orderService);
-        ScheduleCommand scheduleCommand = new ScheduleCommand(scheduleService);
+        Pagination paginate = new Pagination();
+        ScheduleCommand scheduleCommand = new ScheduleCommand(scheduleService, paginate);
 
         MovieFormValidator movieValidator = new MovieFormValidator();
 
@@ -51,7 +52,7 @@ public class Servlet extends HttpServlet {
         commands.put("schedule/delete", new ScheduleDeleteCommand(scheduleService));
         commands.put("admin/add-session", new ScheduleAddCommand(scheduleService, movieService, hallService, sessionValidator));
         commands.put("admin/update-session", new ScheduleUpdateCommand(scheduleService, movieService, hallService, sessionValidator));
-        commands.put("admin/analise", new AnaliseCommand(scheduleService, movieService, hallService, new AnaliseFormValidator()));
+        commands.put("admin/analise", new AnaliseCommand(scheduleService, movieService, hallService, new AnaliseFormValidator(), paginate));
         commands.put("logout", new LogOutCommand());
 
 

@@ -9,6 +9,7 @@ import dao.Constants;
 import entities.Hall;
 import entities.Movie;
 import entities.Session;
+import exceptions.DAOException;
 import exceptions.DBConnectionException;
 import persistance.ConnectionPoolHolder;
 
@@ -179,11 +180,11 @@ public class SqlSessionDao implements SessionDao {
     }
 
     @Override
-    public List<Session> findAllFilterByAvailableViewing(String filterBy, String orderBy) {
+    public List<Session> findAllFilterByAvailableViewing(String filterBy, String orderBy, String limits) {
         List<Session> sessions = new ArrayList<>();
         try (
                 Connection con = connectionPoolHolder.getConnection();
-                PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_SESSIONS_FILTER_BY_SORTED_BY + filterBy + " ORDER BY " + orderBy)) {
+                PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_SESSIONS_FILTER_BY_SORTED_BY + filterBy + " ORDER BY " + orderBy + limits)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Session session;
@@ -219,6 +220,21 @@ public class SqlSessionDao implements SessionDao {
             throw new DBConnectionException(e);
         }
         return sessions;
+    }
+    @Override
+    public int getNumberOfRecords (String filters) throws DAOException {
+        int numberOfRecords = 0;
+        try (Connection connection = connectionPoolHolder.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(Constants.COUNT_ALL_SESSIONS_FILTER_BY_SORTED_BY + filters)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    numberOfRecords = resultSet.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+        return numberOfRecords;
     }
 }
 

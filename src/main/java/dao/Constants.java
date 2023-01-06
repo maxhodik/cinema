@@ -20,7 +20,8 @@ public class Constants {
     public static final String FIND_ALL_SESSIONS_SORTED_BY_NUMBER_OF_SEATS = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id order by number_available_seats;";
     public static final String FIND_ALL_SESSIONS_SORTED_BY_MOVIE_TITLE = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id order by name;";
     public static final String FIND_ALL_SESSIONS_SORTED_BY_DATE = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id order by date";
-    public static final String FIND_ALL_SESSIONS_FILTER_BY_SORTED_BY = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id WHERE ";
+    public static final String FIND_ALL_SESSIONS_FILTER_BY_SORTED_BY = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id";
+    public static final String COUNT_ALL_SESSIONS_FILTER_BY_SORTED_BY = "SELECT COUNT(*) FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id";
     public static final String FIND_ALL_SESSIONS = "SELECT *  FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id";
     public static final String DELETE_SESSION_BY_ID = "DELETE FROM sessions WHERE id =?";
     public static final String INSERT_INTO_HALLS = "INSERT INTO `mydb`.`halls`(`id`,`number_seats`,`number_available_seats`, `number_sold_seats`, `attendance`) VALUES(default,?,?,?,?);";

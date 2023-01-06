@@ -1,10 +1,11 @@
 package command;
 
+
 import dto.Filter;
 import dto.SessionAdminDto;
 import entities.Role;
-import entities.Session;
 import entities.Status;
+import exceptions.ServiceException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.ScheduleService;
@@ -21,43 +22,48 @@ public class ScheduleCommand extends MultipleMethodCommand {
     private static final Logger LOGGER = LogManager.getLogger(ScheduleCommand.class);
 
     private ScheduleService scheduleService;
+    private Pagination pagination;
 
-    public ScheduleCommand(ScheduleService scheduleService) {
+    public ScheduleCommand(ScheduleService scheduleService, Pagination paginate) {
         this.scheduleService = scheduleService;
+        this.pagination = paginate;
     }
 
     @Override
     public String performGet(HttpServletRequest request) {
-        if (request.getParameter("reset")!= null && request.getParameter("reset").equals("true")){
-            request.getSession().setAttribute("filters" , null );
+        String isResetParam = request.getParameter("reset");
+        if (isResetParam != null && isResetParam.equals("true")) {
+            request.getSession().setAttribute("filters", null);
         }
         List<Filter> filters = (List<Filter>) request.getSession().getAttribute("filters");
         if (filters == null || filters.isEmpty()) {
             filters = new ArrayList<>();
         }
         String orderBy = request.getParameter("orderBy");
-
-//        String admin = request.getParameter("admin");
         String[] select = request.getParameterValues("number_available_seats");
         String[] status = request.getParameterValues("status");
         if (request.getSession().getAttribute("role") != Role.ADMIN) {
-            select = new String[] {"true"};
-            status = new String[] {Status.ACTIVE.name()};
+            // todo data time filter
+            select = new String[]{"true"};
+            status = new String[]{Status.ACTIVE.name()};
         }
-
         addFilterIfNeeded(status, filters, "status", IN);
+        //todo why not addFilterIfNeeded?
         if (select != null && select.length != 0) {
             filters.add(new Filter("number_available_seats", List.of(select), IS));
         }
         request.getSession().setAttribute("filters", filters);
-        List<SessionAdminDto> sessionDtoList = scheduleService.findAllFilterByAndOrderBy(filters, orderBy);
-//        } else {
-//            allSortedSessions = scheduleService.findAllOrderBy(orderBy);
-//        }
-//        List<SessionAdminDto> sessionDtoList = scheduleService.getSessionAdminDtoList(allSortedSessions);
-        //     List<String> movieDtoList = getMovieDtoList(sessionDtoList);
+        int numberOfRecords = 0;
+        try {
+            numberOfRecords = scheduleService.getNumberOfRecords(filters);
+        } catch (ServiceException e) {
+            throw new RuntimeException(e);
+        }
+        pagination.paginate(numberOfRecords, request);
+        String limits = setLimits(request);
+
+        List<SessionAdminDto> sessionDtoList = scheduleService.findAllFilterByAndOrderBy(filters, orderBy, limits);
         request.setAttribute("sessionAdminDto", sessionDtoList);
-//        User user=User.builder().build();
         if (request.getSession().getAttribute("role") == Role.ADMIN) {
             return "WEB-INF/admin/schedule-admin.jsp";
         }
@@ -80,7 +86,6 @@ public class ScheduleCommand extends MultipleMethodCommand {
             // todo recheck if this for needed
             for (String d : filterValues) {
                 if (d.isEmpty()) {
-
                     return;
                 }
             }
@@ -92,5 +97,13 @@ public class ScheduleCommand extends MultipleMethodCommand {
     private void replaceFiltersIfPresent(String[] filterValues, List<Filter> filters, String columnName) {
         Optional<Filter> filterByColumn = filters.stream().filter(filter -> filter.getColumn().equals(columnName)).findFirst();
         filterByColumn.ifPresent(filter -> filter.setValues(List.of(filterValues)));
+    }
+
+    private String setLimits(HttpServletRequest request) {
+        String offset = request.getParameter("offset");
+        String records = request.getParameter("records");
+        if (offset != null && records != null) {
+            return " LIMIT " + records + " OFFSET " + offset;
+        } else return "";
     }
 }
