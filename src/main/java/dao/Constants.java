@@ -38,6 +38,7 @@ public class Constants {
     public static final String UPDATE_ORDERS = "UPDATE `mydb`.`orders` SET `state` = ?,`number_of_seats` = ?,`price` = ?,`user_id` = ?,`sessions_id` = ? WHERE `id` = ?";
     public static final String UPDATE_HALL = "UPDATE mydb.halls SET number_seats = ?, number_available_seats = ?, number_sold_seats=? , attendance=?  WHERE id = ?;";
     public static final String FIND_ALL_SESSIONS_SORTED_ORDER_BY = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id order by ";
-    public static final String FIND_ALL_MOVIES_SORTED_BY_NAME = "SELECT * FROM mydb.movies order by name";
+    public static final String FIND_ALL_MOVIES_SORTED_BY_NAME = "SELECT * FROM mydb.movies ";
     public static final String FIND_ORDER_BY_SESSION_ID = "SELECT * FROM orders left join users on user_id=users.id join sessions on sessions_id= sessions.id left join movies on movie_id=movies.id join halls on hall_id= halls.id where sessions_id=?;";
+    public static final String COUNT_ALL_MOVIES = "SELECT COUNT(*) FROM mydb.movies ";
 }

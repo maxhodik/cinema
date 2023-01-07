@@ -45,7 +45,7 @@ public class Servlet extends HttpServlet {
         commands.put("schedule", scheduleCommand);
         commands.put("order", new OrderCommand(new OrderServiceImpl(orderDao,
                 hallDao, hallService, sessionDao, userDao), scheduleService, userService, new OrderFormValidator()));
-        commands.put("admin/movie", new MovieCommand(movieService));
+        commands.put("admin/movie", new MovieCommand(movieService, paginate));
         commands.put("admin/movie/delete", new MovieDeleteCommand(movieService));
         commands.put("admin/movie/update-movie", new MovieUpdateCommand(movieService, movieValidator));
         commands.put("admin/movie/add-movie", new MovieAddCommand(movieService, movieValidator));

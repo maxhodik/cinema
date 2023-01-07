@@ -1,14 +1,23 @@
 package service.impl;
 
 import dao.MovieDao;
+import dto.Filter;
+import dto.MovieDto;
+import dto.SessionAdminDto;
 import entities.Movie;
+import entities.Session;
+import exceptions.DAOException;
 import exceptions.DBException;
 import exceptions.UserAlreadyExistException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.MovieService;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public class MovieServiceImpl implements MovieService {
     private static final Logger LOGGER = LogManager.getLogger(MovieServiceImpl.class);
@@ -61,7 +70,42 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> findAllSortedByName() {
-        return movieDao.findAllSortedByName();
+    public List<MovieDto> findAllSortedBy(String orderBy, String limits) {
+        List<Movie> movies;
+        String sqlColumn = getSqlColumn(orderBy);
+        movies = movieDao.findAllSortedBy(orderBy, limits);
+        List<MovieDto> movieDtoList = getMovieDtoList(movies);
+        return movieDtoList;
+    }
+
+    private List<MovieDto> getMovieDtoList(List<Movie> movies) {
+        List<MovieDto> movieDtoList = new ArrayList<>();
+        for (Movie m : movies) {
+            int id = m.getId();
+            String name = m.getName();
+            MovieDto movieDto = new MovieDto(id, name);
+            movieDtoList.add(movieDto);
+        }
+        return movieDtoList;
+    }
+
+
+    private String getSqlColumn(String columnName) {
+        String sqlColumn = null;
+        try {
+            if (columnName != null) {
+                //todo map (map passed columnName to table name otherwise throw error)
+                ResourceBundle bundle = ResourceBundle.getBundle("mapping");
+                sqlColumn = bundle.getString(columnName);
+            }
+        } catch (MissingResourceException e) {
+            return null;
+        }
+        return sqlColumn;
+    }
+    public int getNumberOfRecords() {
+        int numberOfRecords;
+            numberOfRecords = movieDao.getNumberOfRecords();
+        return numberOfRecords;
     }
 }

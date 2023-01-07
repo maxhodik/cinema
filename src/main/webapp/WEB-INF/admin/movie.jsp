@@ -48,15 +48,14 @@
                   <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/analise"> <fmt:message key="Analise"/></a>
                   </li>
                 </ul>
-                <form>
-                 <class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <fmt:message key="label.language"/>
-                       </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                        <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                       </ul>
+                  </a>
+                       <form class="nav-item">
+                             <label for="records"><fmt:message key="number.records"/></label>
+                                   <input class="col-2" type="number" min="1" name="records" id="records"
+                                    value="${not empty requestScope.records ? requestScope.records : "5"}">
+                                   <input type="hidden" name="offset" value="0">
+                                   <button type="submit" class="btn btn-dark mt-2 mb-3"><fmt:message key="submit"/></button>
+                       </form>
 
                 </form>
               </div>
@@ -65,37 +64,51 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cinema</title>
     </head>
-<body>
+<body><form action="movie">
+                       <class="item dropdown">
+                            <a class="btn btn-outline-secondary dropdown-toggle"  id="Dropdown" role="button" data-bs-toggle="dropdown" >
+                              <fmt:message key="label.sort"/>
+                             </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                              <thead>
+                              <c:set var="base" value="movie?"/>
+                           <c:set var="orderById" value="orderBy=id"/>
+                           <c:set var="orderByMovie" value="orderBy=name"/>
+
+                           <c:set var="limits" value="&offset=0&records=${records}"/>
+                              <li><a class="dropdown-item" href="${base.concat(orderById).concat(limits)}"> <fmt:message key="Sort by Date"/></a></li>
+                              <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="Sort by movie"/></a></li>
+
+      </ul>
+        </thead>
+                    </form>
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
     <thead class="thead-dark">
     <tr>
-        <th scope="col"> id </th>
-
-        <th scope="col"><button> <a href="?orderBy=name"> <fmt:message key="Sort by movie name"/></a></th>
-
+        <th scope="col"><fmt:message key="id"/></th>
+        <th scope="col"> <fmt:message key="movie name"/></a></th>
     </tr>
     </thead>
 
     <tbody>
     <c:choose>
-        <c:when test="${movie.isEmpty()}">
+        <c:when test="${movieDto.isEmpty()}">
             <h2><fmt:message key="alert.orders.list.is.empty"/></h2>
         </c:when>
         <c:otherwise>
-            <c:forEach var="movie" items="${movie}">
+            <c:forEach var="movieDto" items="${movieDto}">
                 <tr>
-                    <td>${movie.id}</td>
-                    <td>${movie.name}</td>
-
+                    <td>${movieDto.id}</td>
+                    <td>${movieDto.name}</td>
                     <td>
       <form method="post" action="${pageContext.request.contextPath}/admin/movie/delete" >
          <class="form-group">
-         <input hidden type="number" name="id" value="${movie.id}"/>
+         <input hidden type="number" name="id" value="${movieDto.id}"/>
          <input class="btn btn-outline-dark" type="submit" value="<fmt:message key="delete"/>">
       </form>
 
 
-  <a class="btn btn-outline-dark" type="submit" href="${pageContext.request.contextPath}/admin/movie/update-movie?id=${movie.id}" ><fmt:message key="update"/></a>
+  <a class="btn btn-outline-dark" type="submit" href="${pageContext.request.contextPath}/admin/movie/update-movie?id=${movieDto.id}" ><fmt:message key="update"/></a>
                     </td>
                 </tr>
             </c:forEach>
@@ -104,7 +117,16 @@
 
     </tbody>
 </table>
-<div>
-
+<c:choose>
+ <c:when test="${not empty orderBy}">
+           <c:set var="href" scope="request"
+                         value="movie?orderBy=${orderBy}&"/>
+ </c:when>
+ <c:otherwise>
+          <c:set var="href" scope="request"
+                                  value="movie?"/>
+ </c:otherwise>
+</c:choose>
+  <c:import url="/WEB-INF/pagination.jsp"/>
 </body>
 </html>

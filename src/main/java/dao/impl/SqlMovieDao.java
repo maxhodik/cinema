@@ -5,6 +5,7 @@ import dao.maper.MovieMapper;
 import dao.maper.ObjectMapper;
 import dao.Constants;
 import entities.Movie;
+import exceptions.DAOException;
 import exceptions.DBConnectionException;
 import exceptions.DBException;
 import persistance.ConnectionPoolHolder;
@@ -21,7 +22,7 @@ public class SqlMovieDao implements MovieDao {
         this.connectionPoolHolder = connectionPoolHolder;
     }
 
-@Override
+    @Override
     public List<Movie> findAll() {
         List<Movie> movies = new ArrayList<>();
         try (
@@ -37,13 +38,14 @@ public class SqlMovieDao implements MovieDao {
         }
         return movies;
     }
-@Override
-    public List<Movie> findAllSortedByName() {
+
+    @Override
+    public List<Movie> findAllSortedBy(String orderBy, String limits) {
         List<Movie> movies = new ArrayList<>();
         try (
                 Connection con = connectionPoolHolder.getConnection();
-                Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(Constants.FIND_ALL_MOVIES_SORTED_BY_NAME);) {
+                PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_MOVIES_SORTED_BY_NAME + " ORDER BY " + orderBy + limits)) {
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 mapper = new MovieMapper();
                 movies.add(mapper.extractFromResultSet(rs));
@@ -53,6 +55,7 @@ public class SqlMovieDao implements MovieDao {
         }
         return movies;
     }
+
     @Override
     public Movie findEntityById(Integer id) {
 
@@ -113,9 +116,8 @@ public class SqlMovieDao implements MovieDao {
     }
 
 
-
-@Override
-    public boolean create (Movie entity) throws DBException {
+    @Override
+    public boolean create(Movie entity) throws DBException {
         try (Connection con = connectionPoolHolder.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_MOVIES);) {
             stmt.setString(1, entity.getName());
@@ -142,6 +144,20 @@ public class SqlMovieDao implements MovieDao {
 
     }
 
+    public int getNumberOfRecords() {
+        int numberOfRecords = 0;
+        try (Connection connection = connectionPoolHolder.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(Constants.COUNT_ALL_MOVIES)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    numberOfRecords = resultSet.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DBConnectionException(e);
+        }
+        return numberOfRecords;
+    }
 
 }
 

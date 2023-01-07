@@ -43,12 +43,12 @@
                     </ul>
                   </li>
                 </ul>
-                 <form class="nav-item">
-                              <label for="records"><fmt:message key="number.records"/></label>
-                            <input class="col-2" type="number" min="1" name="records" id="records"
+                 <form class="nav-item" action="schedule">
+                           <label for="records"><fmt:message key="number.records"/></label>
+                           <input class="col-2" type="number" min="1" name="records" id="records"
                             value="${not empty requestScope.records ? requestScope.records : "5"}">
-                              <input type="hidden" name="offset" value="0">
-                            <button type="submit" class="btn btn-dark mt-2 mb-3"><fmt:message key="submit"/></button>
+                           <input type="hidden" name="offset" value="0">
+                           <button type="submit" class="btn btn-dark mt-2 mb-3"><fmt:message key="submit"/></button>
                 </form>
               </div>
             </div>

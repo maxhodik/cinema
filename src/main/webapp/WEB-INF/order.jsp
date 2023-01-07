@@ -85,7 +85,8 @@
 
 <form method="post" action="${pageContext.request.contextPath}/order">
   <div class="value-button" id="decrease" onclick="decreaseValue()" value="Decrease Value"></div>
-  <input type="number" id="number" value="0" name="seats"/>
+
+  <input type="number" id="number" min="0" value="0" name="seats"/>
   <div class="value-button" id="increase" onclick="increaseValue()" value="Increase Value"></div>
   <input hidden type="number" name="id" value="${sessionDto.id}"/>
   <input class="btn btn-primary" type="submit" value="<fmt:message key="submit"/>">

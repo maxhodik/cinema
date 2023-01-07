@@ -8,6 +8,8 @@ public interface MovieDao extends GenericDao<Integer, Movie> {
 
    Movie findEntityByName(String name);
     List<Movie> findAll();
-    List<Movie> findAllSortedByName();
+    List<Movie> findAllSortedBy(String orderBy, String limits);
+    int getNumberOfRecords();
+
 
 }
