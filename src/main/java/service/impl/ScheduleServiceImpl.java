@@ -42,24 +42,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     }
 
-    @Override
-    public List<Session> findAllByMovie() {
-        List<Session> sessions = sessionDao.findAllSortedByMovieTitle();
-        return sessions;
-    }
-
-    @Override
-    public List<Session> findAllByDate() {
-        List<Session> sessions = sessionDao.findAllSortedByDate();
-        return sessions;
-    }
-
-
-    @Override
-    public List<Session> findAllByAvailableSeats() {
-        List<Session> sessions = sessionDao.findAllSortedByNumberOfAvailableSeats();
-        return sessions;
-    }
 
     @Override
     public List<SessionAdminDto> findAllFilterByAndOrderBy(List<Filter> filters, String orderBy, String limits) {
@@ -87,6 +69,19 @@ public class ScheduleServiceImpl implements ScheduleService {
 //        return strategy.sort(sessionAdminDtoList);
         return sessionAdminDtoList;
     }
+
+    @Override
+    public List<SessionAdminDto> findAllFilterBy(List<Filter> filters) {
+        List<Session> sessions;
+        String sqlFilters = convertFiltersToSqlQuery(filters);
+
+        sessions = sessionDao.findAllFilterByAvailableViewing(sqlFilters);
+
+        List<SessionAdminDto> sessionAdminDtoList = getSessionAdminDtoList(sessions);
+
+        return sessionAdminDtoList;
+    }
+
 
 
     private String convertFiltersToSqlQuery(List<Filter> filters) {
@@ -214,8 +209,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         Hall updatedHall = hallService.changeHallCapacity(hall, numberOfSeats);
 //        hallDao.update(hall);
         //todo validate movie name
-        Movie movie = session.getMovie();
-        movie.setName(movieName);
+        Movie movie = movieService.findEntityByName(movieName);
         session = buildSession(sessionDto, hall, movie);
         // todo update session and hall in transaction
         return sessionDao.update(session);

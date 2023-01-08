@@ -13,6 +13,7 @@ public interface SessionDao extends GenericDao<Integer, Session> {
     List<Session> findAllSortedByDate();
 
     List<Session> findAllFilterByAvailableViewing(String filterBy, String orderBy, String limits);
+    List<Session> findAllFilterByAvailableViewing(String sqlFilters);
 
     List<Session> findAllOrderBy(String columnName);
 

@@ -200,6 +200,28 @@ public class SqlSessionDao implements SessionDao {
         return sessions;
     }
 
+    @Override
+    public List<Session> findAllFilterByAvailableViewing(String filterBy) {
+        List<Session> sessions = new ArrayList<>();
+        try (
+                Connection con = connectionPoolHolder.getConnection();
+                PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_SESSIONS_FILTER_BY_SORTED_BY + filterBy)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Session session;
+                mapper = new SessionMapper();
+                session = mapper.extractFromResultSet(rs);
+                session.setMovie(movieMapper.extractFromResultSet(rs));
+                session.setHall(hallMapper.extractFromResultSet(rs));
+                sessions.add(session);
+            }
+        } catch (SQLException e) {
+            throw new DBConnectionException(e);
+        }
+        return sessions;
+    }
+
+
 
     @Override
     public List<Session> findAllOrderBy(String columnName) {

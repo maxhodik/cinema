@@ -23,12 +23,12 @@ public class SqlMovieDao implements MovieDao {
     }
 
     @Override
-    public List<Movie> findAll() {
+    public List<Movie> findAllOrderBy (String orderBy) {
         List<Movie> movies = new ArrayList<>();
         try (
                 Connection con = connectionPoolHolder.getConnection();
-                Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(Constants.FIND_ALL_MOVIES);) {
+                PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_MOVIES_SORTED_BY_NAME + " ORDER BY " + orderBy)) {
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 mapper = new MovieMapper();
                 movies.add(mapper.extractFromResultSet(rs));
@@ -57,6 +57,22 @@ public class SqlMovieDao implements MovieDao {
     }
 
     @Override
+    public List<Movie> findAll() {
+        List<Movie> movies = new ArrayList<>();
+        try (
+                Connection con = connectionPoolHolder.getConnection();
+                PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_MOVIES_SORTED_BY_NAME)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                mapper = new MovieMapper();
+                movies.add(mapper.extractFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            throw new DBConnectionException(e);
+        }
+        return movies;
+    }
+        @Override
     public Movie findEntityById(Integer id) {
 
         try (Connection con = connectionPoolHolder.getConnection();

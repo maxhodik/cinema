@@ -15,14 +15,8 @@ public interface ScheduleService {
 
     List<Session> findAll();
 
-    List<Session> findAllByMovie();
-
-    List<Session> findAllByDate();
-
-    List<Session> findAllByAvailableSeats();
-
-
     List<SessionAdminDto> findAllFilterByAndOrderBy(List<Filter> filters, String orderBy, String limits);
+    List<SessionAdminDto> findAllFilterBy (List<Filter> filters);
     List<Session> findAllOrderBy(String columnName);
 
     Session findEntityById(Integer id);

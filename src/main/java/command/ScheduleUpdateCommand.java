@@ -61,7 +61,7 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
         }
         SessionDto sessionDto = new SessionDto(id, movieName, date, time, status, numberOfSeats);
         scheduleService.update(sessionDto);
-        return "redirect:schedule?admin=true";
+        return "redirect:schedule";
     }
 
     private List<String> getMovieDtoList() {

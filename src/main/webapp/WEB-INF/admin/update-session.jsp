@@ -106,10 +106,26 @@
                   <input hidden type="number" name="id" value="${sessionDto.id}"/>
                         <td><input  type="date"   name="date" placeholder="${sessionDto.date}"><br/></td>
                         <td><input  type="time"   name="time" placeholder="${sessionDto.time}"><br/></td>
-                        <td><input  type="text" name="movieName" placeholder="${sessionDto.movieName}"><br/></td>
-                        <td><input  type="number"  name="seats" placeholder="${sessionDto.numberOfSeats}"><br/></td>
-                         <input class="btn btn-primary" type="submit" value="<fmt:message key="submit"/>">
 
+                        <td>
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             <fmt:message key="movie"/>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <c:choose>
+                       <c:when test="${schedule.isEmpty()}">
+                        <h2><fmt:message key="alert.orders.list.is.empty"/></h2>
+                    </c:when>
+               <c:otherwise>
+                    <c:forEach var="movieDto" items="${movieDto}">
+            <li> <input type="radio" name="movieName" value="${movieDto}">${movieDto}</li>
+           </c:forEach>
+              </c:otherwise>
+                </c:choose>
+                 </ul>
+                 </td>
+                        <td><input  type="number"  name="seats" min="1" placeholder="${sessionDto.numberOfSeats}"><br/></td>
+                         <input class="btn btn-primary" type="submit" value="<fmt:message key="submit"/>">
                   </form>
               </tr>
         </c:otherwise>

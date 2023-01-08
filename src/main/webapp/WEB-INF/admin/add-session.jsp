@@ -58,7 +58,6 @@
                         <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
                         <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
                        </ul>
-
                 </form>
               </div>
             </div>
@@ -95,7 +94,23 @@
                   <form method="post" action="${pageContext.request.contextPath}/admin/add-session">
                       <td><input id="name" type="date"  name="date"><br/></td>
                       <td><input id="name" type="time" name="time"><br/></td>
-                      <td><input id="name" type="text"  name="movieName"><br/></td>
+                                       <td>
+                              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                       <fmt:message key="movie"/>
+                                              </a>
+                                              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                            <c:choose>
+                                                 <c:when test="${schedule.isEmpty()}">
+                                                  <h2><fmt:message key="alert.orders.list.is.empty"/></h2>
+                                              </c:when>
+                                         <c:otherwise>
+                                              <c:forEach var="movieDto" items="${movieDto}">
+                                      <li> <input type="radio" name="movieName" value="${movieDto}">${movieDto}</li>
+                                     </c:forEach>
+                                        </c:otherwise>
+                                          </c:choose>
+                                           </ul>
+                                       </td>
                       <td><input id="name" type="number"  name="seats"><br/></td>
                        <input class="btn btn-primary" type="submit" value="<fmt:message key="submit"/>">
 

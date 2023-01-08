@@ -60,7 +60,7 @@ public class ScheduleAddCommand extends MultipleMethodCommand {
         } catch (DBException e) {
             throw new RuntimeException(e);
         }
-        return "redirect:schedule?admin=true";
+        return "redirect:schedule";
     }
     private  List<String> getMovieDtoList() {
         List<Movie> movies= movieService.findAll();

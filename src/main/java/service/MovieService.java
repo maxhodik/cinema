@@ -1,6 +1,5 @@
 package service;
 
-import dto.Filter;
 import dto.MovieDto;
 import entities.Movie;
 import exceptions.DBException;
@@ -15,8 +14,9 @@ public interface MovieService {
     boolean delete(Movie entity);
    Movie create(String name) throws DBException, UserAlreadyExistException;
     boolean update(Movie entity);
-    List<MovieDto> findAllSortedBy(String orderBy, String limits);
+    List<MovieDto> findAllSortedByWithLimit(String orderBy, String limits);
     int getNumberOfRecords();
+    List<MovieDto> findAllOrderBy(String orderBy);
 
 
 

@@ -104,6 +104,6 @@ public class ScheduleCommand extends MultipleMethodCommand {
         String records = request.getParameter("records");
         if (offset != null && records != null) {
             return " LIMIT " + records + " OFFSET " + offset;
-        } else return "";
+        }  else return " LIMIT 5 OFFSET 0";
     }
 }

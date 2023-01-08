@@ -12,59 +12,7 @@
 <fmt:setBundle basename="message"/>
 
 <html lang="${param.lang}">
-<head>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-              <a class="navbar-brand"href="/cinema"> <fmt:message key="To main page"/></a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/login"><fmt:message key="button.login"/></a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/register"><fmt:message key="button.registration"/></a>
-                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                  </li>
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                     <fmt:message key="label.language"/>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                      <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                    </ul>
-                  </li>
-                  <li class="nav-item">
-                  <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/admin/add-session"><fmt:message key="Add new session"/></a>
-                  </li>
-                  <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/movie"><fmt:message key="admin menu"/> </a>
-                  </li>
-                  <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/analise"> <fmt:message key="Analise"/></a>
-                  </li>
-                </ul>
-                <form>
-                 <class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <fmt:message key="label.language"/>
-                       </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                        <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                       </ul>
-
-                </form>
-              </div>
-            </div>
-          </nav>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
+<c:import url="head-admin.jsp" />
 <body>
 <div>
  <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -103,21 +51,20 @@
               </ul>
                </li>
  <li class="nav-item dropdown">
-                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <fmt:message key="time"/>
                   </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                        <label> Start  <input  type="time"   name="time" <br/>
+                       <label> Start  <input  type="time"   name="time" <br/>
                        <label> End <input  type="time"   name="time" <br/>
               </ul>
                </li>
                <li class="nav-item dropdown">
                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <fmt:message key="movi"/>
+                  <fmt:message key="movie"/>
                   </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-
                   <c:choose>
                                   <c:when test="${schedule.isEmpty()}">
                                   <h2><fmt:message key="alert.orders.list.is.empty"/></h2>
@@ -138,13 +85,29 @@
 
                     <input type="checkbox" name="status" value="ACTIVE"/> <fmt:message key="Filter by status"/>
               </ul
-               </li>
+</li>
+<li>
+              <class="nav-item dropdown">
+                       <a class="btn btn-outline-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                             <fmt:message key="label.sort"/> </a>
+                     <ul class="dropdown-menu" aria-label="navbarDropdown">
+                     <li><input type="radio" name="orderBy" value="date" /><fmt:message key="Sort by Date"/> </li>
+                     <li><input type="radio" name="orderBy" value="day" /><fmt:message key="Sort by Day"/></li>
+                     <li><input type="radio" name="orderBy" value="time" /><fmt:message key="Sort by time"/></li>
+                     <li><input type="radio" name="orderBy" value="movie" /><fmt:message key="Sort by Movie"/><li>
+                     <li><input type="radio" name="orderBy" value="number_available_seats"/> <fmt:message key="Sort by number of available seats"/></li>
+                     <li><input type="radio" name="orderBy" value="number_sold_seats"/>  <fmt:message key="Sort by number of sold seats"/></li>
+                     <li><input type="radio" name="orderBy" value="capacity"/>  <fmt:message key="Sort by hall capacity"/></li>
+                     <li><input type="radio" name="orderBy" value="attendance"/>  <fmt:message key="Sort by hall attendance"/></li>
+                     </ul>
+                     </li>
+
          <li class="nav-item">
 
             <input  class="btn btn-secondary" type="submit" value="Submit" />
             </li>
             </form>
-            <li >
+            <li>
  <form method="post" action="${pageContext.request.contextPath}/admin/analise">
   <input hidden type="text" name="reset" value="true"/>
   <input class="btn btn-secondary" type="submit" value="<fmt:message key="reset"/>">
@@ -159,47 +122,20 @@
 </div>
 <h6>schedule-admin</h6>
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
-    <thead class="thead-dark">
-      <form method="post" action="${pageContext.request.contextPath}/admin/analise">
-             <class="item dropdown">
-                            <a class="btn btn-outline-secondary dropdown-toggle"  id="Dropdown" role="button" data-bs-toggle="dropdown" >
-                              <fmt:message key="label.sort"/>
-                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                              <li><input type="radio" name="orderBy" value="date" /><fmt:message key="Sort by Date"/> </li>
-                              <li>   <input type="radio" name="orderBy" value="day" /><fmt:message key="Sort by Day"/></li>
-                              <li> <input type="radio" name="orderBy" value="time" /><fmt:message key="Sort by time"/></li>
-                              <li> <input type="radio" name="orderBy" value="movie" /><fmt:message key="Sort by Movie"/><li>
-          <li><input type="radio" name="orderBy" value="number_available_seats"/> <fmt:message key="Sort by number of available seats"/></li>
-      <li> <input type="radio" name="orderBy" value="number_sold_seats"/>  <fmt:message key="Sort by number of sold seats"/></li>
-      <li> <input type="radio" name="orderBy" value="capacity"/>  <fmt:message key="Sort by hall capacity"/></li>
-      <li> <input type="radio" name="orderBy" value="attendance"/>  <fmt:message key="Sort by hall attendance"/></li>
 
-      </ul>
 
     <tr>
-        <th scope="col">
-
-         </div>
-              <input type="radio" name="orderBy" value="date" /><fmt:message key="Sort by Date"/> </th>
-        <th scope="col">
-
-         <input type="radio" name="orderBy" value="day" /><fmt:message key="Sort by Day"/>
-        </th>
-          <th scope="col">
-
-                     </div> <input type="radio" name="orderBy" value="time" /><fmt:message key="Sort by time"/></a></th>
-        <th scope="col">
-
-           <input type="radio" name="orderBy" value="movie" /><fmt:message key="Sort by Movie"/>
-           </th>
-           <th scope="col"><input type="checkbox" name="status" value="ACTIVE"/> <fmt:message key="Filter by status"/></th>
-           <th scope="col"><input type="radio" name="orderBy" value="number_available_seats"/> <fmt:message key="Sort by number of available seats"/></th>
-           <th scope="col"><input type="radio" name="orderBy" value="number_sold_seats"/>  <fmt:message key="Sort by number of sold seats"/></a></th>
-           <th scope="col"><input type="radio" name="orderBy" value="capacity"/>  <fmt:message key="Sort by hall capacity"/></a></th>
-           <th scope="col"><input type="radio" name="orderBy" value="attendance"/>  <fmt:message key="Sort by hall attendance"/></a></th>
+        <th scope="col"> <fmt:message key="Date"/></th>
+        <th scope="col"><fmt:message key="Day"/></th>
+        <th scope="col"><fmt:message key="time"/></th>
+        <th scope="col"><fmt:message key="Movie"/></th>
+           <th scope="col"><fmt:message key="status"/></th>
+           <th scope="col"><fmt:message key="available seats"/></th>
+           <th scope="col"><fmt:message key="sold seats"/></a></th>
+           <th scope="col"><fmt:message key="hall capacity"/></a></th>
+           <th scope="col"><fmt:message key="attendance"/></a></th>
     </tr>
-    <input  class="btn btn-secondary" type="submit" value="Submit" />
+
 
     </form>
     </thead>
@@ -233,4 +169,16 @@
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </body>
+<c:choose>
+ <c:when test="${not empty orderBy}">
+           <c:set var="href" scope="request"
+                         value="analise?orderBy=${orderBy}&"/>
+ </c:when>
+ <c:otherwise>
+          <c:set var="href" scope="request"
+                                  value="analise?"/>
+ </c:otherwise>
+</c:choose>
+</form>
+  <c:import url="/WEB-INF/pagination.jsp"/>
 </html>

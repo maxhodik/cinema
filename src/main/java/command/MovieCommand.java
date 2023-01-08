@@ -1,8 +1,6 @@
 package command;
 
 import dto.MovieDto;
-import entities.Movie;
-import exceptions.ServiceException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.MovieService;
@@ -27,7 +25,7 @@ public class MovieCommand extends MultipleMethodCommand {
         List<MovieDto> movies;
         String limits = setLimits(request);
         String orderBy = request.getParameter("orderBy");
-        movies = movieService.findAllSortedBy(orderBy, limits);
+        movies = movieService.findAllSortedByWithLimit(orderBy, limits);
         int numberOfRecords = 0;
         numberOfRecords = movieService.getNumberOfRecords();
         pagination.paginate(numberOfRecords, request);
@@ -46,6 +44,6 @@ public class MovieCommand extends MultipleMethodCommand {
         String records = request.getParameter("records");
         if (offset != null && records != null) {
             return " LIMIT " + records + " OFFSET " + offset;
-        } else return "";
+        } else return " LIMIT 5 OFFSET 0";
     }
 }

@@ -2,7 +2,6 @@ package command;
 
 import dto.Filter;
 import dto.SessionAdminDto;
-import entities.Session;
 import exceptions.ServiceException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -38,11 +37,12 @@ public class AnaliseCommand extends MultipleMethodCommand {
 
     @Override
     public String performGet(HttpServletRequest request) {
-        List<Session> allSortedSessions;
+
         String orderBy = request.getParameter("orderBy");
         String admin = request.getParameter("admin");
         String[] select = request.getParameterValues("number_available_seats");
         List<Filter> filters = new ArrayList<>();
+    filters = (List<Filter>) request.getSession().getAttribute("filters");
         if (select != null && select.length != 0) {
             filters.add(new Filter("number_available_seats", List.of(select), IS));
         }
@@ -55,11 +55,12 @@ public class AnaliseCommand extends MultipleMethodCommand {
         pagination.paginate(numberOfRecords, request);
         String limits = setLimits(request);
         List<SessionAdminDto> sessionDtoList = scheduleService.findAllFilterByAndOrderBy(filters, orderBy, limits);
+        List<SessionAdminDto> sessionDtoListAll = scheduleService.findAllFilterBy(filters);
 //        } else {
 //            allSortedSessions = scheduleService.findAllOrderBy(orderBy);
 //        }
 //        List<SessionAdminDto> sessionDtoList = scheduleService.getSessionAdminDtoList(allSortedSessions);
-        List<String> movieDtoList = getMovieDtoList(sessionDtoList);
+        List<String> movieDtoList = getMovieDtoList(sessionDtoListAll);
         request.setAttribute("sessionAdminDto", sessionDtoList);
         request.setAttribute("movieDto", movieDtoList);
 
@@ -111,13 +112,14 @@ public class AnaliseCommand extends MultipleMethodCommand {
         pagination.paginate(numberOfRecords, request);
         String limits = setLimits(request);
         List<SessionAdminDto> sessionDtoList = scheduleService.findAllFilterByAndOrderBy(filters, orderBy, limits);
+        List<SessionAdminDto> sessionDtoListAll = scheduleService.findAllFilterBy(filters);
 //            List<Session> allSortedSessions;
 //        if (web.filters.size() != 0) {
 //        } else {
 //            allSortedSessions = scheduleService.findAllOrderBy(orderBy);
 //        }
 //        List<SessionAdminDto> sessionDtoList = scheduleService.getSessionAdminDtoList(allSortedSessions);
-        List<String> movieDtoList = getMovieDtoList(sessionDtoList);
+        List<String> movieDtoList = getMovieDtoList(sessionDtoListAll);
         request.setAttribute("sessionAdminDto", sessionDtoList);
         request.setAttribute("movieDto", movieDtoList);
         return "/WEB-INF/admin/analise.jsp";
@@ -159,7 +161,7 @@ public class AnaliseCommand extends MultipleMethodCommand {
         String records = request.getParameter("records");
         if (offset != null && records != null) {
             return " LIMIT " + records + " OFFSET " + offset;
-        } else return "";
+        } else return " LIMIT 5 OFFSET 0";
     }
 
 }

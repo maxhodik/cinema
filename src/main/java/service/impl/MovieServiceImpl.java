@@ -70,14 +70,19 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<MovieDto> findAllSortedBy(String orderBy, String limits) {
+    public List<MovieDto> findAllSortedByWithLimit(String orderBy, String limits) {
         List<Movie> movies;
-        String sqlColumn = getSqlColumn(orderBy);
         movies = movieDao.findAllSortedBy(orderBy, limits);
         List<MovieDto> movieDtoList = getMovieDtoList(movies);
         return movieDtoList;
     }
-
+    @Override
+    public List<MovieDto> findAllOrderBy(String orderBy) {
+        List<Movie> movies;
+        movies = movieDao.findAllOrderBy(orderBy);
+        List<MovieDto> movieDtoList = getMovieDtoList(movies);
+        return movieDtoList;
+    }
     private List<MovieDto> getMovieDtoList(List<Movie> movies) {
         List<MovieDto> movieDtoList = new ArrayList<>();
         for (Movie m : movies) {
