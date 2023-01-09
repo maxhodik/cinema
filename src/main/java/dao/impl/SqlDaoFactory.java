@@ -4,25 +4,25 @@ import dao.*;
 import persistance.ConnectionPoolHolder;
 
 public class SqlDaoFactory {
-    private static final ConnectionPoolHolder connectionPoolHolder = ConnectionPoolHolder.pool();
+
 
     public static UserDao createUserDao() {
-        return new SqlUserDao(connectionPoolHolder);
+        return new SqlUserDao();
     }
 
     public static SessionDao createSessionDao() {
-        return new SqlSessionDao(connectionPoolHolder);
+        return new SqlSessionDao();
     }
 
     public static OrderDao createOrderDao() {
-        return new SqlOrderDao(connectionPoolHolder);
+        return new SqlOrderDao();
     }
 
     public static MovieDao createMovieDao() {
-        return new SqlMovieDao(connectionPoolHolder);
+        return new SqlMovieDao();
     }
 
     public static HallDao createHallDao() {
-        return new SqlHallDao(connectionPoolHolder);
+        return new SqlHallDao();
     }
 }

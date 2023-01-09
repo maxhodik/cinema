@@ -9,6 +9,8 @@ import exceptions.DAOException;
 import exceptions.DBConnectionException;
 import exceptions.DBException;
 import persistance.ConnectionPoolHolder;
+import persistance.ConnectionWrapper;
+import persistance.TransactionManagerWrapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,17 +18,11 @@ import java.util.List;
 
 public class SqlMovieDao implements MovieDao {
     ObjectMapper<Movie> mapper;
-    private final ConnectionPoolHolder connectionPoolHolder;
-
-    public SqlMovieDao(ConnectionPoolHolder connectionPoolHolder) {
-        this.connectionPoolHolder = connectionPoolHolder;
-    }
-
     @Override
     public List<Movie> findAllOrderBy (String orderBy) {
         List<Movie> movies = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
                 PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_MOVIES_SORTED_BY_NAME + " ORDER BY " + orderBy)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -43,7 +39,7 @@ public class SqlMovieDao implements MovieDao {
     public List<Movie> findAllSortedBy(String orderBy, String limits) {
         List<Movie> movies = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
+                 ConnectionWrapper con = TransactionManagerWrapper.getConnection();
                 PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_MOVIES_SORTED_BY_NAME + " ORDER BY " + orderBy + limits)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -60,7 +56,7 @@ public class SqlMovieDao implements MovieDao {
     public List<Movie> findAll() {
         List<Movie> movies = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
                 PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_MOVIES_SORTED_BY_NAME)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -75,7 +71,7 @@ public class SqlMovieDao implements MovieDao {
         @Override
     public Movie findEntityById(Integer id) {
 
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_MOVIE_BY_ID);) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -91,7 +87,7 @@ public class SqlMovieDao implements MovieDao {
 
     public Movie findEntityByName(String name) {
 
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_MOVIE_BY_NAME);) {
             stmt.setString(1, name);
             ResultSet rs = stmt.executeQuery();
@@ -108,9 +104,9 @@ public class SqlMovieDao implements MovieDao {
 
 
     public boolean delete(Movie entity) {
-        Connection con = null;
+        ConnectionWrapper con = null;
         try {
-            con = connectionPoolHolder.getConnection();
+           con = TransactionManagerWrapper.getConnection();
             try (PreparedStatement stmt = con.prepareStatement(Constants.DELETE_MOVIE_BY_NAME);) {
 
                 con.setAutoCommit(false);
@@ -134,7 +130,7 @@ public class SqlMovieDao implements MovieDao {
 
     @Override
     public boolean create(Movie entity) throws DBException {
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_MOVIES);) {
             stmt.setString(1, entity.getName());
             return stmt.executeUpdate() != 0;
@@ -147,7 +143,7 @@ public class SqlMovieDao implements MovieDao {
 
     public boolean update(Movie entity) {
 
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_MOVIE);) {
             stmt.setString(1, entity.getName());
             stmt.setInt(2, entity.getId());
@@ -162,8 +158,8 @@ public class SqlMovieDao implements MovieDao {
 
     public int getNumberOfRecords() {
         int numberOfRecords = 0;
-        try (Connection connection = connectionPoolHolder.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(Constants.COUNT_ALL_MOVIES)) {
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+             PreparedStatement preparedStatement = con.prepareStatement(Constants.COUNT_ALL_MOVIES)) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     numberOfRecords = resultSet.getInt(1);

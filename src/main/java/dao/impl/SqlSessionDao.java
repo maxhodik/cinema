@@ -12,6 +12,8 @@ import entities.Session;
 import exceptions.DAOException;
 import exceptions.DBConnectionException;
 import persistance.ConnectionPoolHolder;
+import persistance.ConnectionWrapper;
+import persistance.TransactionManagerWrapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,10 +23,9 @@ public class SqlSessionDao implements SessionDao {
     private ObjectMapper<Session> mapper;
     private ObjectMapper<Hall> hallMapper;
     private ObjectMapper<Movie> movieMapper;
-    private final ConnectionPoolHolder connectionPoolHolder;
 
-    public SqlSessionDao(final ConnectionPoolHolder connectionPoolHolder) {
-        this.connectionPoolHolder = connectionPoolHolder;
+
+    public SqlSessionDao() {
         this.hallMapper = new HallMapper();
         this.movieMapper = new MovieMapper();
     }
@@ -34,8 +35,8 @@ public class SqlSessionDao implements SessionDao {
     public List<Session> findAll() {
         List<Session> sessions = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
-                Statement stmt = con.createStatement();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                Statement stmt = con.statement();
                 ResultSet rs = stmt.executeQuery(Constants.FIND_ALL_SESSIONS_SORTED_BY_NUMBER_OF_SEATS);) {
             while (rs.next()) {
                 Session session;
@@ -54,7 +55,7 @@ public class SqlSessionDao implements SessionDao {
 
     @Override
     public Session findEntityById(Integer id) {
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_SESSION_BY_ID);) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -71,7 +72,7 @@ public class SqlSessionDao implements SessionDao {
 
     @Override
     public boolean delete(Session entity) {
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.DELETE_SESSION_BY_ID);) {
             stmt.setInt(1, entity.getId());
             return stmt.executeUpdate() != 0;
@@ -84,8 +85,8 @@ public class SqlSessionDao implements SessionDao {
 
     @Override
     public boolean create(Session session) {
-        // need create new Hall???
-        try (Connection con = connectionPoolHolder.getConnection();
+        // todo need create new Hall???
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_SESSIONS, Statement.RETURN_GENERATED_KEYS);) {
             stmt.setDate(1, Date.valueOf(session.getDate()));
             stmt.setInt(2, session.getMovie().getId());
@@ -100,7 +101,7 @@ public class SqlSessionDao implements SessionDao {
 
     @Override
     public boolean update(Session entity) {
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_SESSIONS);) {
             int k=0;
             stmt.setDate(++k, Date.valueOf(entity.getDate()));
@@ -119,8 +120,8 @@ public class SqlSessionDao implements SessionDao {
     public List<Session> findAllSortedByNumberOfAvailableSeats() {
         List<Session> sessions = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
-                Statement stmt = con.createStatement();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                Statement stmt = con.statement();
                 ResultSet rs = stmt.executeQuery(Constants.FIND_ALL_SESSIONS);) {
             while (rs.next()) {
                 Session session;
@@ -139,8 +140,8 @@ public class SqlSessionDao implements SessionDao {
     @Override
     public List<Session> findAllSortedByMovieTitle() {
         List<Session> sessions = new ArrayList<>();
-        try (Connection con = connectionPoolHolder.getConnection();
-             Statement stmt = con.createStatement();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+             Statement stmt = con.statement();
              ResultSet rs = stmt.executeQuery(Constants.FIND_ALL_SESSIONS_SORTED_BY_MOVIE_TITLE);) {
             while (rs.next()) {
                 Session session;
@@ -161,8 +162,8 @@ public class SqlSessionDao implements SessionDao {
     public List<Session> findAllSortedByDate() {
         List<Session> sessions = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
-                Statement stmt = con.createStatement();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                Statement stmt = con.statement();
                 ResultSet rs = stmt.executeQuery(Constants.FIND_ALL_SESSIONS_SORTED_BY_DATE);) {
             while (rs.next()) {
                 Session session;
@@ -183,7 +184,7 @@ public class SqlSessionDao implements SessionDao {
     public List<Session> findAllFilterByAvailableViewing(String filterBy, String orderBy, String limits) {
         List<Session> sessions = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
                 PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_SESSIONS_FILTER_BY_SORTED_BY + filterBy + " ORDER BY " + orderBy + limits)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -204,7 +205,7 @@ public class SqlSessionDao implements SessionDao {
     public List<Session> findAllFilterByAvailableViewing(String filterBy) {
         List<Session> sessions = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
                 PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_SESSIONS_FILTER_BY_SORTED_BY + filterBy)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -227,7 +228,7 @@ public class SqlSessionDao implements SessionDao {
     public List<Session> findAllOrderBy(String columnName) {
         List<Session> sessions = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
                 PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_SESSIONS_SORTED_ORDER_BY + columnName)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -246,8 +247,8 @@ public class SqlSessionDao implements SessionDao {
     @Override
     public int getNumberOfRecords (String filters) throws DAOException {
         int numberOfRecords = 0;
-        try (Connection connection = connectionPoolHolder.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(Constants.COUNT_ALL_SESSIONS_FILTER_BY_SORTED_BY + filters)) {
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+             PreparedStatement preparedStatement = con.prepareStatement(Constants.COUNT_ALL_SESSIONS_FILTER_BY_SORTED_BY + filters)) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     numberOfRecords = resultSet.getInt(1);

@@ -9,9 +9,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-
-
-
 public class ConnectionPoolHolder {
 
     private static final Logger LOGGER = LogManager.getLogger(ConnectionPoolHolder.class);

@@ -9,6 +9,8 @@ import entities.Role;
 import entities.User;
 import exceptions.DBConnectionException;
 import persistance.ConnectionPoolHolder;
+import persistance.ConnectionWrapper;
+import persistance.TransactionManagerWrapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,18 +18,13 @@ import java.util.List;
 
 public class SqlUserDao implements UserDao {
     ObjectMapper<User> mapper;
-    private final ConnectionPoolHolder connectionPoolHolder;
-
-    public SqlUserDao(final ConnectionPoolHolder connectionPoolHolder) {
-        this.connectionPoolHolder = connectionPoolHolder;
-    }
 
 
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
-                Statement stmt = con.createStatement();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                Statement stmt = con.statement();
                 ResultSet rs = stmt.executeQuery(Constants.FIND_ALL_USERS);) {
             while (rs.next()) {
                 mapper = new UserMapper();
@@ -45,7 +42,7 @@ public class SqlUserDao implements UserDao {
     public List<User> findAllByRole(Role role) {
         List<User> users = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
                 PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_USERS_BY_ROLE);) {
             stmt.setString(1, (role.name()));
             ResultSet rs = stmt.executeQuery();
@@ -62,7 +59,7 @@ public class SqlUserDao implements UserDao {
 
     public User findEntityById (Integer id) {
 //       User user = new User();
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_USERS_BY_ID);) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -78,7 +75,7 @@ public class SqlUserDao implements UserDao {
 
     public User findEntityByLogin (String login) {
 
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_USERS_BY_LOGIN);) {
             stmt.setString(1, login);
             ResultSet rs = stmt.executeQuery();
@@ -94,7 +91,7 @@ public class SqlUserDao implements UserDao {
 
 
     public boolean delete(User entity) {
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.DELETE_USERS_BY_LOGIN);) {
             stmt.setString(1, entity.getLogin());
             return stmt.executeUpdate() != 0;
@@ -105,7 +102,7 @@ public class SqlUserDao implements UserDao {
 
 
     public boolean create(User entity) throws DBException {
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_USERS)) {
             stmt.setString(1, entity.getLogin());
             stmt.setString(2, entity.getPassword());
@@ -119,7 +116,7 @@ public class SqlUserDao implements UserDao {
 
 
     public boolean update(User entity) {
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_USER);) {
             stmt.setString(1, entity.getLogin());
             stmt.setString(2, entity.getPassword());

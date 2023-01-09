@@ -12,6 +12,8 @@ import entities.User;
 import exceptions.DBConnectionException;
 import exceptions.SaveOrderException;
 import persistance.ConnectionPoolHolder;
+import persistance.ConnectionWrapper;
+import persistance.TransactionManagerWrapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,11 +23,9 @@ public class SqlOrderDao implements OrderDao {
     private ObjectMapper<Order> mapper;
     private ObjectMapper<Session> sessionMapper;
     private ObjectMapper<User> userMapper;
-    private final ConnectionPoolHolder connectionPoolHolder;
 
-    public SqlOrderDao(ConnectionPoolHolder connectionPoolHolder) {
 
-        this.connectionPoolHolder = connectionPoolHolder;
+    public SqlOrderDao() {
         this.userMapper = new UserMapper();
         this.sessionMapper = new SessionMapper();
     }
@@ -34,8 +34,8 @@ public class SqlOrderDao implements OrderDao {
     public List<Order> findAll() {
         List<Order> orders = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
-                Statement stmt = con.createStatement();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                Statement stmt = con.statement();
                 ResultSet rs = stmt.executeQuery(Constants.FIND_ALL_ORDERS);) {
             while (rs.next()) {
                 Order order;
@@ -55,7 +55,7 @@ public class SqlOrderDao implements OrderDao {
     @Override
     public Order findEntityById(Integer id) {
 
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_ORDER_BY_ID);) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -73,7 +73,7 @@ public class SqlOrderDao implements OrderDao {
     @Override
     public List<Order> findAllBySessionId(Integer id) {
         List<Order> orders = new ArrayList<>();
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_ORDER_BY_SESSION_ID);) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -92,7 +92,7 @@ public class SqlOrderDao implements OrderDao {
 
     @Override
     public boolean delete(Order entity) {
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.DELETE_ORDER_BY_ID);) {
             stmt.setInt(1, entity.getId());
             return stmt.executeUpdate() != 0;
@@ -105,7 +105,7 @@ public class SqlOrderDao implements OrderDao {
     @Override
     public boolean create(Order entity) throws SaveOrderException {
 
-        try (Connection con = connectionPoolHolder.getConnection();) {
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();) {
             try (PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_ORDER);) {
                 con.setAutoCommit(false);
                 stmt.setString(1, String.valueOf(entity.getState()));
@@ -129,7 +129,7 @@ public class SqlOrderDao implements OrderDao {
 
     @Override
     public boolean update(Order entity) {
-        try (Connection con = connectionPoolHolder.getConnection();
+        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_ORDERS);) {
             stmt.setString(1, String.valueOf(entity.getState()));
             stmt.setInt(2, entity.getNumberOfSeats());

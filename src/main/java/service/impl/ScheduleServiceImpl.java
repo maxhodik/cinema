@@ -9,12 +9,15 @@ import dto.SessionDto;
 import entities.*;
 import exceptions.DAOException;
 import exceptions.DBException;
+import persistance.TransactionManager;
+import persistance.TransactionManagerWrapper;
 import service.HallService;
 import service.MovieService;
 import service.OrderService;
 import service.ScheduleService;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -46,12 +49,10 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<SessionAdminDto> findAllFilterByAndOrderBy(List<Filter> filters, String orderBy, String limits) {
         List<Session> sessions;
-//        if (filters.size() == 0) {
-//            sessions = findAllOrderBy(orderBy);
-//        } else {
-            String sqlFilters = convertFiltersToSqlQuery(filters);
-            String sqlColumn = getSqlColumn(orderBy);
-            sessions = sessionDao.findAllFilterByAvailableViewing(sqlFilters, sqlColumn, limits);
+
+        String sqlFilters = convertFiltersToSqlQuery(filters);
+        String sqlColumn = getSqlColumn(orderBy);
+        sessions = sessionDao.findAllFilterByAvailableViewing(sqlFilters, sqlColumn, limits);
 //        }
         List<SessionAdminDto> sessionAdminDtoList = getSessionAdminDtoList(sessions);
 //        // 1-получаем фактори
@@ -83,15 +84,14 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
 
-
     private String convertFiltersToSqlQuery(List<Filter> filters) {
         if (filters == null || filters.isEmpty()) {
             return "";
         }
         StringBuilder queryBuilder = new StringBuilder(" WHERE ");
-        int i=0;
+        int i = 0;
         for (Filter filter : filters) {
-          i++;
+            i++;
             if (i > 1) {
                 queryBuilder.append(" AND ");
             }
@@ -180,39 +180,68 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .hall(session.getHall())
                 .status(Status.CANCELED)
                 .build();
-        sessionDao.update(updetedSession);
-        List<Order> orders = orderService.findAllBySessionId(updetedSession.getId());
-        for (Order o : orders) {
-            Order updetedOrder = Order.builder()
-                    .id(o.getId())
-                    .user(o.getUser())
-                    .session(o.getSession())
-                    .price(o.getPrice())
-                    .numberOfSeats(o.getNumberOfSeats())
-                    .state(State.CANCELED)
-                    .build();
-            orderService.update(updetedOrder);
+        try {
+            TransactionManagerWrapper.startTransaction();
+
+            sessionDao.update(updetedSession);
+            List<Order> orders = orderService.findAllBySessionId(updetedSession.getId());
+            for (Order o : orders) {
+                Order updetedOrder = Order.builder()
+                        .id(o.getId())
+                        .user(o.getUser())
+                        .session(o.getSession())
+                        .price(o.getPrice())
+                        .numberOfSeats(o.getNumberOfSeats())
+                        .state(State.CANCELED)
+                        .build();
+                orderService.update(updetedOrder);
+            }
+            TransactionManagerWrapper.commit();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                TransactionManagerWrapper.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return false;
         }
-        return true;
     }
+
+
+
 
     @Override
     public boolean update(SessionDto sessionDto) {
         //todo transaction
         // todo check orders. If bought tickets > new capacity --> throw error
-        int sessionDtoId = sessionDto.getId();
-        Session session = sessionDao.findEntityById(sessionDtoId);
-        String movieName = sessionDto.getMovieName();
-        int numberOfSeats = sessionDto.getNumberOfSeats();
-        Hall hall = session.getHall();
+        try {
+            TransactionManagerWrapper.startTransaction();
+            int sessionDtoId = sessionDto.getId();
+            Session session = sessionDao.findEntityById(sessionDtoId);
+            String movieName = sessionDto.getMovieName();
+            int numberOfSeats = sessionDto.getNumberOfSeats();
+            Hall hall = session.getHall();
 //        hall = getHall(sessionDtoId, numberOfSeats, hall);
-        Hall updatedHall = hallService.changeHallCapacity(hall, numberOfSeats);
-//        hallDao.update(hall);
-        //todo validate movie name
-        Movie movie = movieService.findEntityByName(movieName);
-        session = buildSession(sessionDto, hall, movie);
-        // todo update session and hall in transaction
-        return sessionDao.update(session);
+            Hall updatedHall = hallService.changeHallCapacity(hall, numberOfSeats);
+            //   hallDao.update(hall);
+            //todo validate movie name
+            Movie movie = movieService.findEntityByName(movieName);
+            session = buildSession(sessionDto, hall, movie);
+            // todo update session and hall in transaction
+            boolean update = sessionDao.update(session);
+            TransactionManagerWrapper.commit();
+            return update;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                TransactionManagerWrapper.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        }
     }
 
     private static Session buildSession(SessionDto sessionDto, Hall hall, Movie movie) {
@@ -242,14 +271,27 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public boolean create(SessionDto sessionDto) throws DBException {
-        String movieName = sessionDto.getMovieName();
-        int numberOfSeats = sessionDto.getNumberOfSeats();
-        Hall hall = hallService.createWithCapacity(numberOfSeats);
-
-        Movie movie = movieService.findEntityByName(movieName);
-        Session session = buildSession(sessionDto, hall, movie);
-        return sessionDao.create(session);
+        try {
+            TransactionManagerWrapper.startTransaction();
+            String movieName = sessionDto.getMovieName();
+            int numberOfSeats = sessionDto.getNumberOfSeats();
+            Hall hall = hallService.createWithCapacity(numberOfSeats);
+            Movie movie = movieService.findEntityByName(movieName);
+            Session session = buildSession(sessionDto, hall, movie);
+            boolean create = sessionDao.create(session);
+            TransactionManagerWrapper.commit();
+            return create;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                TransactionManagerWrapper.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return false;
     }
+
 
     @Override
     public SessionDto getSessionDto(int id) {

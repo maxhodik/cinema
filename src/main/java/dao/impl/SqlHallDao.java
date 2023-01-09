@@ -9,7 +9,8 @@ import exceptions.DBConnectionException;
 import exceptions.DBException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import persistance.ConnectionPoolHolder;
+import persistance.ConnectionWrapper;
+import persistance.TransactionManagerWrapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,23 +18,17 @@ import java.util.List;
 
 public class SqlHallDao implements HallDao {
     private static final Logger LOGGER = LogManager.getLogger(SqlHallDao.class);
-    ObjectMapper<Hall> mapper;
-    private final ConnectionPoolHolder connectionPoolHolder;
-
-    public SqlHallDao(ConnectionPoolHolder connectionPoolHolder) {
-        this.connectionPoolHolder = connectionPoolHolder;
-    }
-
+    private ObjectMapper<Hall> mapper;
 
     @Override
     public List<Hall> findAll() {
         List<Hall> halls = new ArrayList<>();
         try (
-                Connection con = connectionPoolHolder.getConnection();
-                Statement stmt = con.createStatement();
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                Statement stmt = con.statement();
                 ResultSet rs = stmt.executeQuery(Constants.FIND_ALL_HALLS);) {
             while (rs.next()) {
-                mapper= new HallMapper();
+                mapper = new HallMapper();
                 halls.add(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException e) {
@@ -45,12 +40,13 @@ public class SqlHallDao implements HallDao {
     @Override
     public Hall findEntityById(Integer id) {
 
-        try (Connection con = connectionPoolHolder.getConnection();
-             PreparedStatement stmt = con.prepareStatement(Constants.FIND_HALL_BY_ID);) {
+        try (
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                PreparedStatement stmt = con.prepareStatement(Constants.FIND_HALL_BY_ID);) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             rs.next();
-            mapper= new HallMapper();
+            mapper = new HallMapper();
             return mapper.extractFromResultSet(rs);
 
         } catch (SQLException e) {
@@ -59,11 +55,11 @@ public class SqlHallDao implements HallDao {
     }
 
 
-
     @Override
     public boolean delete(Hall entity) {
-        try (Connection con = connectionPoolHolder.getConnection();
-             PreparedStatement stmt = con.prepareStatement(Constants.DELETE_HALL_BY_ID);) {
+        try (
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                PreparedStatement stmt = con.prepareStatement(Constants.DELETE_HALL_BY_ID);) {
             stmt.setInt(1, entity.getId());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
@@ -73,8 +69,9 @@ public class SqlHallDao implements HallDao {
 
     @Override
     public boolean create(Hall entity) throws DBException {
-        try (Connection con = connectionPoolHolder.getConnection();
-             PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_HALLS);) {
+        try (
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_HALLS);) {
             stmt.setInt(1, entity.getCapacity());
             stmt.setInt(2, entity.getNumberAvailableSeats());
             stmt.setInt(3, entity.getNumberOfSoldSeats());
@@ -85,10 +82,12 @@ public class SqlHallDao implements HallDao {
         }
 
     }
+
     @Override
     public Hall createAndReturnWithId(Hall entity) throws DBException {
-        try (Connection con = connectionPoolHolder.getConnection();
-             PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_HALLS, Statement.RETURN_GENERATED_KEYS);) {
+        try (
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_HALLS, Statement.RETURN_GENERATED_KEYS);) {
             stmt.setInt(1, entity.getCapacity());
             stmt.setInt(2, entity.getNumberAvailableSeats());
             stmt.setInt(3, entity.getNumberOfSoldSeats());
@@ -99,8 +98,7 @@ public class SqlHallDao implements HallDao {
                 if (generatedKeys.next()) {
                     entity.setId(generatedKeys.getInt(1));
                     return entity;
-                }
-                else {
+                } else {
                     throw new SQLException("Creating  hall failed, no ID obtained.");
                 }
             }
@@ -112,8 +110,9 @@ public class SqlHallDao implements HallDao {
 
     @Override
     public boolean update(Hall entity) {
-        try (Connection con = connectionPoolHolder.getConnection();
-             PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_HALL);) {
+        try (
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_HALL);) {
             stmt.setInt(1, entity.getCapacity());
             stmt.setInt(2, entity.getNumberAvailableSeats());
             stmt.setInt(3, entity.getNumberOfSoldSeats());
@@ -128,6 +127,8 @@ public class SqlHallDao implements HallDao {
         }
 
     }
+
+
 
 }
 

@@ -3,21 +3,24 @@ package dao;
 import exceptions.DBException;
 import exceptions.DuplicateDBException;
 
+import java.sql.Connection;
 import java.util.List;
 
 public interface GenericDao<K extends Number, T> {
+//    protected Connection connection;
 
 
 
-    List<T> findAll();
+    abstract List<T> findAll();
 
-    T findEntityById(K id);
+    abstract T findEntityById(K id);
 
 
-    boolean delete(T entity);
+    abstract boolean delete(T entity);
 
-    boolean create(T entity) throws DBException;
+   abstract boolean create(T entity) throws DBException;
 
-    boolean update(T entity);
+   abstract boolean update(T entity);
+
 
 }

@@ -3,6 +3,7 @@ package service.impl;
 import dao.HallDao;
 import entities.Hall;
 import exceptions.DBException;
+import persistance.TransactionManager;
 import service.HallService;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.List;
 
 public class HallServiceImpl implements HallService {
     private HallDao hallDao;
+    private TransactionManager transaction;
 
     public HallServiceImpl(HallDao hallDao) {
         this.hallDao = hallDao;
@@ -45,7 +47,6 @@ public class HallServiceImpl implements HallService {
     public Hall changeHallCapacity(Hall hallToChange, int newCapacity) {
         int numberOfSoldSeats = hallToChange.getNumberOfSoldSeats();
         int numberOfAvailableSeats = newCapacity - numberOfSoldSeats;
-
         BigDecimal attendance = new BigDecimal((float) numberOfSoldSeats / newCapacity * 100);
         attendance = attendance.setScale(2, RoundingMode.HALF_UP);
         // todo calculate hall params based on new capacity
@@ -54,6 +55,7 @@ public class HallServiceImpl implements HallService {
                 .numberSeats(newCapacity)
                 .numberAvailableSeats(numberOfAvailableSeats)
                 .numberOfSoldSeats(numberOfSoldSeats).attendance(attendance).build();
+        hallDao.update(hall);
         return hall;
     }
 
@@ -70,6 +72,7 @@ public class HallServiceImpl implements HallService {
                 .numberSeats(capacity)
                 .numberAvailableSeats(newAvailableSeats)
                 .numberOfSoldSeats(numberOfSoldSeats).attendance(attendance).build();
+        hallDao.update(hall);
         return hall;
     }
 
