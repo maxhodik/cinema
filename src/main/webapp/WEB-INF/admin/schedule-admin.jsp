@@ -27,18 +27,18 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
          <li class="nav-item dropdown">
                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <fmt:message key="Filter by"/>
+                  <fmt:message key="filter_by"/>
      </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                  <li><input type="checkbox" name="status" value="ACTIVE"/> <fmt:message key="Filter by status"/></li>
-                  <li><input type="checkbox" name="number_available_seats" value = "true"><fmt:message key="Filter by number of available seats"/></li>
+                  <li><input type="checkbox" name="status" value="ACTIVE"/> <fmt:message key="label.status"/></li>
+                  <li><input type="checkbox" name="number_available_seats" value = "true"><fmt:message key="label.available_seats"/></li>
               </ul
                </li>
          <li class="nav-item">
                            <input type="hidden" name="offset" value="0">
                            <input type="hidden" name="records" value="${requestScope.records}">
-            <input  class="btn btn-secondary" type="submit" value="Submit" />
+            <input  class="btn btn-secondary" type="submit" value=<fmt:message key="button.submit"/>
             </li>
             </form>
             <li >
@@ -70,10 +70,10 @@
                       <c:set var="orderByMovie" value="orderBy=movie"/>
                       <c:set var="orderBySeats" value="orderBy=number_available_seats"/>
                       <c:set var="limits" value="&offset=0&records=${records}"/>
-                         <li><a class="dropdown-item" href="${base.concat(orderByDate).concat(limits)}"> <fmt:message key="Sort by Date"/></a></li>
-                         <li><a class="dropdown-item" href="${base.concat(orderByTime).concat(limits)}"> <fmt:message key="Sort by time"/></a></li>
-                         <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="Sort by movie"/></a></li>
-                         <li><a class="dropdown-item" href="${base.concat(orderBySeats).concat(limits)}"> <fmt:message key="Sort by number of available seats"/></a><li>
+                         <li><a class="dropdown-item" href="${base.concat(orderByDate).concat(limits)}"> <fmt:message key="label.date"/></a></li>
+                         <li><a class="dropdown-item" href="${base.concat(orderByTime).concat(limits)}"> <fmt:message key="label.time"/></a></li>
+                         <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="label.movie"/></a></li>
+                         <li><a class="dropdown-item" href="${base.concat(orderBySeats).concat(limits)}"> <fmt:message key="label.available_seats"/></a><li>
  </ul>
    </thead>
                </form>
@@ -81,13 +81,13 @@
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
     <thead class="thead-dark">
      <tr>
-       <th> <fmt:message key="Date"/> </th>
-       <th> <fmt:message key="time"/> </th>
-       <th><fmt:message key="movie"/></th>
+       <th><fmt:message key="label.date"/></th>
+       <th><fmt:message key="label.time"/></th>
+       <th><fmt:message key="label.movie"/></th>
    <div>
     <th>
-     <fmt:message key="number of available seats"/></th>
-    <th> <fmt:message key="status"/></th>
+     <fmt:message key="label.available_seats"/></th>
+    <th> <fmt:message key="label.status"/></th>
    </div>
        </tr>
 </form>
@@ -107,13 +107,13 @@
                           <td>${sessionAdminDto.status}</td>
                        <td>
                     <div>
-                       <a input class="btn btn-outline-dark" type="submit" href="${pageContext.request.contextPath}/admin/update-session?id=${sessionAdminDto.id}"><fmt:message key="Edit"/></a>
+                       <a input class="btn btn-outline-dark" type="submit" href="${pageContext.request.contextPath}/admin/update-session?id=${sessionAdminDto.id}"><fmt:message key="button.edit"/></a>
                       </div>
                       <div>
                             <form method="post" action="${pageContext.request.contextPath}/schedule/delete" >
                                  <class="form-group" horizontal>
                                  <input hidden type="number" name="id" value="${sessionAdminDto.id}"/>
-                                 <input class="btn btn-outline-dark" type="submit" value="<fmt:message key="cancel"/>">
+                                 <input class="btn btn-outline-dark" type="submit" value="<fmt:message key="button.cancel"/>">
                               </form>
                         </div>
                     </td>

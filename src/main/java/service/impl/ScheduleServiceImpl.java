@@ -108,7 +108,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                     queryBuilder.append(column).append(" BETWEEN '").append(values.get(0)).append("' AND '").append(values.get(1)).append("'");
                     break;
                 case WEEKDAY:
-                    //todo
                     queryBuilder.append(" (select WEEKDAY( " + column + ")) " + getValueQueryFromList(values));
                     break;
                 case IN:
@@ -122,8 +121,11 @@ public class ScheduleServiceImpl implements ScheduleService {
                     } else {
                         queryBuilder.append(column).append("=").append(value);
                     }
+                case MORE:
+                    if (column.equals("datetime")) {
+                        queryBuilder.append("CONCAT(date, '', time) >").append(value);
+                    }
             }
-
         }
         return queryBuilder.toString();
     }
@@ -152,7 +154,13 @@ public class ScheduleServiceImpl implements ScheduleService {
                 //todo map (map passed columnName to table name otherwise throw error)
                 ResourceBundle bundle = ResourceBundle.getBundle("mapping");
                 sqlColumn = bundle.getString(columnName);
-            }
+//                if (sqlColumn == null) {
+//                    sqlColumn = default
+                    // Or
+                    // throw exc
+                }
+
+
         } catch (MissingResourceException e) {
             return null;
         }
@@ -171,7 +179,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public boolean updateStatus(Session session) {
-        //todo transaction
+
         Session updetedSession = Session.builder()
                 .id(session.getId())
                 .data(session.getDate())
@@ -210,11 +218,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
 
-
-
     @Override
     public boolean update(SessionDto sessionDto) {
-        //todo transaction
+
         // todo check orders. If bought tickets > new capacity --> throw error
         try {
             TransactionManagerWrapper.startTransaction();

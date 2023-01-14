@@ -13,9 +13,11 @@
 
 <html lang="${param.lang}">
 <c:import url="head-admin.jsp" />
-<body><form action="movie">
+
+<body>
+<form action="movie">
 <li class="nav-item">
-                  <a class="btn btn-outline-secondary " aria-current="page"  href="${pageContext.request.contextPath}/admin/movie/add-movie"><fmt:message key="Add new movie"/></a>
+                  <a class="btn btn-outline-secondary " aria-current="page"  href="${pageContext.request.contextPath}/admin/movie/add-movie"><fmt:message key="button.new_movie"/></a>
                            <class="item dropdown">
                             <a class="btn btn-outline-secondary dropdown-toggle"  id="Dropdown" role="button" data-bs-toggle="dropdown" >
                               <fmt:message key="label.sort"/>
@@ -27,8 +29,8 @@
                            <c:set var="orderByMovie" value="orderBy=name"/>
 
                            <c:set var="limits" value="&offset=0&records=${records}"/>
-                              <li><a class="dropdown-item" href="${base.concat(orderById).concat(limits)}"> <fmt:message key="Sort by Date"/></a></li>
-                              <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="Sort by movie"/></a></li>
+                              <li><a class="dropdown-item" href="${base.concat(orderById).concat(limits)}"> <fmt:message key="label.id"/></a></li>
+                              <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="label.movie"/></a></li>
 
       </ul>
         </thead>
@@ -36,8 +38,8 @@
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
     <thead class="thead-dark">
     <tr>
-        <th scope="col"><fmt:message key="id"/></th>
-        <th scope="col"> <fmt:message key="movie name"/></a></th>
+        <th scope="col"><fmt:message key="label.id"/></th>
+        <th scope="col"> <fmt:message key="label.movie"/></a></th>
     </tr>
     </thead>
 
@@ -55,11 +57,11 @@
       <form method="post" action="${pageContext.request.contextPath}/admin/movie/delete" >
          <class="form-group">
          <input hidden type="number" name="id" value="${movieDto.id}"/>
-         <input class="btn btn-outline-dark" type="submit" value="<fmt:message key="delete"/>">
+         <input class="btn btn-outline-dark" type="submit" value="<fmt:message key="button.delete"/>">
       </form>
 
 
-  <a class="btn btn-outline-dark" type="submit" href="${pageContext.request.contextPath}/admin/movie/update-movie?id=${movieDto.id}" ><fmt:message key="update"/></a>
+  <a class="btn btn-outline-dark" type="submit" href="${pageContext.request.contextPath}/admin/movie/update-movie?id=${movieDto.id}" ><fmt:message key="button.edit"/></a>
                     </td>
                 </tr>
             </c:forEach>

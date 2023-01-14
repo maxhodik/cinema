@@ -7,7 +7,7 @@ import dto.SessionDto;
 import entities.Role;
 import entities.Session;
 import exceptions.DBException;
-import exceptions.ServiceException;
+
 
 import java.util.List;
 
@@ -26,5 +26,5 @@ public interface ScheduleService {
     boolean create(SessionDto sessionDto) throws DBException;
     SessionDto getSessionDto(int id);
     List<SessionAdminDto> getSessionAdminDtoList(List<Session> allSortedSessions);
-    int getNumberOfRecords(List<Filter> filters) throws ServiceException;
+    int getNumberOfRecords(List<Filter> filters);
 }

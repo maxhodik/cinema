@@ -23,7 +23,9 @@ public class RegisterCommand extends MultipleMethodCommand{
 
     @Override
     public String performGet(HttpServletRequest request) {
-        return "/WEB-INF/register.jsp";
+        if (request.getSession().getAttribute("name") != null) {
+            return "redirect:logout";
+        }return "WEB-INF/register.jsp";
     }
 
     @Override
@@ -38,6 +40,7 @@ public class RegisterCommand extends MultipleMethodCommand{
         try {
             userService.create(name, password);
         } catch (UserAlreadyExistException e) {
+
             //todo handle exception --> add message on the register page
             LOGGER.info("User already exist with name=" + name);
             return "redirect:register";

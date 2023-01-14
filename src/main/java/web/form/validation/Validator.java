@@ -15,7 +15,7 @@ public interface Validator<T> {
     boolean validate(T form);
 
     default boolean stringParamValidate(String param, String regex) {
-        return isNull(param) || !param.matches(regex);
+        return isNull(param) || !param.matches(regex) ;
     }
 
     default boolean numberParamValid(int param, int minValue, int maxValue) {

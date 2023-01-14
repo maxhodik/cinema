@@ -1,15 +1,22 @@
 package entities;
 
 public enum WeekDays {
-    SUNDAY("sunday",6), MONDAY("monday",0), TUESDAY("tuesday",1), WEDNESDAY("wednesday",2),
-    THURSDAY("thursday",3), FRIDAY("friday",4), SATURDAY("saturday",5);
+    SUNDAY("sunday", "НЕДІЛЯ", 6),
+    MONDAY("monday", "ПОНЕДІЛОК", 0),
+    TUESDAY("tuesday", "ВІВТОРОК", 1),
+    WEDNESDAY("wednesday", "СЕРЕДА", 2),
+    THURSDAY("thursday", "ЧЕТВЕР", 3),
+    FRIDAY("friday", "П'ЯТНИЦЯ", 4),
+    SATURDAY("saturday", "СУБОТА", 5);
 
 
     final String name;
+    final String nameUkr;
     final int number;
 
-    WeekDays(String name, int number) {
+    WeekDays(String name, String nameUkr, int number) {
         this.name = name;
+        this.nameUkr = nameUkr;
         this.number = number;
     }
 
@@ -27,6 +34,15 @@ public enum WeekDays {
                 return value;
             }
         }
-        throw new IllegalArgumentException("Role not found " + name);
+        throw new IllegalArgumentException("Day not found " + name);
     }
+
+    public static boolean contains(String name) {
+        try {
+            getByNameIgnoringCase(name);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
+}

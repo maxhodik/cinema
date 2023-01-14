@@ -44,7 +44,7 @@ public class OrderCommand extends MultipleMethodCommand {
 
     @Override
     public String performPost(HttpServletRequest request) {
-        int seats = Integer.parseInt(request.getParameter("seats"));
+     String seats = (request.getParameter("seats"));
         OrderForm orderForm= new OrderForm(seats);
         if (orderValidator.validate(orderForm)) {
             request.setAttribute("errors", true);
@@ -52,9 +52,10 @@ public class OrderCommand extends MultipleMethodCommand {
         }
         int id = Integer.parseInt(request.getParameter("id"));
         String userLogin= (String) request.getSession().getAttribute("name");
+        int numberOfSeats= Integer.parseInt(seats);
         Order order;
         try {
-            order = orderService.submitOrder(id, seats, userLogin);
+            order = orderService.submitOrder(id, numberOfSeats, userLogin);
             if (order == null) {
                 return "WEB-INF/order.jsp";
             }

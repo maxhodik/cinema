@@ -13,84 +13,32 @@
 
 <html lang="${param.lang}">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-    <head>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-              <a class="navbar-brand"href="${pageContext.request.contextPath}/schedule"><fmt:message key="button.schedule"/></a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                            <a class="nav-link active" href="/cinema"> <fmt:message key="To main page"/></a>
 
-                </li>
-              <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/login"><fmt:message key="button.login"/></a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/register"><fmt:message key="button.registration"/></a>
-                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                  </li>
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                     <fmt:message key="label.language"/>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                      <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                    </ul>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                  </li>
-                </ul>
+<c:import url="head-admin.jsp"/>
 
-                 <class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <fmt:message key="label.language"/>
-                       </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                        <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                       </ul>
-               </li>
-                </form>
-              </div>
-            </div>
-          </nav>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Cinema</title>
-    </head>
-</head>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Cinema</title>
 </head>
-<h6>schedule-admin</h6>
 
+<body>
 <c:remove var="exception" scope="session"/>
 
 <c:if test="${errors}">
     <p>Not Valid</p>
 </c:if>
+<c:if test="not empty ${message}">
+    <p>You had already sold tickets</p>
+</c:if>
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
     <thead class="thead-dark">
     <tr>
 
-        <th scope="col"><fmt:message key="Date"/>"${sessionDto.date}"</th>
-        <th scope="col"> <fmt:message key="time"/></th>
-        <th scope="col"><fmt:message key="movie"/></th>
+        <th scope="col"><fmt:message key="label.date"/>"${sessionDto.date}"</th>
+        <th scope="col"> <fmt:message key="label.time"/></th>
+        <th scope="col"><fmt:message key="label.movie"/></th>
 
 
-        <th scope="col"><fmt:message key="seats"/>"${sessionDto.numberOfSeats}"</th>
+        <th scope="col"><fmt:message key="label.available_seats"/>"${sessionDto.numberOfSeats}"</th>
     </tr>
     </thead>
 
@@ -109,7 +57,7 @@
 
                         <td>
     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-             <fmt:message key="movie"/>
+             <fmt:message key="label.movie"/>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <c:choose>
@@ -124,8 +72,8 @@
                 </c:choose>
                  </ul>
                  </td>
-                        <td><input  type="number"  name="seats" min="1" placeholder="${sessionDto.numberOfSeats}"><br/></td>
-                         <input class="btn btn-primary" type="submit" value="<fmt:message key="submit"/>">
+                        <td><input  type="number"  name="label.seats" min="1" placeholder="${sessionDto.numberOfSeats}"><br/></td>
+                         <input class="btn btn-primary" type="submit" value="<fmt:message key="button.submit"/>">
                   </form>
               </tr>
         </c:otherwise>

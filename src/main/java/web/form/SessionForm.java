@@ -6,16 +6,46 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class SessionForm {
-    private String movieName;
-    private int capacity;
-    private LocalDate date;
-    private LocalTime time;
 
-    public SessionForm(String movieName, int capacity, LocalDate date, LocalTime time) {
+    private String sessionId;
+    private String sessionDate;
+    private String sessionTime;
+
+    private String movieName;
+    private String capacity;
+
+
+    public SessionForm(String sessionId, String sessionDate, String sessionTime, String movieName, String capacity) {
+        this.sessionId = sessionId;
+        this.sessionDate = sessionDate;
+        this.sessionTime = sessionTime;
         this.movieName = movieName;
         this.capacity = capacity;
-        this.date = date;
-        this.time = time;
+
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getSessionDate() {
+        return sessionDate;
+    }
+
+    public void setSessionDate(String sessionDate) {
+        this.sessionDate = sessionDate;
+    }
+
+    public String getSessionTime() {
+        return sessionTime;
+    }
+
+    public void setSessionTime(String sessionTime) {
+        this.sessionTime = sessionTime;
     }
 
     public String getMovieName() {
@@ -26,27 +56,12 @@ public class SessionForm {
         this.movieName = movieName;
     }
 
-    public int getCapacity() {
+    public String getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
+    public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
 }

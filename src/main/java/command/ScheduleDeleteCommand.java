@@ -27,7 +27,6 @@ public class ScheduleDeleteCommand extends MultipleMethodCommand {
 //        Session entityById = scheduleService.findEntityById(id);
 //        scheduleService.delete(entityById);
 //        return "redirect:schedule?admin=true";
-        //todo need transaction with halls
         int id = Integer.parseInt(request.getParameter("id"));
         Session session = scheduleService.findEntityById(id);
         scheduleService.updateStatus(session);

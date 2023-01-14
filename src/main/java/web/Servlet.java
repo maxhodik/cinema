@@ -35,9 +35,7 @@ public class Servlet extends HttpServlet {
         ScheduleServiceImpl scheduleService = new ScheduleServiceImpl(sessionDao, hallService, movieService, orderService);
         Pagination paginate = new Pagination();
         ScheduleCommand scheduleCommand = new ScheduleCommand(scheduleService, paginate);
-
         MovieFormValidator movieValidator = new MovieFormValidator();
-
         SessionFormValidator sessionValidator = new SessionFormValidator();
 
         commands.put("register", new RegisterCommand(userService, new UserFormValidator()));

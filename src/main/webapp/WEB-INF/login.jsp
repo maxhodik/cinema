@@ -11,7 +11,7 @@
 
 <fmt:setBundle basename="message"/>
 
-<html lang="${param.lang}">
+<html lang="${lang}">
  <head>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
@@ -28,7 +28,7 @@
                      <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/register"><fmt:message key="button.registration"/></a>
                    </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
+                       <a class="btn btn-outline-secondary" href="logout" role="button"><fmt:message key="label.logout"/></a>
                   </li>
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -36,7 +36,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                       <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                      <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
+                      <li><a class="dropdown-item" href="?lang=ua"><fmt:message key="label.lang.ua"/></a></li>
                     </ul>
                   </li>
                   <li class="nav-item">
@@ -50,7 +50,7 @@
                                       </a>
                                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                                       <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
+                                       <li><a class="dropdown-item" href="?lang=ua"><fmt:message key="label.lang.ua"/></a></li>
                                       </ul>
 
                                </form>
@@ -81,7 +81,7 @@
      <input id="password" class="form-control" type="password" required pattern="^[A-Za-z0-9_-]{5,18}$" name="pass"><br/><br/>
      <input class="btn btn-outline-primary" type="submit" value="<fmt:message key="button.login"/>">
     <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}" role="button"><fmt:message key="button.back"/></a>
-    <a class="btn btn-outline-secondary" href="logout" role="button"><fmt:message key="Logout"/></a>
+
 
 
       </div>

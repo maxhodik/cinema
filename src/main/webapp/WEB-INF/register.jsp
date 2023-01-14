@@ -39,7 +39,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                       <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                      <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
+                      <li><a class="dropdown-item" href="?lang=ua"><fmt:message key="label.lang.ua"/></a></li>
                     </ul>
                   </li>
                   <li class="nav-item">
@@ -53,7 +53,7 @@
                                       </a>
                                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                                       <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
+                                       <li><a class="dropdown-item" href="?lang=ua"><fmt:message key="label.lang.ua"/></a></li>
                                       </ul>
 
                                </form>

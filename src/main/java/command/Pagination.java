@@ -1,14 +1,23 @@
 package command;
 
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+
 import javax.servlet.http.HttpServletRequest;
 
-import static java.util.Objects.isNull;
 
-public  class Pagination {
+
+public class Pagination {
+    private static final Logger LOGGER = LogManager.getLogger(OrderCommand.class);
+
 
     public void paginate(int totalRecords, HttpServletRequest request) {
+
         int records = getInt(request.getParameter("records"), 1, 5);
         int offset = getInt(request.getParameter("offset"), 0, 0);
+
         setAttributes(request, totalRecords, records, offset);
     }
 
@@ -25,7 +34,7 @@ public  class Pagination {
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("start", startPage);
         request.setAttribute("end", endPage);
-        request.getParameterMap().forEach((k,e) -> request.setAttribute(k, e[0]));
+        request.getParameterMap().forEach((k, e) -> request.setAttribute(k, e[0]));
     }
 
     private static int getInt(String value, int min, int defaultValue) {

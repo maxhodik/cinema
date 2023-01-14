@@ -19,11 +19,13 @@ public class LoginCommand extends MultipleMethodCommand {
 
     @Override
     public String performGet(HttpServletRequest request) {
+
         return "/WEB-INF/login.jsp";
     }
 
     @Override
     public String performPost(HttpServletRequest request) {
+        request.getSession().invalidate();
         String name = request.getParameter("name");
         String password = request.getParameter("pass");
         try {

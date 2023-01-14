@@ -43,18 +43,24 @@ public class ScheduleAddCommand extends MultipleMethodCommand {
 
     @Override
     protected String performPost(HttpServletRequest request) {
-        LocalDate date = LocalDate.parse(request.getParameter("date"));
-        LocalTime time = LocalTime.parse(request.getParameter("time"));
+        String sessionId = request.getParameter("id");
+        String sessionDate = request.getParameter("date");
+        String sessionTime = request.getParameter("time");
         String movieName = request.getParameter("movieName");
-        int numberOfSeats = Integer.parseInt(request.getParameter("seats"));
-        Status status=ACTIVE;
-        SessionForm sessionForm = new SessionForm(movieName,numberOfSeats,date,time);
+        String capacity = request.getParameter("seats");
+        SessionForm sessionForm = new SessionForm(sessionId, sessionDate, sessionTime, movieName, capacity);
         if (sessionValidator.validate(sessionForm)) {
             request.setAttribute("errors", true);
-            return "/WEB-INF/admin/add-session.jsp";
+            return "redirect:admin/add-session";
         }
-        int id=-1;
-        SessionDto sessionDto = new SessionDto(id, movieName, date, time, status, numberOfSeats);
+        int id = Integer.parseInt(sessionId);
+        LocalDate date = LocalDate.parse(sessionDate);
+        LocalTime time = LocalTime.parse(sessionTime);
+        int numberOfSeats = Integer.parseInt(capacity);
+        Status status=ACTIVE;
+
+        int SessionDtoId=-1;
+        SessionDto sessionDto = new SessionDto(SessionDtoId, movieName, date, time, status, numberOfSeats);
         try {
             scheduleService.create(sessionDto);
         } catch (DBException e) {
