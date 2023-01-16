@@ -18,7 +18,7 @@ public class SessionFormValidationTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "10, 2023-01-15, 10:15, Aladdin, 40",
+            "10, 2024-01-15, 10:15, Aladdin, 40",
     "245, 2023-01-22, 19:20, Duna, 28",
     "348, 2024-02-18, 09:00, Вий, 100",
     "0, 2023-02-28, 20:00, King kong, 100",
@@ -29,7 +29,7 @@ public class SessionFormValidationTest {
     }
     @ParameterizedTest
     @CsvSource(value = {
-            "2.6, 2023-01-15, 10:15, Aladdin, 40",
+            "2.6, 2024-01-15, 10:15, Aladdin, 40",
             "d, 2023-01-22, 19:20, Duna, 28",
             "3d, 2024-02-18, 09:00, Вий, 100",
             "hg, 2023-02-28, 20:00, King kong, 100",

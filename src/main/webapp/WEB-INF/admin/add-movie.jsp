@@ -32,7 +32,7 @@
 </form>
 
 <div>
- <button><a href="${pageContext.request.contextPath}/admin/movie"><fmt:message key="label.finish"/></a>
+
 </div>
 </div>
 </html>

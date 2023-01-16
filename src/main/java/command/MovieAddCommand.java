@@ -38,6 +38,6 @@ public class MovieAddCommand extends MultipleMethodCommand {
         } catch (DBException | EntityAlreadyExistException e) {
             throw new RuntimeException(e);
         }
-        return "redirect:schedule?admin=true";
+        return "redirect:admin/movie" ;
     }
 }
