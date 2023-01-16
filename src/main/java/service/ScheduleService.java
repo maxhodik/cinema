@@ -26,5 +26,5 @@ public interface ScheduleService {
     boolean create(SessionDto sessionDto) throws DBException;
     SessionDto getSessionDto(int id);
     List<SessionAdminDto> getSessionAdminDtoList(List<Session> allSortedSessions);
-    int getNumberOfRecords(List<Filter> filters);
+    int getNumberOfRecords(List<Filter> filters) ;
 }
