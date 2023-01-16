@@ -12,63 +12,10 @@
 <fmt:setBundle basename="message"/>
 
 <html lang="${param.lang}">
-<head>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-              <a class="navbar-brand"href="/cinema"> <fmt:message key="To main page"/></a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/login"><fmt:message key="button.login"/></a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/register"><fmt:message key="button.registration"/></a>
-                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                  </li>
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                     <fmt:message key="label.language"/>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                      <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                    </ul>
-                  </li>
-                  <li class="nav-item">
-                  <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/admin/add-session"><fmt:message key="Add new session"/></a>
-                  </li>
-                  <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/movie"><fmt:message key="admin menu"/> </a>
-                  </li>
-                  <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/analise"> <fmt:message key="Analise"/></a>
-                  </li>
-                </ul>
-                <form>
-                 <class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <fmt:message key="label.language"/>
-                       </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                        <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                       </ul>
-
-                </form>
-              </div>
-            </div>
-          </nav>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Cinema</title>
-    </head>
+<c:import url="head-admin.jsp"/>
 <body>
-
-<h1><fmt:message key="Add new movie"/></h1><br/>
+<div class="container col-3">
+<h1><fmt:message key="button.new_movie"/></h1><br/>
 
 <c:if test="${sessionScope.exception == true}">
     <label class="alert alert-info"> <fmt:message key="alert.user.already.exist"/></label>
@@ -76,16 +23,16 @@
 <c:remove var="exception" scope="session"/>
 
 <c:if test="${errors}">
-    <p>Not Valid</p>
+    <p>movie_name_not_valid</p>
 </c:if>
 <form method="post" action="${pageContext.request.contextPath}/admin/movie/add-movie">
-    <label for="name"> <fmt:message key="Name"/></label>
+    <label for="name"> <fmt:message key="label.movie"/></label>
     <input type="text"  name="name"><br>
-    <input class="button" type="submit" value="<fmt:message key="Add"/>">
+    <input class="button" type="submit" value="<fmt:message key="label.add"/>">
 </form>
 
 <div>
- <button><a href="${pageContext.request.contextPath}/admin/movie"><fmt:message key="Finish"/></a>
+ <button><a href="${pageContext.request.contextPath}/admin/movie"><fmt:message key="label.finish"/></a>
 </div>
-
+</div>
 </html>

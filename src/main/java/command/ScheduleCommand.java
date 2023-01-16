@@ -5,18 +5,20 @@ import dto.Filter;
 import dto.SessionAdminDto;
 import entities.Role;
 import entities.Status;
-import exceptions.ServiceException;
+
+import exceptions.DAOException;
+import exceptions.DBException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.ScheduleService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static command.Operation.IN;
-import static command.Operation.IS;
+import static command.Operation.*;
 
 public class ScheduleCommand extends MultipleMethodCommand {
     private static final Logger LOGGER = LogManager.getLogger(ScheduleCommand.class);
@@ -42,25 +44,26 @@ public class ScheduleCommand extends MultipleMethodCommand {
         String orderBy = request.getParameter("orderBy");
         String[] select = request.getParameterValues("number_available_seats");
         String[] status = request.getParameterValues("status");
+        String[] dateTime = null;
         if (request.getSession().getAttribute("role") != Role.ADMIN) {
+            dateTime = new String[]{String.valueOf(LocalDateTime.now())};
             // todo data time filter
             select = new String[]{"true"};
             status = new String[]{Status.ACTIVE.name()};
         }
+
         addFilterIfNeeded(status, filters, "status", IN);
+        addFilterIfNeeded(dateTime, filters, "datetime", MORE);
         //todo why not addFilterIfNeeded?
         if (select != null && select.length != 0) {
             filters.add(new Filter("number_available_seats", List.of(select), IS));
         }
         request.getSession().setAttribute("filters", filters);
         int numberOfRecords = 0;
-        try {
-            numberOfRecords = scheduleService.getNumberOfRecords(filters);
-        } catch (ServiceException e) {
-            throw new RuntimeException(e);
-        }
-        pagination.paginate(numberOfRecords, request);
-        String limits = setLimits(request);
+
+        numberOfRecords = scheduleService.getNumberOfRecords(filters);
+            pagination.paginate(numberOfRecords, request);
+            String limits = setLimits(request);
 
         List<SessionAdminDto> sessionDtoList = scheduleService.findAllFilterByAndOrderBy(filters, orderBy, limits);
         request.setAttribute("sessionAdminDto", sessionDtoList);
@@ -104,6 +107,6 @@ public class ScheduleCommand extends MultipleMethodCommand {
         String records = request.getParameter("records");
         if (offset != null && records != null) {
             return " LIMIT " + records + " OFFSET " + offset;
-        }  else return " LIMIT 5 OFFSET 0";
+        } else return " LIMIT 5 OFFSET 0";
     }
 }

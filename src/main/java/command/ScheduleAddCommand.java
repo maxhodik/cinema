@@ -52,7 +52,7 @@ public class ScheduleAddCommand extends MultipleMethodCommand {
         if (sessionValidator.validate(sessionForm)) {
             LOGGER.info("Session form not valid");
             request.setAttribute("errors", true);
-            return "/WEB-INF/admin/add-session.jsp";
+            return "redirect:admin/add-session";
         }
         int id = Integer.parseInt(sessionId);
         LocalDate date = LocalDate.parse(sessionDate);

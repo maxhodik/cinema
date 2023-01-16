@@ -18,5 +18,14 @@ public enum Status {
         }
         throw new IllegalArgumentException("Status not found " + name);
     }
+
+    public static boolean contains(String name) {
+        try {
+            getByNameIgnoringCase(name);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 }
 

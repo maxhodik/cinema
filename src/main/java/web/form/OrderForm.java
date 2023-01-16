@@ -1,17 +1,17 @@
 package web.form;
 
 public class OrderForm {
-    private int numberOfSeats;
+    private String numberOfSeats;
 
-    public OrderForm(int numberOfSeats) {
+    public OrderForm(String numberOfSeats) {
         this.numberOfSeats = numberOfSeats;
     }
 
-    public int getNumberOfSeats() {
+    public String getNumberOfSeats() {
         return numberOfSeats;
     }
 
-    public void setNumberOfSeats(int numberOfSeats) {
+    public void setNumberOfSeats(String numberOfSeats) {
         this.numberOfSeats = numberOfSeats;
     }
 }

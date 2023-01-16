@@ -16,9 +16,9 @@ public class LocaleFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         if (request.getParameter("lang") != null) {
-                request.getSession().setAttribute("lang",request.getParameter("lang") );
+            request.getSession().setAttribute("lang", request.getParameter("lang"));
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 
     @Override
