@@ -15,7 +15,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-    <head>
+
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
               <a class="navbar-brand"href="${pageContext.request.contextPath}/schedule"><fmt:message key="button.schedule"/></a>
@@ -30,31 +30,8 @@
                   <li class="nav-item">
                      <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/register"><fmt:message key="button.registration"/></a>
                    </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                  </li>
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                     <fmt:message key="label.language"/>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                      <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                    </ul>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                  </li>
                 </ul>
                 <form>
-                 <class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <fmt:message key="label.language"/>
-                       </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                        <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
-                       </ul>
                </li>
                 </form>
               </div>
@@ -63,29 +40,26 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cinema</title>
     </head>
-</head>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Cinema</title>
-</head>
+
+
 <body>
 
 <div class="container">
 
 <div class="form-group">
-<label for="Login"> Login: ${orderDto.login}</label>
+<label for="Login"><fmt:message key="label.login"/>: ${orderDto.login}</label>
 <br>
-<label for="Date"> Date: ${sessionDto.date} </label>
+<label for="Date"> <fmt:message key="label.date"/>: ${sessionDto.date} </label>
 <br>
-<label for="Time"> Time: ${sessionDto.time} </label>
+<label for="Time"> <fmt:message key="label.time"/>: ${sessionDto.time} </label>
 <br>
-<label for="Movie"> Movie: ${sessionDto.movieName} </label>
+<label for="Movie"> <fmt:message key="label.movie"/>: ${sessionDto.movieName} </label>
 <br>
-<label for="Number of tickets"> Number of tickets: ${orderDto.numberOfSeats} </label>
+<label for="Number of tickets"><fmt:message key="label.seats"/>: ${orderDto.numberOfSeats} </label>
 <br>
-<label for="Price"> Price: ${orderDto.price}</label>
+<label for="Price"> <fmt:message key="label.price"/>: ${orderDto.price}</label>
 <br>
-<label for="Count"> Count: ${orderDto.count}</label>
+<label for="Count"> <fmt:message key="label.count"/>: ${orderDto.count}</label>
 <br>
 <label for="session"> session:${sessionDto.id} </label>
 <br>

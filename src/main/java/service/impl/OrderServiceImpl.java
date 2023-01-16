@@ -71,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean update(Order entity) {
+    public boolean update(Order entity) throws DBException {
         return orderDao.update(entity);
     }
 

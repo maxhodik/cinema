@@ -1,6 +1,8 @@
 package command;
 
 import entities.Movie;
+import exceptions.DBException;
+import exceptions.EntityAlreadyExistException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.MovieService;
@@ -33,11 +35,18 @@ public class MovieUpdateCommand extends MultipleMethodCommand {
         MovieForm movieForm= new MovieForm(name);
         if (movieValidator.validate(movieForm)) {
             request.setAttribute("errors", true);
-            return "movie.jsp";
+            LOGGER.info("Movie not valid");
+            return "/WEB-INF/admin/update-movie.jsp";
         }
         Movie movie = movieService.findEntityById(id);
         movie.setName(name);
-        movieService.update(movie);
+        try {
+            movieService.update(movie);
+        } catch (EntityAlreadyExistException e) {
+            request.getSession().setAttribute("exception", true);
+        } catch (DBException e) {
+            throw new RuntimeException(e);
+        }
         return "redirect:admin/movie" ;
     }
 

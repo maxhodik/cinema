@@ -1,19 +1,14 @@
 package service.impl;
 
 import dao.MovieDao;
-import dto.Filter;
 import dto.MovieDto;
-import dto.SessionAdminDto;
 import entities.Movie;
-import entities.Session;
-import exceptions.DAOException;
 import exceptions.DBException;
-import exceptions.UserAlreadyExistException;
+import exceptions.EntityAlreadyExistException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.MovieService;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
@@ -48,11 +43,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Movie create(String name) throws DBException, UserAlreadyExistException {
+    public Movie create(String name) throws DBException, EntityAlreadyExistException {
         Movie movieFromDb = movieDao.findEntityByName(name);
         if (movieFromDb != null) {
             LOGGER.info("Movie already exists name: " + name);
-            throw new UserAlreadyExistException("Movie already exists");
+            throw new EntityAlreadyExistException("Movie already exists");
         }
         try {
             Movie movie = Movie.builder().name(name).build();
@@ -65,7 +60,7 @@ public class MovieServiceImpl implements MovieService {
 
 
     @Override
-    public boolean update(Movie entity) {
+    public boolean update(Movie entity) throws DBException, EntityAlreadyExistException {
         return movieDao.update(entity);
     }
 

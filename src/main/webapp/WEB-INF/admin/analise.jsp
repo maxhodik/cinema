@@ -28,16 +28,16 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item dropdown">
                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <fmt:message key="date"/>
+                  <fmt:message key="label.date"/>
                   </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-               <label> Start  <input  type="date"   name="date" <br/>
-               <label> End <input  type="date"   name="date" <br/>
+               <label> <fmt:message key="label.start"/>  <input  type="date"   name="date" <br/>
+               <label> <fmt:message key="label.end"/> <input  type="date"   name="date" <br/>
               </ul>
                </li>
                     <li class="nav-item dropdown">
                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <fmt:message key="day of week"/>
+                  <fmt:message key="label.day_of_week"/>
                   </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
@@ -52,17 +52,17 @@
                </li>
  <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <fmt:message key="time"/>
+                  <fmt:message key="label.time"/>
                   </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                       <label> Start  <input  type="time"   name="time" <br/>
-                       <label> End <input  type="time"   name="time" <br/>
+                       <label> <fmt:message key="label.start"/> <input  type="time"   name="time" <br/>
+                       <label> <fmt:message key="label.end"/>  <input  type="time"   name="time" <br/>
               </ul>
                </li>
                <li class="nav-item dropdown">
                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <fmt:message key="movie"/>
+                  <fmt:message key="label.movie"/>
                   </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <c:choose>
@@ -79,11 +79,11 @@
                </li>
  <li class="nav-item dropdown">
                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <fmt:message key="Filter by status"/>
+                  <fmt:message key="label.status"/>
                   </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                    <input type="checkbox" name="status" value="ACTIVE"/> <fmt:message key="Filter by status"/>
+                    <input type="checkbox" name="status" value="ACTIVE"/> <fmt:message key="label.status"/>
               </ul
 </li>
 <li>
@@ -91,20 +91,21 @@
                        <a class="btn btn-outline-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown">
                              <fmt:message key="label.sort"/> </a>
                      <ul class="dropdown-menu" aria-label="navbarDropdown">
-                     <li><input type="radio" name="orderBy" value="date" /><fmt:message key="Sort by Date"/> </li>
-                     <li><input type="radio" name="orderBy" value="day" /><fmt:message key="Sort by Day"/></li>
-                     <li><input type="radio" name="orderBy" value="time" /><fmt:message key="Sort by time"/></li>
-                     <li><input type="radio" name="orderBy" value="movie" /><fmt:message key="Sort by Movie"/><li>
-                     <li><input type="radio" name="orderBy" value="number_available_seats"/> <fmt:message key="Sort by number of available seats"/></li>
-                     <li><input type="radio" name="orderBy" value="number_sold_seats"/>  <fmt:message key="Sort by number of sold seats"/></li>
-                     <li><input type="radio" name="orderBy" value="capacity"/>  <fmt:message key="Sort by hall capacity"/></li>
-                     <li><input type="radio" name="orderBy" value="attendance"/>  <fmt:message key="Sort by hall attendance"/></li>
+                     <li><input type="radio" name="orderBy" value="date" /><fmt:message key="label.date"/> </li>
+                     <li><input type="radio" name="orderBy" value="day" /><fmt:message key="label.day_of_week"/></li>
+                     <li><input type="radio" name="orderBy" value="time" /><fmt:message key="label.time"/></li>
+                     <li><input type="radio" name="orderBy" value="movie" /><fmt:message key="label.movie"/><li>
+                     <li><input type="radio" name="orderBy" value="number_available_seats"/> <fmt:message key="label.available_seats"/></li>
+                     <li><input type="radio" name="orderBy" value="number_sold_seats"/>  <fmt:message key="label.sold_seats"/></li>
+                     <li><input type="radio" name="orderBy" value="capacity"/>  <fmt:message key="label.hall_capacity"/></li>
+                     <li><input type="radio" name="orderBy" value="attendance"/>  <fmt:message key="label.hall_attendance"/></li>
                      </ul>
                      </li>
 
          <li class="nav-item">
-
-            <input  class="btn btn-secondary" type="submit" value="Submit" />
+          <input hidden type="number" name="records" value="${records}"/>
+          <input hidden type="number" name="offset" value="${offset}"/>
+            <input  class="btn btn-secondary" type="submit" value=<fmt:message key="button.submit" />
             </li>
             </form>
             <li>
@@ -125,15 +126,15 @@
 
 
     <tr>
-        <th scope="col"> <fmt:message key="Date"/></th>
-        <th scope="col"><fmt:message key="Day"/></th>
-        <th scope="col"><fmt:message key="time"/></th>
-        <th scope="col"><fmt:message key="Movie"/></th>
-           <th scope="col"><fmt:message key="status"/></th>
-           <th scope="col"><fmt:message key="available seats"/></th>
-           <th scope="col"><fmt:message key="sold seats"/></a></th>
-           <th scope="col"><fmt:message key="hall capacity"/></a></th>
-           <th scope="col"><fmt:message key="attendance"/></a></th>
+        <th scope="col"> <fmt:message key="label.date"/></th>
+        <th scope="col"><fmt:message key="label.day_of_week"/></th>
+        <th scope="col"><fmt:message key="label.time"/></th>
+        <th scope="col"><fmt:message key="label.movie"/></th>
+           <th scope="col"><fmt:message key="label.status"/></th>
+           <th scope="col"><fmt:message key="label.available_seats"/></th>
+           <th scope="col"><fmt:message key="label.sold_seats"/></a></th>
+           <th scope="col"><fmt:message key="label.hall_capacity"/></a></th>
+           <th scope="col"><fmt:message key="label.hall_attendance"/></a></th>
     </tr>
 
 

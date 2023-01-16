@@ -2,6 +2,7 @@ package dao;
 
 import exceptions.DBException;
 import exceptions.DuplicateDBException;
+import exceptions.EntityAlreadyExistException;
 
 import java.sql.Connection;
 import java.util.List;
@@ -20,7 +21,7 @@ public interface GenericDao<K extends Number, T> {
 
    abstract boolean create(T entity) throws DBException;
 
-   abstract boolean update(T entity);
+   abstract boolean update(T entity) throws DBException;
 
 
 }

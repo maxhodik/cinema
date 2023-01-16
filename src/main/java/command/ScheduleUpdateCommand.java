@@ -34,6 +34,18 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
     @Override
     protected String performGet(HttpServletRequest request) {
         int id = Integer.parseInt(request.getParameter("id"));
+        Status status = scheduleService.findEntityById(id).getStatus();
+        if (status.equals(Status.CANCELED)) {request.setAttribute("cantEdit", true);
+            request.setAttribute("cantUpdate", true);
+            LOGGER.info("Can't update. This session canceled");
+            return "/WEB-INF/admin/unsuccess-update-session.jsp";
+        }
+        int numberOfSoldSeats = scheduleService.findEntityById(id).getHall().getNumberOfSoldSeats();
+        if (numberOfSoldSeats > 0) {
+            request.setAttribute("cantEdit", true);
+            LOGGER.info("You have tickets sold on this session");
+            return "/WEB-INF/admin/unsuccess-update-session.jsp";
+                }
         SessionDto sessionDto = scheduleService.getSessionDto(id);
         request.setAttribute("sessionDto", sessionDto);
         List<String> movieDtoList = getMovieDtoList();
@@ -43,26 +55,42 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
 
     @Override
     protected String performPost(HttpServletRequest request) {
-        //todo need transaction with halls
-        int id = Integer.parseInt(request.getParameter("id"));
-        LocalDate date = LocalDate.parse(request.getParameter("date"));
-        LocalTime time = LocalTime.parse(request.getParameter("time"));
+        String sessionId = request.getParameter("id");
+        String sessionDate = request.getParameter("date");
+        String sessionTime = request.getParameter("time");
         String movieName = request.getParameter("movieName");
-        Status status = scheduleService.findEntityById(id).getStatus();
-        if (status.equals(Status.CANCELED)){
-            LOGGER.info("Can't update this session");
-            throw new IllegalArgumentException();
-        }
-        int numberOfSeats = Integer.parseInt(request.getParameter("seats"));
-        SessionForm sessionForm = new SessionForm(movieName, numberOfSeats, date, time);
+        String capacity = request.getParameter("seats");
+        SessionForm sessionForm = new SessionForm(sessionId, sessionDate, sessionTime, movieName, capacity);
         if (sessionValidator.validate(sessionForm)) {
             request.setAttribute("errors", true);
-            return "redirect:admin/update-session";
+           return "/WEB-INF/admin/update-session.jsp";
         }
-        SessionDto sessionDto = new SessionDto(id, movieName, date, time, status, numberOfSeats);
+
+        int id = Integer.parseInt(sessionId);
+        LocalDate date = LocalDate.parse(sessionDate);
+        LocalTime time = LocalTime.parse(sessionTime);
+
+        if (movieService.findEntityByName(movieName) == null) {
+            request.setAttribute("movieDoesntExist", true);
+            LOGGER.info("Can't update this session this movie name doesn't exist");
+            return "/WEB-INF/admin/update-session.jsp";
+        }
+        int numberOfSoldSeats = scheduleService.findEntityById(id).getHall().getNumberOfSoldSeats();
+        if (numberOfSoldSeats > 0) {
+            //todo message
+            LOGGER.info("You have  tickets sold on this session");
+            request.setAttribute("message", numberOfSoldSeats);
+        }
+        Status status = scheduleService.findEntityById(id).getStatus();
+        if (status.equals(Status.CANCELED)) {
+            LOGGER.info("Can't update. This session canceled");
+            throw new IllegalArgumentException();
+        }
+    int numberSeats= Integer.parseInt(capacity);
+    SessionDto sessionDto = new SessionDto(id, movieName, date, time, status, numberSeats);
         scheduleService.update(sessionDto);
-        return "redirect:schedule";
-    }
+        return"redirect:schedule";
+}
 
     private List<String> getMovieDtoList() {
         List<Movie> movies = movieService.findAll();

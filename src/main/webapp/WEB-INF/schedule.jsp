@@ -1,13 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="my" uri = "tags/addParam.tld"%>
-<%@ taglib prefix="pgn" uri = "tags/pagination.tld"%>
+<%@ taglib prefix="my" uri = "tags/lang.tld"%>
 <%@ page isELIgnored="false" %>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 
-<c:if test="${not empty param.lang}">
+<c:if test="${not empty lang}">
     <fmt:setLocale value="${param.lang}" scope="session"/>
 </c:if>
 <c:set var="queryString" value="${pageContext.request.queryString}" />
@@ -18,7 +17,7 @@
  <head>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-              <a class="navbar-brand"href="/cinema"> <fmt:message key="To main page"/></a>
+              <a class="navbar-brand"href="/cinema"> <fmt:message key="label.mainPage"/></a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -30,16 +29,14 @@
                   <li class="nav-item">
                      <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/register"><fmt:message key="button.registration"/></a>
                    </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                  </li>
+
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                      <fmt:message key="label.language"/>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                      <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
+                     <li><a class="dropdown-item" href=<my:lang value="en"/>><fmt:message key="label.lang.en"/></a></li>
+                     <li><a class="dropdown-item" href=<my:lang value="ua"/>><fmt:message key="label.lang.ua"/></a></li>
                     </ul>
                   </li>
                 </ul>
@@ -48,7 +45,7 @@
                            <input class="col-2" type="number" min="1" name="records" id="records"
                             value="${not empty requestScope.records ? requestScope.records : "5"}">
                            <input type="hidden" name="offset" value="0">
-                           <button type="submit" class="btn btn-dark mt-2 mb-3"><fmt:message key="submit"/></button>
+                           <button type="submit" class="btn btn-dark mt-2 mb-3"><fmt:message key="button.submit"/></button>
                 </form>
               </div>
             </div>
@@ -56,12 +53,10 @@
           </nav>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cinema</title>
-
     </head>
-
+<!--<h1>"${requestScope}"</h1>--!>
 <body>
-<h1>"${queryString}"</h1>
-<!--<h1>"${requestScope}"</h1> --!>
+
 
  <form action="schedule">
                  <class="item dropdown">
@@ -76,10 +71,10 @@
                      <c:set var="orderByMovie" value="orderBy=movie"/>
                      <c:set var="orderBySeats" value="orderBy=number_available_seats"/>
                      <c:set var="limits" value="&offset=0&records=${records}"/>
-                        <li><a class="dropdown-item" href="${base.concat(orderByDate).concat(limits)}"> <fmt:message key="Sort by Date"/></a></li>
-                        <li><a class="dropdown-item" href="${base.concat(orderByTime).concat(limits)}"> <fmt:message key="Sort by time"/></a></li>
-                        <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="Sort by movie"/></a></li>
-                        <li><a class="dropdown-item" href="${base.concat(orderBySeats).concat(limits)}"> <fmt:message key="Sort by number of available seats"/></a><li>
+                        <li><a class="dropdown-item" href="${base.concat(orderByDate).concat(limits)}"> <fmt:message key="label.date"/></a></li>
+                        <li><a class="dropdown-item" href="${base.concat(orderByTime).concat(limits)}"> <fmt:message key="label.time"/></a></li>
+                        <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="label.movie"/></a></li>
+                        <li><a class="dropdown-item" href="${base.concat(orderBySeats).concat(limits)}"> <fmt:message key="label.available_seats"/></a><li>
 </ul>
   </thead>
               </form>
@@ -88,11 +83,11 @@
 <form action="schedule">
 
     <tr>
-    <th><fmt:message key="Date"/> </th>
-    <th> <fmt:message key="time"/> </th>
-    <th> <fmt:message key="movie"/></th>
+    <th> <fmt:message key="label.date"/> </th>
+    <th> <fmt:message key="label.time"/> </th>
+    <th> <fmt:message key="label.movie"/></th>
 <div>
- <th> <fmt:message key="number of available seats"/>
+ <th> <fmt:message key="label.available_seats"/>
 </div>
     </tr>
 

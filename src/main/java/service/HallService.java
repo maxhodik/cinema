@@ -10,9 +10,9 @@ public interface HallService {
     Hall findEntityById(Integer id);
      boolean delete(Hall entity);
      boolean create(Hall entity) throws DBException;
-    boolean update(Hall entity);
-    Hall changeHallCapacity(Hall hallToChange, int newCapacity);
-    Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats);
+    boolean update(Hall entity) throws DBException;
+    Hall changeHallCapacity(Hall hallToChange, int newCapacity) throws DBException;
+    Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats) throws DBException;
 
     Hall createWithCapacity(int seatsCapacity) throws DBException;
 

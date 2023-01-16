@@ -3,7 +3,7 @@ package service.impl;
 import dao.UserDao;
 import entities.User;
 import exceptions.DBException;
-import exceptions.UserAlreadyExistException;
+import exceptions.EntityAlreadyExistException;
 import exceptions.UserNotFoundException;
 import service.UserService;
 
@@ -20,10 +20,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(String name, String password) throws UserAlreadyExistException {
+    public User create(String name, String password) throws EntityAlreadyExistException {
         User userFromDb = userDao.findEntityByLogin(name);
         if (userFromDb != null) {
-            throw new UserAlreadyExistException("User already exists");
+            throw new EntityAlreadyExistException("User already exists");
         }
         try {
             // todo add coder for password

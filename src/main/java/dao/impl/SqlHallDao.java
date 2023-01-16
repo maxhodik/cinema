@@ -78,7 +78,7 @@ public class SqlHallDao implements HallDao {
             stmt.setBigDecimal(4, entity.getAttendance());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            throw new DBException("Hall already exists:" + entity.getId(), e);
+            throw new DBException("Creating  hall failed", e);
         }
 
     }

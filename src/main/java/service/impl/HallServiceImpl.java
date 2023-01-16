@@ -39,12 +39,12 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public boolean update(Hall entity) {
+    public boolean update(Hall entity) throws DBException {
         return hallDao.update(entity);
     }
 
     @Override
-    public Hall changeHallCapacity(Hall hallToChange, int newCapacity) {
+    public Hall changeHallCapacity(Hall hallToChange, int newCapacity) throws DBException {
         int numberOfSoldSeats = hallToChange.getNumberOfSoldSeats();
         int numberOfAvailableSeats = newCapacity - numberOfSoldSeats;
         BigDecimal attendance = new BigDecimal((float) numberOfSoldSeats / newCapacity * 100);
@@ -60,7 +60,7 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats) {
+    public Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats) throws DBException {
         int capacity = hallToChange.getCapacity();
         int numberOfSoldSeats = capacity - newAvailableSeats;
 

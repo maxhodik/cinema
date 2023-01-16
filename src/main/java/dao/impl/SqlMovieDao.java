@@ -8,6 +8,7 @@ import entities.Movie;
 import exceptions.DAOException;
 import exceptions.DBConnectionException;
 import exceptions.DBException;
+import exceptions.EntityAlreadyExistException;
 import persistance.ConnectionPoolHolder;
 import persistance.ConnectionWrapper;
 import persistance.TransactionManagerWrapper;
@@ -78,7 +79,6 @@ public class SqlMovieDao implements MovieDao {
             rs.next();
             mapper = new MovieMapper();
             return mapper.extractFromResultSet(rs);
-
         } catch (SQLException e) {
             throw new DBConnectionException(e);
         }
@@ -135,13 +135,17 @@ public class SqlMovieDao implements MovieDao {
             stmt.setString(1, entity.getName());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            throw new DBException("Movie already exists:" + entity.getName(), e);
+            try {
+                throw new EntityAlreadyExistException("Movie already exists:" + entity.getName(), e);
+            } catch (EntityAlreadyExistException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
     }
 
-
-    public boolean update(Movie entity) {
+@Override
+    public boolean update(Movie entity) throws DBException {
 
         try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_MOVIE);) {
@@ -151,11 +155,15 @@ public class SqlMovieDao implements MovieDao {
 
         } catch (SQLException e) {
 
-            throw new DBConnectionException(e);
+            try {
+                throw new EntityAlreadyExistException("Movie already exists:" + entity.getName(), e);
+            } catch (EntityAlreadyExistException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
     }
-
+@Override
     public int getNumberOfRecords() {
         int numberOfRecords = 0;
         try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();

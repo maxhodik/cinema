@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page isELIgnored="false" %>
+<%@ taglib prefix="my" uri = "../tags/lang.tld"%>
 <c:if test="${not empty param.lang}">
     <fmt:setLocale value="${param.lang}" scope="session"/>
 </c:if>
@@ -10,13 +11,12 @@
 
 <html lang="${param.lang}">
 
-
-
-
 <head>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-              <a class="navbar-brand"href="/cinema"> <fmt:message key="To main page"/></a>
+            <h1>"${param}"</h1>
+            <h1>"${requestScope.queryString}"</h1>
+              <a class="navbar-brand"href="/cinema"> <fmt:message key="label.mainPage"/></a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -36,18 +36,18 @@
                      <fmt:message key="label.language"/>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                      <li><a class="dropdown-item" href="?lang=ru"><fmt:message key="label.lang.ru"/></a></li>
+                      <li><a class="dropdown-item" href=<my:lang value="en"/>><fmt:message key="label.lang.en"/></a></li>
+                      <li><a class="dropdown-item" href=<my:lang value="ua"/>><fmt:message key="label.lang.ua"/></a></li>
                     </ul>
                   </li>
                   <li class="nav-item">
-                  <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/admin/add-session"><fmt:message key="Add new session"/></a>
+                  <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/admin/add-session"><fmt:message key="button.new_session"/></a>
                   </li>
                   <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/movie"><fmt:message key="admin menu"/> </a>
+                  <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/movie"><fmt:message key="button.movies_menu"/> </a>
                   </li>
                   <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/analise"> <fmt:message key="Analise"/></a>
+                  <a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/admin/analise"> <fmt:message key="button.analise"/></a>
                   </li>
                 </ul>
                <form class="nav-item">
@@ -55,11 +55,11 @@
                                <input class="col-2" type="number" min="1" name="records" id="records"
                                value="${not empty requestScope.records ? requestScope.records : "5"}">
                                       <input type="hidden" name="offset" value="0">
-                               <button type="submit" class="btn btn-dark mt-2 mb-3"><fmt:message key="submit"/></button>
+                               <button type="submit" class="btn btn-dark mt-2 mb-3"><fmt:message key="button.submit"/></button>
                </form>
               </div>
             </div>
           </nav>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cinema</title>
-    </head>
+</head>

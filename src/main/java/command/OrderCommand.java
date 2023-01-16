@@ -16,6 +16,7 @@ import web.form.OrderForm;
 import web.form.validation.OrderFormValidator;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 
 public class OrderCommand extends MultipleMethodCommand {
     private static final Logger LOGGER = LogManager.getLogger(OrderCommand.class);
@@ -35,7 +36,14 @@ public class OrderCommand extends MultipleMethodCommand {
 
     @Override
     public String performGet(HttpServletRequest request) {
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id;
+        try {
+            id = Integer.parseInt(request.getParameter("id"));
+        } catch (NumberFormatException e) {
+            LOGGER.info("Order form not valid");
+            request.setAttribute("errors", true);
+            return "WEB-INF/order.jsp";
+        }
         SessionDto sessionDto = scheduleService.getSessionDto(id);
         request.setAttribute("sessionDto", sessionDto);
 
@@ -44,23 +52,27 @@ public class OrderCommand extends MultipleMethodCommand {
 
     @Override
     public String performPost(HttpServletRequest request) {
-        int seats = Integer.parseInt(request.getParameter("seats"));
-        OrderForm orderForm= new OrderForm(seats);
+        //todo redirect
+        String seats = (request.getParameter("seats"));
+        OrderForm orderForm = new OrderForm(seats);
         if (orderValidator.validate(orderForm)) {
+            LOGGER.info("Order form not valid");
             request.setAttribute("errors", true);
             return "WEB-INF/order.jsp";
         }
         int id = Integer.parseInt(request.getParameter("id"));
-        String userLogin= (String) request.getSession().getAttribute("name");
+        String userLogin = (String) request.getSession().getAttribute("name");
+        int numberOfSeats = Integer.parseInt(seats);
         Order order;
         try {
-            order = orderService.submitOrder(id, seats, userLogin);
+            order = orderService.submitOrder(id, numberOfSeats, userLogin);
             if (order == null) {
                 return "WEB-INF/order.jsp";
             }
         } catch (DBException | NotEnoughAvailableSeats e) {
-
-            throw new RuntimeException(e);
+            LOGGER.info("Not enough available seats");
+            request.setAttribute("noPlaces", true);
+                      return "WEB-INF/order.jsp";
         }
         request.setAttribute("sessionDto", scheduleService.getSessionDto(id));
         request.setAttribute("orderDto", orderService.getOrderDto(order));

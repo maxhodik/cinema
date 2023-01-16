@@ -1,5 +1,6 @@
 package web.tag;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -7,50 +8,50 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class QueryStringTag extends TagSupport {
 
-    private String paramName;
-    private String paramValue;
+    private String value;
 
-    public void setParamName(String paramName) {
-        this.paramName = paramName;
-    }
-
-    public void setParamValue(String paramValue) {
-        this.paramValue = paramValue;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     @Override
-    public int doStartTag() throws JspException {
-        try {
-            JspWriter out = pageContext.getOut();
-            HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-            String queryString =  request.getQueryString();
-//            if (queryString.contains(paramName)){
-//                String[] split = queryString.split("&");
-//                List<String> strings = Arrays.asList(split);
-//                for (String string : strings) {
-//
-//                }
-//            }
-            if (queryString == null || queryString.isEmpty()) {
-                String newQuery ="?" +  paramName + "=" + paramValue;
-                request.setAttribute(paramName, "dasdfaetqemdas dada");
-                out.print(newQuery);
-            } else {
-                out.print("?" + queryString + "&" + paramName + "=" + paramValue);
-            }
-        } catch (IOException e) {
-            throw new JspException(e.getMessage());
+    public int doStartTag() {
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        String queryString = request.getQueryString();
+        System.out.println(queryString);
+        if (value == null && (queryString == null || queryString.isBlank())) {
+            return 0;
         }
-        return SKIP_BODY;
+        queryString = clearLang(queryString);
+        if (queryString == null || queryString.isBlank()) {
+            queryString = "?lang=" + value;
+        } else {
+            if (value != null) {
+                queryString = "?" + queryString + "&lang=" + value;
+            } else {
+                queryString = "?" + queryString;
+            }
+        }
+        JspWriter out = pageContext.getOut();
+        try {
+            out.print(queryString);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return  SKIP_BODY;
     }
 
-    @Override
-    public int doEndTag() throws JspException {
-        paramName = null;
-        paramValue = null;
-        return super.doEndTag();
+    private String clearLang(String queryString) {
+        if (queryString == null) {
+            return null;
+        }
+        String[] split = queryString.split("&");
+        String[] withoutLang = Arrays.stream(split).filter(param -> !param.contains("lang")).toArray(String[]::new);
+        String newQueryString = String.join("&", withoutLang);
+        return newQueryString;
     }
 }

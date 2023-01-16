@@ -1,11 +1,10 @@
 package command;
 
-import exceptions.UserAlreadyExistException;
+import exceptions.EntityAlreadyExistException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.UserService;
 import web.form.UserForm;
-import web.form.validation.UserFormValidator;
 import web.form.validation.Validator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +22,9 @@ public class RegisterCommand extends MultipleMethodCommand{
 
     @Override
     public String performGet(HttpServletRequest request) {
-        return "/WEB-INF/register.jsp";
+        if (request.getSession().getAttribute("name") != null) {
+            return "redirect:logout";
+        }return "WEB-INF/register.jsp";
     }
 
     @Override
@@ -37,7 +38,8 @@ public class RegisterCommand extends MultipleMethodCommand{
         }
         try {
             userService.create(name, password);
-        } catch (UserAlreadyExistException e) {
+        } catch (EntityAlreadyExistException e) {
+
             //todo handle exception --> add message on the register page
             LOGGER.info("User already exist with name=" + name);
             return "redirect:register";

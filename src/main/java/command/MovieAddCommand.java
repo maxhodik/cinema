@@ -1,7 +1,7 @@
 package command;
 
 import exceptions.DBException;
-import exceptions.UserAlreadyExistException;
+import exceptions.EntityAlreadyExistException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.MovieService;
@@ -9,11 +9,6 @@ import web.form.MovieForm;
 import web.form.validation.MovieFormValidator;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 
 public class MovieAddCommand extends MultipleMethodCommand {
     private static final Logger LOGGER = LogManager.getLogger(MovieCommand.class);
@@ -40,7 +35,7 @@ public class MovieAddCommand extends MultipleMethodCommand {
         }
         try {
             movieService.create(name);
-        } catch (DBException | UserAlreadyExistException e) {
+        } catch (DBException | EntityAlreadyExistException e) {
             throw new RuntimeException(e);
         }
         return "redirect:schedule?admin=true";
