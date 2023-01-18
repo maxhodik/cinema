@@ -32,7 +32,7 @@ public class SqlMovieDao implements MovieDao {
                 movies.add(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Movie not found", e);
         }
         return movies;
     }
@@ -49,7 +49,7 @@ public class SqlMovieDao implements MovieDao {
                 movies.add(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Movies not found", e);
         }
         return movies;
     }
@@ -66,7 +66,7 @@ public class SqlMovieDao implements MovieDao {
                 movies.add(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Movies not found", e);
         }
         return movies;
     }
@@ -82,7 +82,7 @@ public class SqlMovieDao implements MovieDao {
             mapper = new MovieMapper();
             return mapper.extractFromResultSet(rs);
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Movies not found", e);
         }
     }
 
@@ -99,7 +99,7 @@ public class SqlMovieDao implements MovieDao {
             }
 
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Movie not found", e);
         }
         return null;
     }
@@ -122,32 +122,30 @@ public class SqlMovieDao implements MovieDao {
                 assert con != null;
                 con.rollback();
             } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+                throw new RuntimeException("Failed delete", ex);
             }
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Failed delete", e);
         }
         return true;
     }
 
 
     @Override
-    public boolean create(Movie entity) throws DBException {
+    public boolean create(Movie entity) throws EntityAlreadyExistException {
         try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_MOVIES);) {
             stmt.setString(1, entity.getName());
             return stmt.executeUpdate() != 0;
+        } catch (SQLIntegrityConstraintViolationException ex) {
+            throw new EntityAlreadyExistException("Movie already exists, name: " + entity.getName(), ex);
         } catch (SQLException e) {
-            try {
-                throw new EntityAlreadyExistException("Movie already exists:" + entity.getName(), e);
-            } catch (EntityAlreadyExistException ex) {
-                throw new RuntimeException(ex);
-            }
+            throw new RuntimeException("Exception in DB", e);
         }
 
     }
 
     @Override
-    public boolean update(Movie entity) throws DBException {
+    public boolean update(Movie entity) throws EntityAlreadyExistException {
 
         try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_MOVIE);) {
@@ -155,13 +153,10 @@ public class SqlMovieDao implements MovieDao {
             stmt.setInt(2, entity.getId());
             return stmt.executeUpdate() != 0;
 
+        } catch (SQLIntegrityConstraintViolationException ex) {
+            throw new EntityAlreadyExistException("Movie already exists, name " + entity.getName(), ex);
         } catch (SQLException e) {
-
-            try {
-                throw new EntityAlreadyExistException("Movie already exists:" + entity.getName(), e);
-            } catch (EntityAlreadyExistException ex) {
-                throw new RuntimeException(ex);
-            }
+            throw new RuntimeException("Exception in DB", e);
         }
 
     }
@@ -177,7 +172,7 @@ public class SqlMovieDao implements MovieDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Exception in DB", e);
         }
         return numberOfRecords;
     }

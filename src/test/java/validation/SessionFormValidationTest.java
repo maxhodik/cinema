@@ -1,7 +1,9 @@
 package validation;
 
+import dao.impl.SqlUserDao;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mockito;
 import web.form.OrderForm;
 import web.form.SessionForm;
 import web.form.UserForm;
@@ -9,13 +11,17 @@ import web.form.validation.OrderFormValidator;
 import web.form.validation.SessionFormValidator;
 import web.form.validation.Validator;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class SessionFormValidationTest {
     Validator<SessionForm> validator = new SessionFormValidator();
     SessionForm form;
-
+    private final LocalDateTime mockedDateTime = LocalDateTime.of(2023, Month.JANUARY, 15, 20, 0, 0);
     @ParameterizedTest
     @CsvSource(value = {
             "10, 2024-01-15, 10:15, Aladdin, 40",
@@ -24,6 +30,7 @@ public class SessionFormValidationTest {
     "0, 2023-02-28, 20:00, King kong, 100",
     "0, 2023-03-15, 19:59, KISS, 99"})
     public void validate(String sessionId, String sessionDate, String sessionTime, String movieName, String capacity) {
+   //     Mockito.when(LocalDateTime.now()).thenReturn(mockedDateTime);
         form = new SessionForm(sessionId,sessionDate,sessionTime,movieName,capacity);
         assertFalse(validator.validate(form));
     }

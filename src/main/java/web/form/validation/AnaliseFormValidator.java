@@ -97,7 +97,7 @@ public class AnaliseFormValidator implements Validator<AnaliseForm> {
         return timeValidate(timeStart, timeEnd);
     }
 
-    private boolean validateByDate(String[] dates) throws DateTimeParseException {
+    private boolean  validateByDate(String[] dates) throws DateTimeParseException {
         if (isNullOrEmpty(dates)) return false;
         LocalDate dateStart = LocalDate.parse(dates[0]);
         LocalDate dateEnd = LocalDate.parse(dates[1]);

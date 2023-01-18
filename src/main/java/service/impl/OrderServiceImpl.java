@@ -6,7 +6,7 @@ import dao.SessionDao;
 import dao.UserDao;
 import dto.OrderDto;
 import entities.*;
-import exceptions.DBException;
+import exceptions.EntityAlreadyExistException;
 import exceptions.NotEnoughAvailableSeats;
 import exceptions.SaveOrderException;
 import service.HallService;
@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Order submitOrder(int sessionId, int seats, String userLogin) throws DBException, NotEnoughAvailableSeats {
+    public Order submitOrder(int sessionId, int seats, String userLogin) throws NotEnoughAvailableSeats, EntityAlreadyExistException {
    // todo transaction
         Session session = sessionDao.findEntityById(sessionId);
         Hall hall = session.getHall();
@@ -66,12 +66,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean create(Order entity) throws SaveOrderException, DBException {
+    public boolean create(Order entity) throws SaveOrderException,  EntityAlreadyExistException {
         return orderDao.create(entity);
     }
 
     @Override
-    public boolean update(Order entity) throws DBException {
+    public boolean update(Order entity) throws  EntityAlreadyExistException {
         return orderDao.update(entity);
     }
 
@@ -86,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findAllBySessionId(Integer id) {
+    public List<Order> findAllBySessionId(Integer id)  {
         return orderDao.findAllBySessionId(id);
     }
 

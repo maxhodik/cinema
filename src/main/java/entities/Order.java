@@ -3,6 +3,8 @@ package entities;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.Objects;
+
 public class Order {
     private int id;
     private User user;
@@ -21,6 +23,19 @@ public class Order {
                 .append("numberOfSeats", numberOfSeats)
                 .append("price", price)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return id == order.id && numberOfSeats == order.numberOfSeats && price == order.price && Objects.equals(user, order.user) && Objects.equals(session, order.session) && state == order.state;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, session, state, numberOfSeats, price);
     }
 
     public static Builder builder() {

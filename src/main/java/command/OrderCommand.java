@@ -3,6 +3,7 @@ package command;
 import dto.SessionDto;
 import entities.Order;
 import exceptions.DBException;
+import exceptions.EntityAlreadyExistException;
 import exceptions.NotEnoughAvailableSeats;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -69,10 +70,10 @@ public class OrderCommand extends MultipleMethodCommand {
             if (order == null) {
                 return "WEB-INF/order.jsp";
             }
-        } catch (DBException | NotEnoughAvailableSeats e) {
+        } catch (NotEnoughAvailableSeats | EntityAlreadyExistException e) {
             LOGGER.info("Not enough available seats");
             request.setAttribute("noPlaces", true);
-                      return "WEB-INF/order.jsp";
+            return "WEB-INF/order.jsp";
         }
         request.setAttribute("sessionDto", scheduleService.getSessionDto(id));
         request.setAttribute("orderDto", orderService.getOrderDto(order));

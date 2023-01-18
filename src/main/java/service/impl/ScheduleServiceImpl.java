@@ -9,6 +9,7 @@ import dto.SessionDto;
 import entities.*;
 import exceptions.DAOException;
 import exceptions.DBException;
+import exceptions.EntityAlreadyExistException;
 import persistance.TransactionManager;
 import persistance.TransactionManagerWrapper;
 import service.HallService;
@@ -40,14 +41,14 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<Session> findAll() {
+    public List<Session> findAll()  {
         return sessionDao.findAll();
 
     }
 
 
     @Override
-    public List<SessionAdminDto> findAllFilterByAndOrderBy(List<Filter> filters, String orderBy, String limits) {
+    public List<SessionAdminDto> findAllFilterByAndOrderBy(List<Filter> filters, String orderBy, String limits)  {
         List<Session> sessions;
 
         String sqlFilters = convertFiltersToSqlQuery(filters);
@@ -72,7 +73,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<SessionAdminDto> findAllFilterBy(List<Filter> filters) {
+    public List<SessionAdminDto> findAllFilterBy(List<Filter> filters)  {
         List<Session> sessions;
         String sqlFilters = convertFiltersToSqlQuery(filters);
 
@@ -141,7 +142,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<Session> findAllOrderBy(String columnName) {
+    public List<Session> findAllOrderBy(String columnName)  {
         String sqlColumn;
         sqlColumn = getSqlColumn(columnName);
         return sessionDao.findAllOrderBy(sqlColumn);
@@ -156,11 +157,9 @@ public class ScheduleServiceImpl implements ScheduleService {
                 sqlColumn = bundle.getString(columnName);
 //                if (sqlColumn == null) {
 //                    sqlColumn = default
-                    // Or
-                    // throw exc
-                }
-
-
+                // Or
+                // throw exc
+            }
         } catch (MissingResourceException e) {
             return null;
         }
@@ -168,19 +167,19 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public Session findEntityById(Integer id) {
+    public Session findEntityById(Integer id)  {
         return sessionDao.findEntityById(id);
     }
 
     @Override
-    public boolean delete(Session entity) {
+    public boolean delete(Session entity)  {
         return sessionDao.delete(entity);
     }
 
     @Override
     public boolean updateStatus(Session session) {
 
-        Session updetedSession = Session.builder()
+        Session updatedSession = Session.builder()
                 .id(session.getId())
                 .data(session.getDate())
                 .time(session.getTime())
@@ -191,8 +190,8 @@ public class ScheduleServiceImpl implements ScheduleService {
         try {
             TransactionManagerWrapper.startTransaction();
 
-            sessionDao.update(updetedSession);
-            List<Order> orders = orderService.findAllBySessionId(updetedSession.getId());
+            sessionDao.update(updatedSession);
+            List<Order> orders = orderService.findAllBySessionId(updatedSession.getId());
             for (Order o : orders) {
                 Order updetedOrder = Order.builder()
                         .id(o.getId())
@@ -206,7 +205,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             }
             TransactionManagerWrapper.commit();
             return true;
-        } catch (SQLException | DBException e) {
+        } catch (EntityAlreadyExistException | SQLException e) {
             e.printStackTrace();
             try {
                 TransactionManagerWrapper.rollback();
@@ -239,7 +238,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             boolean update = sessionDao.update(session);
             TransactionManagerWrapper.commit();
             return update;
-        } catch (SQLException | DBException e) {
+        } catch (SQLException | EntityAlreadyExistException e) {
             e.printStackTrace();
             try {
                 TransactionManagerWrapper.rollback();
@@ -276,7 +275,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public boolean create(SessionDto sessionDto) throws DBException {
+    public boolean create(SessionDto sessionDto)  {
         try {
             TransactionManagerWrapper.startTransaction();
             String movieName = sessionDto.getMovieName();
@@ -287,7 +286,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             boolean create = sessionDao.create(session);
             TransactionManagerWrapper.commit();
             return create;
-        } catch (SQLException e) {
+        } catch (SQLException | EntityAlreadyExistException e) {
             e.printStackTrace();
             try {
                 TransactionManagerWrapper.rollback();
@@ -300,7 +299,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 
     @Override
-    public SessionDto getSessionDto(int id) {
+    public SessionDto getSessionDto(int id)  {
         Session session = findEntityById(id);
         int sessionId = session.getId();
         String movieName = session.getMovie().getName();
@@ -342,12 +341,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         String sqlFilters = convertFiltersToSqlQuery(filters);
 
         int numberOfRecords;
-
-        try {
-            numberOfRecords = sessionDao.getNumberOfRecords(sqlFilters);
-        } catch (DAOException e) {
-            throw new RuntimeException(e);
-        }
+        numberOfRecords = sessionDao.getNumberOfRecords(sqlFilters);
         return numberOfRecords;
     }
 }

@@ -1,5 +1,9 @@
 package dto;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.util.Objects;
+
 public class OrderDto {
     private int id;
     private int numberOfSeats;
@@ -54,5 +58,29 @@ public class OrderDto {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderDto orderDto = (OrderDto) o;
+        return id == orderDto.id && numberOfSeats == orderDto.numberOfSeats && price == orderDto.price && count == orderDto.count && Objects.equals(login, orderDto.login);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, numberOfSeats, price, login, count);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("numberOfSeats", numberOfSeats)
+                .append("price", price)
+                .append("login", login)
+                .append("count", count)
+                .toString();
     }
 }

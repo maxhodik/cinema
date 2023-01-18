@@ -1,6 +1,7 @@
 package service;
 
 import entities.User;
+import exceptions.DBException;
 import exceptions.EntityAlreadyExistException;
 import exceptions.UserNotFoundException;
 

@@ -7,6 +7,7 @@ import dao.Constants;
 import entities.Hall;
 import exceptions.DBConnectionException;
 import exceptions.DBException;
+import exceptions.EntityAlreadyExistException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import persistance.ConnectionWrapper;
@@ -32,7 +33,7 @@ public class SqlHallDao implements HallDao {
                 halls.add(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Users not found", e);
         }
         return halls;
     }
@@ -50,7 +51,7 @@ public class SqlHallDao implements HallDao {
             return mapper.extractFromResultSet(rs);
 
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Users not found", e);
         }
     }
 
@@ -63,12 +64,12 @@ public class SqlHallDao implements HallDao {
             stmt.setInt(1, entity.getId());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Failed delete", e);
         }
     }
 
     @Override
-    public boolean create(Hall entity) throws DBException {
+    public boolean create(Hall entity) {
         try (
                 ConnectionWrapper con = TransactionManagerWrapper.getConnection();
                 PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_HALLS);) {
@@ -78,13 +79,13 @@ public class SqlHallDao implements HallDao {
             stmt.setBigDecimal(4, entity.getAttendance());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            throw new DBException("Creating  hall failed", e);
+            throw new RuntimeException("Creating  hall failed", e);
         }
 
     }
 
     @Override
-    public Hall createAndReturnWithId(Hall entity) throws DBException {
+    public Hall createAndReturnWithId(Hall entity) {
         try (
                 ConnectionWrapper con = TransactionManagerWrapper.getConnection();
                 PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_HALLS, Statement.RETURN_GENERATED_KEYS);) {
@@ -102,9 +103,9 @@ public class SqlHallDao implements HallDao {
                     throw new SQLException("Creating  hall failed, no ID obtained.");
                 }
             }
-        } catch (SQLException e) {
-            throw new DBException("Hall already exists:" + entity.getId(), e);
-        }
+    } catch (SQLException e) {
+        throw new RuntimeException("Exception in DB", e);
+    }
 
     }
 
@@ -121,9 +122,8 @@ public class SqlHallDao implements HallDao {
             stmt.setInt(5, entity.getId());
             return stmt.executeUpdate() != 0;
 
-        } catch (SQLException e) {
-            LOGGER.info("DBException");
-            throw new DBConnectionException(e);
+        }catch (SQLException e) {
+            throw new RuntimeException("Exception in DB", e);
         }
 
     }

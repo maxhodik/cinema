@@ -10,6 +10,7 @@ import entities.Order;
 import entities.Session;
 import entities.User;
 import exceptions.DBConnectionException;
+import exceptions.DBException;
 import exceptions.SaveOrderException;
 import persistance.ConnectionPoolHolder;
 import persistance.ConnectionWrapper;
@@ -31,7 +32,7 @@ public class SqlOrderDao implements OrderDao {
     }
 
     @Override
-    public List<Order> findAll() {
+    public List<Order> findAll()  {
         List<Order> orders = new ArrayList<>();
         try (
                 ConnectionWrapper con = TransactionManagerWrapper.getConnection();
@@ -41,19 +42,18 @@ public class SqlOrderDao implements OrderDao {
                 Order order;
                 mapper = new OrderMapper();
                 order = mapper.extractFromResultSet(rs);
-//                order.setSession(sessionMapper.extractFromResultSet(rs));
-//                order.setUser(userMapper.extractFromResultSet(rs));
+
                 orders.add(order);
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Orders not found", e);
         }
         return orders;
     }
 
 
     @Override
-    public Order findEntityById(Integer id) {
+    public Order findEntityById(Integer id)  {
 
         try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_ORDER_BY_ID);) {
@@ -66,12 +66,13 @@ public class SqlOrderDao implements OrderDao {
             order.setUser(userMapper.extractFromResultSet(rs));
             return order;
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Orders not found", e);
+
         }
     }
 
     @Override
-    public List<Order> findAllBySessionId(Integer id) {
+    public List<Order> findAllBySessionId(Integer id)  {
         List<Order> orders = new ArrayList<>();
         try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_ORDER_BY_SESSION_ID);) {
@@ -86,19 +87,20 @@ public class SqlOrderDao implements OrderDao {
             }
             return orders;
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Orders not found", e);
+
         }
     }
 
     @Override
-    public boolean delete(Order entity) {
+    public boolean delete(Order entity)  {
         try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.DELETE_ORDER_BY_ID);) {
             stmt.setInt(1, entity.getId());
             return stmt.executeUpdate() != 0;
 
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Failed delete", e);
         }
     }
 
@@ -119,16 +121,16 @@ public class SqlOrderDao implements OrderDao {
                 }
             } catch (SQLException e) {
                 con.rollback();
-                throw new SaveOrderException("Transaction rollback. Cannot save order to database cause");
+                throw new SaveOrderException("Transaction rollback. Cannot save order to database cause", e);
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Cannot save order to database cause", e);
         }
         return true;
     }
 
     @Override
-    public boolean update(Order entity) {
+    public boolean update(Order entity)  {
         try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_ORDERS);) {
             stmt.setString(1, String.valueOf(entity.getState()));
@@ -139,7 +141,7 @@ public class SqlOrderDao implements OrderDao {
             stmt.setInt(6, entity.getId());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Exception in DB", e);
         }
     }
 }

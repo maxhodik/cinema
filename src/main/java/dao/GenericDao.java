@@ -20,9 +20,9 @@ public interface GenericDao<K extends Number, T> {
 
     abstract boolean delete(T entity);
 
-   abstract boolean create(T entity) throws DBException;
+   abstract boolean create(T entity) throws  EntityAlreadyExistException;
 
-   abstract boolean update(T entity) throws DBException;
+   abstract boolean update(T entity) throws  EntityAlreadyExistException;
 
 
 }

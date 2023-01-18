@@ -6,6 +6,7 @@ import exceptions.UserNotFoundException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.UserService;
+import web.handler.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,7 +20,6 @@ public class LoginCommand extends MultipleMethodCommand {
 
     @Override
     public String performGet(HttpServletRequest request) {
-
         return "/WEB-INF/login.jsp";
     }
 
@@ -30,15 +30,20 @@ public class LoginCommand extends MultipleMethodCommand {
         String password = request.getParameter("pass");
         try {
             userService.login(name, password);
+
         } catch (UserNotFoundException e) {
-            //todo handle exception --> add message on the Login page
+            ExceptionHandler handler = new ExceptionHandler(e, "login", "redirect");
             LOGGER.info("User not found with name=" + name);
-            return "redirect:login";
+            return handler.handling(request);
+            //todo handle exception --> add message on the Login page
+//
+//            return "redirect:login";
         }
         User user = userService.findEntityByLogin(name);
         request.getSession().setAttribute("name", user.getLogin());
         request.getSession().setAttribute("pass", user.getPassword());
         request.getSession().setAttribute("role", user.getRole());
+        request.getSession().setAttribute("success", true);
         LOGGER.info("User logged success role: " + user.getRole());
         return "redirect:index.jsp";
     }

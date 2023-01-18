@@ -26,19 +26,20 @@ public class ScheduleAddCommand extends MultipleMethodCommand {
     private ScheduleService scheduleService;
     private HallService hallService;
     private MovieService movieService;
-   private SessionFormValidator sessionValidator;
+    private SessionFormValidator sessionValidator;
 
     public ScheduleAddCommand(ScheduleService scheduleService, MovieService movieService, HallService hallService, SessionFormValidator sessionValidator) {
         this.scheduleService = scheduleService;
         this.hallService = hallService;
         this.movieService = movieService;
-      this.sessionValidator = sessionValidator;
+        this.sessionValidator = sessionValidator;
     }
+
     @Override
     protected String performGet(HttpServletRequest request) {
         List<String> movieDtoList = getMovieDtoList();
         request.setAttribute("movieDto", movieDtoList);
-            return "/WEB-INF/admin/add-session.jsp";
+        return "/WEB-INF/admin/add-session.jsp";
     }
 
     @Override
@@ -58,19 +59,16 @@ public class ScheduleAddCommand extends MultipleMethodCommand {
         LocalDate date = LocalDate.parse(sessionDate);
         LocalTime time = LocalTime.parse(sessionTime);
         int numberOfSeats = Integer.parseInt(capacity);
-        Status status=ACTIVE;
+        Status status = ACTIVE;
 
-        int SessionDtoId=-1;
+        int SessionDtoId = -1;
         SessionDto sessionDto = new SessionDto(SessionDtoId, movieName, date, time, status, numberOfSeats);
-        try {
-            scheduleService.create(sessionDto);
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
-        return "redirect:schedule";
+        scheduleService.create(sessionDto);
+         return "redirect:schedule";
     }
-    private  List<String> getMovieDtoList() {
-        List<Movie> movies= movieService.findAll();
+
+    private List<String> getMovieDtoList() {
+        List<Movie> movies = movieService.findAll();
         List<String> movieDtoList = movies.stream().map(x -> x.getName())
                 .distinct()
                 .collect(Collectors.toList());

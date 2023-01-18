@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import service.MovieService;
 import web.form.MovieForm;
 import web.form.validation.MovieFormValidator;
+import web.handler.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,9 +44,10 @@ public class MovieUpdateCommand extends MultipleMethodCommand {
         try {
             movieService.update(movie);
         } catch (EntityAlreadyExistException e) {
-            request.getSession().setAttribute("exception", true);
-        } catch (DBException e) {
-            throw new RuntimeException(e);
+            ExceptionHandler handler = new ExceptionHandler(e, "/WEB-INF/admin/update-movie.jsp" );
+            LOGGER.info("Movie already exist with name=" + name);
+            return handler.handling(request);
+//            request.getSession().setAttribute("exception", true);
         }
         return "redirect:admin/movie" ;
     }

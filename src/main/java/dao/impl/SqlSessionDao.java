@@ -11,6 +11,7 @@ import entities.Movie;
 import entities.Session;
 import exceptions.DAOException;
 import exceptions.DBConnectionException;
+import exceptions.DBException;
 import persistance.ConnectionPoolHolder;
 import persistance.ConnectionWrapper;
 import persistance.TransactionManagerWrapper;
@@ -48,7 +49,7 @@ public class SqlSessionDao implements SessionDao {
 
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Sessions not found", e);
         }
         return sessions;
     }
@@ -66,7 +67,7 @@ public class SqlSessionDao implements SessionDao {
             session.setHall(hallMapper.extractFromResultSet(rs));
             return session;
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Sessions not found", e);
         }
     }
 
@@ -78,14 +79,14 @@ public class SqlSessionDao implements SessionDao {
             return stmt.executeUpdate() != 0;
 
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Sessions not found", e);
         }
 
     }
 
     @Override
     public boolean create(Session session) {
-        // todo need create new Hall???
+
         try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_SESSIONS, Statement.RETURN_GENERATED_KEYS);) {
             stmt.setDate(1, Date.valueOf(session.getDate()));
@@ -94,7 +95,7 @@ public class SqlSessionDao implements SessionDao {
             stmt.setTime(4, Time.valueOf(session.getTime()));
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Session not created", e);
         }
     }
 
@@ -112,7 +113,7 @@ public class SqlSessionDao implements SessionDao {
             stmt.setInt(++k, entity.getId());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Session not updated", e);
         }
     }
 
@@ -132,9 +133,9 @@ public class SqlSessionDao implements SessionDao {
                 sessions.add(session);
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
-        }
-        return sessions;
+            throw new RuntimeException("Sessions not found", e);
+
+        } return sessions;
     }
 
     @Override
@@ -152,7 +153,7 @@ public class SqlSessionDao implements SessionDao {
                 sessions.add(session);
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Sessions not found", e);
         }
 
         return sessions;
@@ -175,7 +176,7 @@ public class SqlSessionDao implements SessionDao {
 
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Sessions not found", e);
         }
         return sessions;
     }
@@ -196,7 +197,7 @@ public class SqlSessionDao implements SessionDao {
                 sessions.add(session);
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Sessions not found", e);
         }
         return sessions;
     }
@@ -217,7 +218,7 @@ public class SqlSessionDao implements SessionDao {
                 sessions.add(session);
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Sessions not found", e);
         }
         return sessions;
     }
@@ -240,12 +241,12 @@ public class SqlSessionDao implements SessionDao {
                 sessions.add(session);
             }
         } catch (SQLException e) {
-            throw new DBConnectionException(e);
+            throw new RuntimeException("Sessions not found", e);
         }
         return sessions;
     }
     @Override
-    public int getNumberOfRecords (String filters) throws DAOException {
+    public int getNumberOfRecords (String filters) {
         int numberOfRecords = 0;
         try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement preparedStatement = con.prepareStatement(Constants.COUNT_ALL_SESSIONS_FILTER_BY_SORTED_BY + filters)) {
@@ -255,7 +256,7 @@ public class SqlSessionDao implements SessionDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DAOException(e);
+            throw new RuntimeException("Sessions not found", e);
         }
         return numberOfRecords;
     }

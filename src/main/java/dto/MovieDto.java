@@ -1,5 +1,7 @@
 package dto;
 
+import java.util.Objects;
+
 public class MovieDto {
     private int id;
     private String name;
@@ -23,5 +25,18 @@ public class MovieDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MovieDto movieDto = (MovieDto) o;
+        return id == movieDto.id && Objects.equals(name, movieDto.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

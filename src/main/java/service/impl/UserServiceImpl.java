@@ -25,18 +25,13 @@ public class UserServiceImpl implements UserService {
         if (userFromDb != null) {
             throw new EntityAlreadyExistException("User already exists");
         }
-        try {
-            // todo add coder for password
-            User user = User.builder()
+                 User user = User.builder()
                     .login(name)
                     .password(passwordEncoderService.encode(password))
                     .role(USER)
                     .build();
             userDao.create(user);
             return user;
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

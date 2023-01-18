@@ -43,24 +43,23 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Movie create(String name) throws DBException, EntityAlreadyExistException {
+    public Movie create(String name) throws EntityAlreadyExistException {
         Movie movieFromDb = movieDao.findEntityByName(name);
         if (movieFromDb != null) {
             LOGGER.info("Movie already exists name: " + name);
             throw new EntityAlreadyExistException("Movie already exists");
         }
-        try {
-            Movie movie = Movie.builder().name(name).build();
-            movieDao.create(movie);
-            return movie;
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+
+        Movie movie = Movie.builder().name(name).build();
+        movieDao.create(movie);
+        return movie;
+
+
     }
 
 
     @Override
-    public boolean update(Movie entity) throws DBException, EntityAlreadyExistException {
+    public boolean update(Movie entity) throws EntityAlreadyExistException {
         return movieDao.update(entity);
     }
 
@@ -71,6 +70,7 @@ public class MovieServiceImpl implements MovieService {
         List<MovieDto> movieDtoList = getMovieDtoList(movies);
         return movieDtoList;
     }
+
     @Override
     public List<MovieDto> findAllOrderBy(String orderBy) {
         List<Movie> movies;
@@ -78,6 +78,7 @@ public class MovieServiceImpl implements MovieService {
         List<MovieDto> movieDtoList = getMovieDtoList(movies);
         return movieDtoList;
     }
+
     private List<MovieDto> getMovieDtoList(List<Movie> movies) {
         List<MovieDto> movieDtoList = new ArrayList<>();
         for (Movie m : movies) {
@@ -94,7 +95,6 @@ public class MovieServiceImpl implements MovieService {
         String sqlColumn = null;
         try {
             if (columnName != null) {
-                //todo map (map passed columnName to table name otherwise throw error)
                 ResourceBundle bundle = ResourceBundle.getBundle("mapping");
                 sqlColumn = bundle.getString(columnName);
             }
@@ -103,9 +103,10 @@ public class MovieServiceImpl implements MovieService {
         }
         return sqlColumn;
     }
+
     public int getNumberOfRecords() {
         int numberOfRecords;
-            numberOfRecords = movieDao.getNumberOfRecords();
+        numberOfRecords = movieDao.getNumberOfRecords();
         return numberOfRecords;
     }
 }

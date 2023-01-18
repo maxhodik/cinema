@@ -3,6 +3,7 @@ package service.impl;
 import dao.HallDao;
 import entities.Hall;
 import exceptions.DBException;
+import exceptions.EntityAlreadyExistException;
 import persistance.TransactionManager;
 import service.HallService;
 
@@ -19,32 +20,32 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public List<Hall> findAll() {
+    public List<Hall> findAll()  {
         return hallDao.findAll();
     }
 
     @Override
-    public Hall findEntityById(Integer id) {
+    public Hall findEntityById(Integer id)  {
         return hallDao.findEntityById(id);
     }
 
     @Override
-    public boolean delete(Hall entity) {
+    public boolean delete(Hall entity)  {
         return hallDao.delete(entity);
     }
 
     @Override
-    public boolean create(Hall entity) throws DBException {
+    public boolean create(Hall entity) throws  EntityAlreadyExistException {
         return hallDao.create(entity);
     }
 
     @Override
-    public boolean update(Hall entity) throws DBException {
+    public boolean update(Hall entity) throws  EntityAlreadyExistException {
         return hallDao.update(entity);
     }
 
     @Override
-    public Hall changeHallCapacity(Hall hallToChange, int newCapacity) throws DBException {
+    public Hall changeHallCapacity(Hall hallToChange, int newCapacity) throws  EntityAlreadyExistException {
         int numberOfSoldSeats = hallToChange.getNumberOfSoldSeats();
         int numberOfAvailableSeats = newCapacity - numberOfSoldSeats;
         BigDecimal attendance = new BigDecimal((float) numberOfSoldSeats / newCapacity * 100);
@@ -60,7 +61,7 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats) throws DBException {
+    public Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats) throws EntityAlreadyExistException {
         int capacity = hallToChange.getCapacity();
         int numberOfSoldSeats = capacity - newAvailableSeats;
 
@@ -78,7 +79,7 @@ public class HallServiceImpl implements HallService {
 
     @Override
     //todo check exceptions
-    public Hall createWithCapacity(int seatsCapacity) throws DBException {
+    public Hall createWithCapacity(int seatsCapacity)  {
         Hall hall = Hall.builder().numberSeats(seatsCapacity).numberAvailableSeats(seatsCapacity).build();
         hall = hallDao.createAndReturnWithId(hall);
         return hall;

@@ -1,7 +1,10 @@
 package entities;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 
 public class Hall {
     private int id;
@@ -61,6 +64,30 @@ public class Hall {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Hall hall = (Hall) o;
+        return id == hall.id && capacity == hall.capacity && numberAvailableSeats == hall.numberAvailableSeats && numberOfSoldSeats == hall.numberOfSoldSeats && Objects.equals(attendance, hall.attendance);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, capacity, numberAvailableSeats, numberOfSoldSeats, attendance);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("capacity", capacity)
+                .append("numberAvailableSeats", numberAvailableSeats)
+                .append("numberOfSoldSeats", numberOfSoldSeats)
+                .append("attendance", attendance)
+                .toString();
     }
 
     public static class Builder {
