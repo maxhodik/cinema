@@ -40,22 +40,14 @@
                     </ul>
                   </li>
              </ul>
-                <form>
-                 <class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" >
-                        <fmt:message key="label.language"/>
-                       </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                        <li><a class="dropdown-item" href="?lang=ua"><fmt:message key="label.lang.ua"/></a></li>
-                       </ul>
-                </form>
+
               </div>
             </div>
           </nav>
         <title>Cinema</title>
 </head>
 <body>
+
 <h2>
     <fmt:message key="label.hello.cinema"/>
 </h2>

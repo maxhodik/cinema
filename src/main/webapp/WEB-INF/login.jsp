@@ -11,7 +11,7 @@
 
 <fmt:setBundle basename="message"/>
 
-<html lang="${lang}">
+<html lang="${param.lang}">
  <head>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
@@ -39,21 +39,8 @@
                       <li><a class="dropdown-item" href="?lang=ua"><fmt:message key="label.lang.ua"/></a></li>
                     </ul>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                  </li>
-                </ul>
-                    <form>
-                                <class="nav-item dropdown">
-                                     <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                       <fmt:message key="label.language"/>
-                                      </a>
-                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                       <li><a class="dropdown-item" href="?lang=en"><fmt:message key="label.lang.en"/></a></li>
-                                       <li><a class="dropdown-item" href="?lang=ua"><fmt:message key="label.lang.ua"/></a></li>
-                                      </ul>
+                             </ul>
 
-                               </form>
                              </div>
                            </div>
                          </nav>
@@ -65,13 +52,14 @@
 <div class="container col-3">
 <h1><fmt:message key="button.login"/></h1><br/>
 <c:if test="${sessionScope.exception == true}">
-    <label class="alert alert-info"> <fmt:message key="alert.wrong.password.or.login"/></label>
+    <label class="alert alert-info"> <fmt:message key="alert.wrong.login.or.password"/></label>
 </c:if>
 <c:remove var="exception" scope="session"/>
-<c:if test="${sessionScope.success == true}">
+<!--<c:if test="${sessionScope.success == true}">
     <label class="alert alert-info"> <fmt:message key="alert.success.sing.up"/></label>
-</c:if>
-<c:remove var="success" scope="session"/>
+
+</c:if> --!>
+ <c:remove var="success" scope="session"/>
 
 <form method="post" action="${pageContext.request.contextPath}/login">
  <div class="md-3">

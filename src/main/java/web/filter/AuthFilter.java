@@ -35,9 +35,7 @@ public class AuthFilter implements Filter {
         }
         if (session.getAttribute("name") != null) {
             if (path.contains("admin") && session.getAttribute("role") != Role.ADMIN) {
-                //todo create access denied page
-                resp.sendRedirect("/schedule-admin");
-                return;
+                req.getRequestDispatcher("/WEB-INF/access-denied.jsp").forward(request, response);
             } else if (path.matches(".*/cinema/.*")) {
                 filterChain.doFilter(request, response);
             } else {

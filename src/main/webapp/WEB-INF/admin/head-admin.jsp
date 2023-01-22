@@ -14,8 +14,8 @@
 <head>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-            <h1>"${param}"</h1>
-            <h1>"${requestScope.queryString}"</h1>
+        <!-- <h1>"${param}"</h1>
+            <h1>"${requestScope.queryString}"</h1> --!>
               <a class="navbar-brand"href="/cinema"> <fmt:message key="label.mainPage"/></a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -28,9 +28,7 @@
                   <li class="nav-item">
                      <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/register"><fmt:message key="button.registration"/></a>
                    </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                  </li>
+
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                      <fmt:message key="label.language"/>
@@ -55,7 +53,7 @@
                                <input class="col-2" type="number" min="1" name="records" id="records"
                                value="${not empty requestScope.records ? requestScope.records : "5"}">
                                       <input type="hidden" name="offset" value="0">
-                               <button type="submit" class="btn btn-dark mt-2 mb-3"><fmt:message key="button.submit"/></button>
+                               <button type="submit" class="btn btn-light mt-2 mb-3"><fmt:message key="button.submit"/></button>
                </form>
               </div>
             </div>

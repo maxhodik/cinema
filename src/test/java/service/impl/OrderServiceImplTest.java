@@ -1,30 +1,44 @@
 package service.impl;
 
 import dao.OrderDao;
-import dto.MovieDto;
 import dto.OrderDto;
 import entities.*;
 import exceptions.EntityAlreadyExistException;
+import exceptions.NotEnoughAvailableSeats;
 import exceptions.SaveOrderException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import persistance.ConnectionWrapper;
+import persistance.TransactionManagerWrapper;
+import service.HallService;
+import service.ScheduleService;
+import service.UserService;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class OrderServiceImplTest {
     private final static LocalTime TIME = LocalTime.parse("09:00");
     private final static LocalDate DATE = LocalDate.parse("2023-02-02");
+    private static final int SEATS_MORE = 91;
+    private static final int SEATS_LESS = 80;
+    private static final int SEATS_EQUALS = 90;
+
+    ;
     private final static User USER = User.builder().id(0).login("test").password("password").role(Role.USER).build();
     private final static Movie EXPECTED_MOVIE = new Movie.Builder().id(0).name("test").build();
     private static final Hall HALL = Hall.builder()
@@ -43,15 +57,32 @@ class OrderServiceImplTest {
             .numberOfSeats(5).user(USER).price(100).session(SESSION).build();
     private final static OrderDto ORDER_DTO = new OrderDto(0, 5, 100, "test");
     private final static List<Order> ORDERS = List.of(EXPECTED_ORDER);
+    private ConnectionWrapper con = mock(ConnectionWrapper.class);
+    private PreparedStatement stmt = mock(PreparedStatement.class);
+    private  OrderDao orderDao = mock(OrderDao.class);
+    private  ScheduleService scheduleService = mock(ScheduleService.class);
+    private  HallService hallService = mock(HallService.class);
+    private  UserService userService = mock(UserService.class);
+    private  OrderServiceImpl orderService = new OrderServiceImpl(orderDao,hallService,scheduleService,userService);
 
-    private static OrderDao orderDao = mock(OrderDao.class);
-    private static OrderServiceImpl orderService = new OrderServiceImpl(orderDao);
 
-
-    @Test
-    void submitOrder() {
-
+    @BeforeEach
+    public void setUp() {
+//        ThreadLocal<ConnectionWrapper> th = new ThreadLocal<>();
+//        th.set(con);
+//        TransactionManagerWrapper.setThreadLocal(new ThreadLocal<>());
     }
+
+
+    @ParameterizedTest
+    @ValueSource (ints = {91, 92})
+    void submitOrder(int seats) {
+
+        when(scheduleService.findEntityById(anyInt())).thenReturn(SESSION);
+        NotEnoughAvailableSeats thrown = Assertions.assertThrows(NotEnoughAvailableSeats.class, () ->
+                orderService.submitOrder(0, seats,"test"));
+    }
+
 
     @Test
     void delete() {

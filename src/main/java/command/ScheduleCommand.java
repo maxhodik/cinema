@@ -5,9 +5,6 @@ import dto.Filter;
 import dto.SessionAdminDto;
 import entities.Role;
 import entities.Status;
-
-import exceptions.DAOException;
-import exceptions.DBException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.ScheduleService;
@@ -79,11 +76,6 @@ public class ScheduleCommand extends MultipleMethodCommand {
     }
 
     private void addFilterIfNeeded(String[] filterValues, List<Filter> filters, String columnName, Operation operation) {
-        // 1 find filter by column in existed filters
-        // 2 if exist
-        //    replace on filterValues
-        //    otherwise add filterValues
-
         if (filterValues != null) {
 
             // todo recheck if this for needed

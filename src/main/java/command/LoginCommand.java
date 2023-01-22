@@ -25,19 +25,19 @@ public class LoginCommand extends MultipleMethodCommand {
 
     @Override
     public String performPost(HttpServletRequest request) {
-        request.getSession().invalidate();
+        if (request.getSession().getAttribute("name")!=null){
+            request.getSession().setAttribute("name", null);
+            request.getSession().setAttribute("pass", null);
+        }
         String name = request.getParameter("name");
         String password = request.getParameter("pass");
         try {
             userService.login(name, password);
 
         } catch (UserNotFoundException e) {
-            ExceptionHandler handler = new ExceptionHandler(e, "login", "redirect");
+            ExceptionHandler handler = new ExceptionHandler(e, "login","redirect");
             LOGGER.info("User not found with name=" + name);
             return handler.handling(request);
-            //todo handle exception --> add message on the Login page
-//
-//            return "redirect:login";
         }
         User user = userService.findEntityByLogin(name);
         request.getSession().setAttribute("name", user.getLogin());

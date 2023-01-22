@@ -1,7 +1,5 @@
 package web.handler;
 
-import exceptions.EntityAlreadyExistException;
-import exceptions.NotEnoughAvailableSeats;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -34,20 +32,12 @@ public class ExceptionHandler {
 
     public String handling(HttpServletRequest request) {
 
-            //handle duplicate
             LOGGER.info(exception.getMessage());
             request.getSession().setAttribute("exception", true);
             if (requestType.equals("redirect")) {
                 return "redirect:" + page;
             }
             return page;
-
-//        } else if (exceptionCode==500){
-//        return "500.jps";
-//
-//        } return "400.jsp";
-
-
 }
 }
 

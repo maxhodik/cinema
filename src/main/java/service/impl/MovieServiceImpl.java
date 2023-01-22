@@ -1,6 +1,8 @@
 package service.impl;
 
 import dao.MovieDao;
+import dao.SessionDao;
+import dao.impl.SqlSessionDao;
 import dto.MovieDto;
 import entities.Movie;
 import exceptions.DBException;
@@ -8,6 +10,7 @@ import exceptions.EntityAlreadyExistException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import service.MovieService;
+import service.ScheduleService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +20,15 @@ import java.util.ResourceBundle;
 public class MovieServiceImpl implements MovieService {
     private static final Logger LOGGER = LogManager.getLogger(MovieServiceImpl.class);
     private MovieDao movieDao;
+    public SessionDao sessionDao;
 
-    public MovieServiceImpl(MovieDao movieDao) {
+
+
+    public MovieServiceImpl(MovieDao movieDao, SessionDao sessionDao) {
         this.movieDao = movieDao;
+        this.sessionDao= sessionDao;
     }
+
 
     @Override
     public List<Movie> findAll() {
@@ -38,7 +46,12 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public boolean delete(Movie entity) {
+    public boolean delete(Movie entity) throws EntityAlreadyExistException {
+        String name = entity.getName();
+       if (sessionDao.findByMovie(name)){
+           LOGGER.info("This movie already used in session");
+        throw new EntityAlreadyExistException();
+       }
         return movieDao.delete(entity);
     }
 

@@ -15,6 +15,10 @@
 <c:import url="head-admin.jsp" />
 
 <body>
+<c:if test="${sessionScope.exception == true}">
+    <label class="alert alert-info"> <fmt:message key="alert.movie.already.busy"/></label>
+</c:if>
+<c:remove var="exception" scope="session"/>
 <form action="movie">
 <li class="nav-item">
                   <a class="btn btn-outline-secondary " aria-current="page"  href="${pageContext.request.contextPath}/admin/movie/add-movie"><fmt:message key="button.new_movie"/></a>
@@ -27,7 +31,6 @@
                               <c:set var="base" value="movie?"/>
                            <c:set var="orderById" value="orderBy=id"/>
                            <c:set var="orderByMovie" value="orderBy=name"/>
-
                            <c:set var="limits" value="&offset=0&records=${records}"/>
                               <li><a class="dropdown-item" href="${base.concat(orderById).concat(limits)}"> <fmt:message key="label.id"/></a></li>
                               <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="label.movie"/></a></li>
@@ -35,6 +38,7 @@
       </ul>
         </thead>
                     </form>
+  <div class="container col-8">
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
     <thead class="thead-dark">
     <tr>
@@ -70,6 +74,7 @@
 
     </tbody>
 </table>
+</div>
 <c:choose>
  <c:when test="${not empty orderBy}">
            <c:set var="href" scope="request"

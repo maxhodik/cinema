@@ -17,4 +17,5 @@ public interface OrderService {
     OrderDto getOrderDto(Order order);
     List<Order> findAllBySessionId (Integer id) ;
     Order findEntityById(Integer id);
+
 }

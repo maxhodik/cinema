@@ -21,19 +21,25 @@
 </head>
 <c:if test="${cantUpdate == true}">
     <label class="alert alert-info"> <fmt:message key="alert.session.cant.update"/></label>
+    <c:remove var="exception" scope="session"/>
 </c:if>
 <c:if test="${cantEdit == true}">
     <label class="alert alert-info"> <fmt:message key="alert.session.cant.edit"/></label>
+    <c:remove var="exception" scope="session"/>
 </c:if>
 
 <c:if test="${movieDoesntExist == true}">
     <label class="alert alert-info"> <fmt:message key="alert.session.movie.not.exist"/></label>
+    <c:remove var="exception" scope="session"/>
 </c:if>
+<div class="container col-11">
 <body>
 <c:remove var="exception" scope="session"/>
 
 <c:if test="${errors}">
-    <p>Not Valid</p>
+   <label class="alert alert-info"> <fmt:message key="alert.session.form.not.valid"/></label>
+
+    <c:remove var="errors" scope="session"/>
 </c:if>
 
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
@@ -90,4 +96,5 @@
 </table>
 
 </body>
+</div>
 </html>

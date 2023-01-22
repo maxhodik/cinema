@@ -41,4 +41,5 @@ public class Constants {
     public static final String FIND_ALL_MOVIES_SORTED_BY_NAME = "SELECT * FROM mydb.movies ";
     public static final String FIND_ORDER_BY_SESSION_ID = "SELECT * FROM orders left join users on user_id=users.id join sessions on sessions_id= sessions.id left join movies on movie_id=movies.id join halls on hall_id= halls.id where sessions_id=?;";
     public static final String COUNT_ALL_MOVIES = "SELECT COUNT(*) FROM mydb.movies ";
+    public static final String FIND_ALL_SESSIONS_BY_MOVIE_NAME = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id WHERE name=?;";
 }

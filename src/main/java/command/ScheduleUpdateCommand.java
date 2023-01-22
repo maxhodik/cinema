@@ -35,7 +35,7 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
     protected String performGet(HttpServletRequest request) {
         int id = Integer.parseInt(request.getParameter("id"));
         Status status = scheduleService.findEntityById(id).getStatus();
-        if (status.equals(Status.CANCELED)) {request.setAttribute("cantEdit", true);
+        if (status.equals(Status.CANCELED)) {
             request.setAttribute("cantUpdate", true);
             LOGGER.info("Can't update. This session canceled");
             return "/WEB-INF/admin/unsuccess-update-session.jsp";
@@ -62,8 +62,8 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
         String capacity = request.getParameter("seats");
         SessionForm sessionForm = new SessionForm(sessionId, sessionDate, sessionTime, movieName, capacity);
         if (sessionValidator.validate(sessionForm)) {
-            request.setAttribute("errors", true);
-           return "/WEB-INF/admin/update-session.jsp";
+            request.getSession().setAttribute("errors", true);
+           return "redirect:admin/update-session?id="+sessionId;
         }
 
         int id = Integer.parseInt(sessionId);

@@ -2,15 +2,15 @@ package service.impl;
 
 
 import command.Operation;
+import command.ScheduleCommand;
 import dao.SessionDao;
 import dto.Filter;
 import dto.SessionAdminDto;
 import dto.SessionDto;
 import entities.*;
-import exceptions.DAOException;
-import exceptions.DBException;
 import exceptions.EntityAlreadyExistException;
-import persistance.TransactionManager;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import persistance.TransactionManagerWrapper;
 import service.HallService;
 import service.MovieService;
@@ -28,6 +28,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class ScheduleServiceImpl implements ScheduleService {
+    private static final Logger LOGGER = LogManager.getLogger(ScheduleCommand.class);
     private final SessionDao sessionDao;
     private final HallService hallService;
     private final MovieService movieService;
@@ -41,14 +42,14 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<Session> findAll()  {
+    public List<Session> findAll() {
         return sessionDao.findAll();
 
     }
 
 
     @Override
-    public List<SessionAdminDto> findAllFilterByAndOrderBy(List<Filter> filters, String orderBy, String limits)  {
+    public List<SessionAdminDto> findAllFilterByAndOrderBy(List<Filter> filters, String orderBy, String limits) {
         List<Session> sessions;
 
         String sqlFilters = convertFiltersToSqlQuery(filters);
@@ -73,7 +74,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<SessionAdminDto> findAllFilterBy(List<Filter> filters)  {
+    public List<SessionAdminDto> findAllFilterBy(List<Filter> filters) {
         List<Session> sessions;
         String sqlFilters = convertFiltersToSqlQuery(filters);
 
@@ -83,7 +84,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         return sessionAdminDtoList;
     }
-
+@Override
+    public boolean findByMovie(String name) {
+        return sessionDao.findByMovie(name);
+    }
 
     private String convertFiltersToSqlQuery(List<Filter> filters) {
         if (filters == null || filters.isEmpty()) {
@@ -142,7 +146,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<Session> findAllOrderBy(String columnName)  {
+    public List<Session> findAllOrderBy(String columnName) {
         String sqlColumn;
         sqlColumn = getSqlColumn(columnName);
         return sessionDao.findAllOrderBy(sqlColumn);
@@ -167,12 +171,12 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public Session findEntityById(Integer id)  {
+    public Session findEntityById(Integer id) {
         return sessionDao.findEntityById(id);
     }
 
     @Override
-    public boolean delete(Session entity)  {
+    public boolean delete(Session entity) {
         return sessionDao.delete(entity);
     }
 
@@ -206,13 +210,15 @@ public class ScheduleServiceImpl implements ScheduleService {
             TransactionManagerWrapper.commit();
             return true;
         } catch (EntityAlreadyExistException | SQLException e) {
-            e.printStackTrace();
+            LOGGER.info("Update session and order status failed");
             try {
                 TransactionManagerWrapper.rollback();
+                LOGGER.info("Transaction rollback");
+                throw new RuntimeException("Can't update session and oder status");
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                throw new RuntimeException("Rollback failed");
             }
-            return false;
+
         }
     }
 
@@ -234,7 +240,6 @@ public class ScheduleServiceImpl implements ScheduleService {
             //todo validate movie name
             Movie movie = movieService.findEntityByName(movieName);
             session = buildSession(sessionDto, hall, movie);
-            // todo update session and hall in transaction
             boolean update = sessionDao.update(session);
             TransactionManagerWrapper.commit();
             return update;
@@ -275,7 +280,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public boolean create(SessionDto sessionDto)  {
+    public boolean create(SessionDto sessionDto) {
         try {
             TransactionManagerWrapper.startTransaction();
             String movieName = sessionDto.getMovieName();
@@ -299,7 +304,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 
     @Override
-    public SessionDto getSessionDto(int id)  {
+    public SessionDto getSessionDto(int id) {
         Session session = findEntityById(id);
         int sessionId = session.getId();
         String movieName = session.getMovie().getName();

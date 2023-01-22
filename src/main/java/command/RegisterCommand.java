@@ -48,9 +48,6 @@ public class RegisterCommand extends MultipleMethodCommand {
             ExceptionHandler handler = new ExceptionHandler(e, "register", "redirect");
             LOGGER.info("User already exist with name=" + name);
             return handler.handling(request);
-            //todo handle exception --> add message on the register page
-//            return "redirect:register";
-
         }
 
         return "redirect:index.jsp";

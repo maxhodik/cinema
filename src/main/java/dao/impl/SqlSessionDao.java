@@ -56,7 +56,7 @@ public class SqlSessionDao implements SessionDao {
 
     @Override
     public Session findEntityById(Integer id) {
-        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.FIND_SESSION_BY_ID);) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -70,10 +70,24 @@ public class SqlSessionDao implements SessionDao {
             throw new RuntimeException("Sessions not found", e);
         }
     }
+@Override
+    public boolean findByMovie(String name) {
+        try (
+                ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+                PreparedStatement stmt = con.prepareStatement(Constants.FIND_ALL_SESSIONS_BY_MOVIE_NAME)) {
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }return false;
+        } catch (SQLException e) {
+            throw new RuntimeException("Sessions not found", e);
+        }
+    }
 
     @Override
     public boolean delete(Session entity) {
-        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.DELETE_SESSION_BY_ID);) {
             stmt.setInt(1, entity.getId());
             return stmt.executeUpdate() != 0;
@@ -87,7 +101,7 @@ public class SqlSessionDao implements SessionDao {
     @Override
     public boolean create(Session session) {
 
-        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_SESSIONS, Statement.RETURN_GENERATED_KEYS);) {
             stmt.setDate(1, Date.valueOf(session.getDate()));
             stmt.setInt(2, session.getMovie().getId());
@@ -102,9 +116,9 @@ public class SqlSessionDao implements SessionDao {
 
     @Override
     public boolean update(Session entity) {
-        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement stmt = con.prepareStatement(Constants.UPDATE_SESSIONS);) {
-            int k=0;
+            int k = 0;
             stmt.setDate(++k, Date.valueOf(entity.getDate()));
             stmt.setInt(++k, entity.getMovie().getId());
             stmt.setInt(++k, entity.getHall().getId());
@@ -135,13 +149,14 @@ public class SqlSessionDao implements SessionDao {
         } catch (SQLException e) {
             throw new RuntimeException("Sessions not found", e);
 
-        } return sessions;
+        }
+        return sessions;
     }
 
     @Override
     public List<Session> findAllSortedByMovieTitle() {
         List<Session> sessions = new ArrayList<>();
-        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              Statement stmt = con.statement();
              ResultSet rs = stmt.executeQuery(Constants.FIND_ALL_SESSIONS_SORTED_BY_MOVIE_TITLE);) {
             while (rs.next()) {
@@ -224,7 +239,6 @@ public class SqlSessionDao implements SessionDao {
     }
 
 
-
     @Override
     public List<Session> findAllOrderBy(String columnName) {
         List<Session> sessions = new ArrayList<>();
@@ -245,10 +259,11 @@ public class SqlSessionDao implements SessionDao {
         }
         return sessions;
     }
+
     @Override
-    public int getNumberOfRecords (String filters) {
+    public int getNumberOfRecords(String filters) {
         int numberOfRecords = 0;
-        try ( ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
              PreparedStatement preparedStatement = con.prepareStatement(Constants.COUNT_ALL_SESSIONS_FILTER_BY_SORTED_BY + filters)) {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {

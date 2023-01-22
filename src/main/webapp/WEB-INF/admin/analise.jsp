@@ -13,7 +13,9 @@
 
 <html lang="${param.lang}">
 <c:import url="head-admin.jsp" />
+
 <body>
+
 <div>
  <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
@@ -56,8 +58,8 @@
                   </a>
                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                       <label> <fmt:message key="label.start"/> <input  type="time"   name="time" <br/>
-                       <label> <fmt:message key="label.end"/>  <input  type="time"   name="time" <br/>
+                       <li><label> <fmt:message key="label.start"/> <input  type="time"   name="time" <br/></li>
+                       <li><label> <fmt:message key="label.end"/>  <input  type="time"   name="time" <br/></li>
               </ul>
                </li>
                <li class="nav-item dropdown">
@@ -88,7 +90,7 @@
 </li>
 <li>
               <class="nav-item dropdown">
-                       <a class="btn btn-outline-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                       <a class="btn btn-outline-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                              <fmt:message key="label.sort"/> </a>
                      <ul class="dropdown-menu" aria-label="navbarDropdown">
                      <li><input type="radio" name="orderBy" value="date" /><fmt:message key="label.date"/> </li>
@@ -121,7 +123,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cinema</title>
 </div>
-<h6>schedule-admin</h6>
+<div class="container col-11">
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
 
 
@@ -162,7 +164,7 @@
             </c:forEach>
         </c:otherwise>
     </c:choose>
-
+</div>
     </tbody>
 </table>
   <!-- jQuery -->

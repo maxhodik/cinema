@@ -23,9 +23,11 @@
 <c:if test="${cantUpdate == true}">
     <label class="alert alert-danger"> <fmt:message key="alert.session.cant.update"/></label>
 </c:if>
+    <c:remove var="exception" scope="session"/>
 <c:if test="${cantEdit == true}">
     <label class="alert alert-info"> <fmt:message key="alert.session.cant.edit"/></label>
 </c:if>
+    <c:remove var="exception" scope="session"/>
  <div class="container-fluid">
               <a class="btn btn-secondary" href="${pageContext.request.contextPath}/schedule"><fmt:message key="button.schedule"/></a>
 

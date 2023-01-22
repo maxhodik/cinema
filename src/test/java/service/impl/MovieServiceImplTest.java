@@ -1,6 +1,7 @@
 package service.impl;
 
 import dao.MovieDao;
+import dao.SessionDao;
 import dto.MovieDto;
 import entities.Movie;
 import entities.User;
@@ -26,7 +27,8 @@ class MovieServiceImplTest {
     private final static MovieDto EXPECTED_MOVIE_DTO = new MovieDto(0, "test");
     private final static List<MovieDto> movieDtos = List.of(EXPECTED_MOVIE_DTO);
     private MovieDao movieDao = mock(MovieDao.class);
-    private MovieServiceImpl movieService = new MovieServiceImpl(movieDao);
+    private SessionDao sessionDao= mock(SessionDao.class);
+    private MovieServiceImpl movieService = new MovieServiceImpl(movieDao, sessionDao);
 
     @Test
     void create() throws EntityAlreadyExistException {
@@ -74,7 +76,8 @@ class MovieServiceImplTest {
     }
 
     @Test
-    void findAllOrderBy() { when(movieDao.findAllOrderBy(anyString())).thenReturn(Collections.singletonList(EXPECTED_MOVIE));
+    void findAllOrderBy() {
+        when(movieDao.findAllOrderBy(anyString())).thenReturn(Collections.singletonList(EXPECTED_MOVIE));
         List<MovieDto> actual = movieService.findAllOrderBy(ORDER_BY);
         verify(movieDao).findAllOrderBy(ORDER_BY);
         verifyNoMoreInteractions(movieDao);

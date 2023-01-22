@@ -54,26 +54,26 @@ public class OrderCommand extends MultipleMethodCommand {
     @Override
     public String performPost(HttpServletRequest request) {
         //todo redirect
+        int id = Integer.parseInt(request.getParameter("id"));
         String seats = (request.getParameter("seats"));
         OrderForm orderForm = new OrderForm(seats);
         if (orderValidator.validate(orderForm)) {
             LOGGER.info("Order form not valid");
-            request.setAttribute("errors", true);
-            return "WEB-INF/order.jsp";
+            request.getSession().setAttribute("errors", true);
+            return "redirect:order?id="+id;
         }
-        int id = Integer.parseInt(request.getParameter("id"));
         String userLogin = (String) request.getSession().getAttribute("name");
         int numberOfSeats = Integer.parseInt(seats);
         Order order;
         try {
             order = orderService.submitOrder(id, numberOfSeats, userLogin);
-            if (order == null) {
-                return "WEB-INF/order.jsp";
-            }
+//            if (order == null) {
+//                return "WEB-INF/order.jsp";
+//            }
         } catch (NotEnoughAvailableSeats | EntityAlreadyExistException e) {
             LOGGER.info("Not enough available seats");
-            request.setAttribute("noPlaces", true);
-            return "WEB-INF/order.jsp";
+            request.getSession().setAttribute("noPlaces", true);
+            return "redirect:order?id="+id;
         }
         request.setAttribute("sessionDto", scheduleService.getSessionDto(id));
         request.setAttribute("orderDto", orderService.getOrderDto(order));

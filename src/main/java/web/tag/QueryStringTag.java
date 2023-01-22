@@ -22,7 +22,6 @@ public class QueryStringTag extends TagSupport {
     public int doStartTag() {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         String queryString = request.getQueryString();
-        System.out.println(queryString);
         if (value == null && (queryString == null || queryString.isBlank())) {
             return 0;
         }

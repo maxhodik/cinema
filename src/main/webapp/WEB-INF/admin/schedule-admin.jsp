@@ -52,6 +52,28 @@
   <input class="btn btn-secondary" type="submit" value="<fmt:message key="reset"/>">
       </form>
    </li>
+   <li><form action="schedule">
+                         <class="item dropdown">
+                              <a class="btn btn-outline-secondary dropdown-toggle"  id="Dropdown" role="button" data-bs-toggle="dropdown" >
+                                <fmt:message key="label.sort"/>
+                               </a>
+                              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <thead>
+                                <c:set var="base" value="schedule?"/>
+                             <c:set var="orderByDate" value="orderBy=date"/>
+                             <c:set var="orderByTime" value="orderBy=time"/>
+                             <c:set var="orderByMovie" value="orderBy=movie"/>
+                             <c:set var="orderBySoldSeats" value="orderBy=number_sold_seats"/>
+                             <c:set var="orderBySeats" value="orderBy=number_available_seats"/>
+                             <c:set var="limits" value="&offset=0&records=${records}"/>
+                                <li><a class="dropdown-item" href="${base.concat(orderByDate).concat(limits)}"> <fmt:message key="label.date"/></a></li>
+                                <li><a class="dropdown-item" href="${base.concat(orderByTime).concat(limits)}"> <fmt:message key="label.time"/></a></li>
+                                <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="label.movie"/></a></li>
+                                <li><a class="dropdown-item" href="${base.concat(orderBySoldSeats).concat(limits)}"> <fmt:message key="label.sold_seats"/></a></li>
+                                <li><a class="dropdown-item" href="${base.concat(orderBySeats).concat(limits)}"> <fmt:message key="label.available_seats"/></a><li>
+        </ul>
+          </thead>
+                      </form> </li>
       </a>
               </div>
             </div>
@@ -60,29 +82,9 @@
         <title>Cinema</title>
 </div>
        </form>
-  <form action="schedule">
-                  <class="item dropdown">
-                       <a class="btn btn-outline-secondary dropdown-toggle"  id="Dropdown" role="button" data-bs-toggle="dropdown" >
-                         <fmt:message key="label.sort"/>
-                        </a>
-                       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                         <thead>
-                         <c:set var="base" value="schedule?"/>
-                      <c:set var="orderByDate" value="orderBy=date"/>
-                      <c:set var="orderByTime" value="orderBy=time"/>
-                      <c:set var="orderByMovie" value="orderBy=movie"/>
-                      <c:set var="orderBySoldSeats" value="orderBy=number_sold_seats"/>
-                      <c:set var="orderBySeats" value="orderBy=number_available_seats"/>
-                      <c:set var="limits" value="&offset=0&records=${records}"/>
-                         <li><a class="dropdown-item" href="${base.concat(orderByDate).concat(limits)}"> <fmt:message key="label.date"/></a></li>
-                         <li><a class="dropdown-item" href="${base.concat(orderByTime).concat(limits)}"> <fmt:message key="label.time"/></a></li>
-                         <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="label.movie"/></a></li>
-                         <li><a class="dropdown-item" href="${base.concat(orderBySoldSeats).concat(limits)}"> <fmt:message key="label.sold_seats"/></a></li>
-                         <li><a class="dropdown-item" href="${base.concat(orderBySeats).concat(limits)}"> <fmt:message key="label.available_seats"/></a><li>
- </ul>
-   </thead>
-               </form>
+
       </form>
+      <div class="container col-11">
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
     <thead class="thead-dark">
      <tr>
@@ -94,6 +96,7 @@
      <fmt:message key="label.available_seats"/></th>
        <th scope="col"><fmt:message key="label.sold_seats"/></a></th>
     <th> <fmt:message key="label.status"/></th>
+    <th class="container col-2"></th>
    </div>
        </tr>
 </form>
@@ -130,6 +133,7 @@
     </c:choose>
     </tbody>
 </table>
+</div>
 <c:choose>
  <c:when test="${not empty orderBy}">
            <c:set var="href" scope="request"

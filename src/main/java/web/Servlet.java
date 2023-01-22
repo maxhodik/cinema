@@ -31,8 +31,9 @@ public class Servlet extends HttpServlet {
         UserDao userDao = SqlDaoFactory.createUserDao();
         HallService hallService = new HallServiceImpl(hallDao);
         UserServiceImpl userService = new UserServiceImpl(userDao, new PasswordEncoderService());
-        MovieServiceImpl movieService = new MovieServiceImpl(movieDao);
+        MovieServiceImpl movieService = new MovieServiceImpl(movieDao,sessionDao);
         ScheduleServiceImpl scheduleService = new ScheduleServiceImpl(sessionDao, hallService, movieService, orderService);
+
         Pagination paginate = new Pagination();
         ScheduleCommand scheduleCommand = new ScheduleCommand(scheduleService, paginate);
         MovieFormValidator movieValidator = new MovieFormValidator();
@@ -42,7 +43,7 @@ public class Servlet extends HttpServlet {
         commands.put("login", new LoginCommand(userService));
         commands.put("schedule", scheduleCommand);
         commands.put("order", new OrderCommand(new OrderServiceImpl(orderDao,
-                hallDao, hallService, sessionDao, userDao), scheduleService, userService, new OrderFormValidator()));
+                hallService, scheduleService, userService), scheduleService, userService, new OrderFormValidator()));
         commands.put("admin/movie", new MovieCommand(movieService, paginate));
         commands.put("admin/movie/delete", new MovieDeleteCommand(movieService));
         commands.put("admin/movie/update-movie", new MovieUpdateCommand(movieService, movieValidator));

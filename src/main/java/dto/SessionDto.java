@@ -25,17 +25,6 @@ public class SessionDto {
 
     }
 
-//    public SessionDto(int id, String movieName, LocalDate date, LocalTime time) {
-//        this.id = id;
-//        this.movieName = movieName;
-//        this.date = date;
-//        this.time = time;
-//
-//    }
-
-
-
-
     public int getNumberOfSeats() {
         return numberOfSeats;
     }

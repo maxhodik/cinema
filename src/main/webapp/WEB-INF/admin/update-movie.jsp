@@ -15,6 +15,7 @@
 <c:import url="head-admin.jsp"/>
 
 <body>
+<img src="/picture/cinema.jpg" class="figure-img img-fluid rounded">
 <div class="container col-3">
 <h1><fmt:message key="label.update_movie"/></h1><br/>
 
@@ -27,7 +28,7 @@
     <p>Not Valid</p>
     ${movie.id}=id
 </c:if>
-< id:${movie.id} Name:${movie.name}>
+<h2> ${movie.name}</h2>
 <form method="post" action="${pageContext.request.contextPath}/admin/movie/update-movie">
     <label for="name"> <fmt:message key="label.movie"/></label>
     <input hidden type="number" name="id" value="${param.id}"/>

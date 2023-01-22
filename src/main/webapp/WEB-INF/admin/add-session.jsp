@@ -15,11 +15,11 @@
 <c:import url="head-admin.jsp" />
 <body>
 
-<h6>schedule-admin</h6>
-<h6>add-schedule-admin</h6>
+
 <c:if test="${errors}">
     <p>not_valid</p>
 </c:if>
+<div class="container col-11">
 <table class="table table-striped table-responsive-md btn-table table-bordered table-hover">
     <thead class="thead-dark">
     <tr>
@@ -35,6 +35,7 @@
     </thead>
 
     <tbody>
+    <div>
     <c:choose>
         <c:when test="${schedule.isEmpty()}">
             <h2><fmt:message key="alert.orders.list.is.empty"/></h2>

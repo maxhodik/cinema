@@ -1,5 +1,6 @@
 package service.impl;
 
+import command.ScheduleCommand;
 import dao.HallDao;
 import dao.OrderDao;
 import dao.SessionDao;
@@ -9,24 +10,32 @@ import entities.*;
 import exceptions.EntityAlreadyExistException;
 import exceptions.NotEnoughAvailableSeats;
 import exceptions.SaveOrderException;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import persistance.TransactionManagerWrapper;
 import service.HallService;
 import service.OrderService;
+import service.ScheduleService;
+import service.UserService;
 
+import java.sql.SQLException;
 import java.util.List;
 
+
 public class OrderServiceImpl implements OrderService {
+
+    private static final Logger LOGGER = LogManager.getLogger(ScheduleCommand.class);
     private OrderDao orderDao;
     private HallDao hallDao;
     private HallService hallService;
-    private SessionDao sessionDao;
-    private UserDao userDao;
+    private ScheduleService scheduleService;
+    private UserService userService;
 
-    public OrderServiceImpl(OrderDao orderDao, HallDao hallDao, HallService hallService, SessionDao sessionDao, UserDao userDao) {
+    public OrderServiceImpl(OrderDao orderDao, HallService hallService, ScheduleService scheduleService, UserService userService) {
         this.orderDao = orderDao;
-        this.hallDao = hallDao;
         this.hallService = hallService;
-        this.sessionDao = sessionDao;
-        this.userDao = userDao;
+        this.scheduleService = scheduleService;
+        this.userService = userService;
     }
 
     public OrderServiceImpl(OrderDao orderDao) {
@@ -36,28 +45,44 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order submitOrder(int sessionId, int seats, String userLogin) throws NotEnoughAvailableSeats, EntityAlreadyExistException {
-   // todo transaction
-        Session session = sessionDao.findEntityById(sessionId);
-        Hall hall = session.getHall();
-        int hallId = hall.getId();
-        User user = userDao.findEntityByLogin(userLogin);
-        int availableSeats = hall.getNumberAvailableSeats();
-        int numberOfAvailableSeats = availableSeats - seats;
-        if (numberOfAvailableSeats < 0) {
+
+        try {
+            TransactionManagerWrapper.startTransaction();
+            Session session = scheduleService.findEntityById(sessionId);
+            Hall hall = session.getHall();
+
+            int availableSeats = hall.getNumberAvailableSeats();
+            int numberOfAvailableSeats = availableSeats - seats;
+            if (numberOfAvailableSeats < 0) {
+                TransactionManagerWrapper.rollback();
+                LOGGER.info("Transaction rollback, cause: Not enough available seats");
                 throw new NotEnoughAvailableSeats("Not enough available seats");
             }
+            User user = userService.findEntityByLogin(userLogin);
+            Order order = Order.builder()
+                    .state(State.getByNameIgnoringCase("NEW"))
+                    .session(session)
+                    .numberOfSeats(seats)
+                    .user(user)
+                    .price(100).build();
+            if (create(order)) {
+                hall = hallService.changeHallNumberOfAvailableSeats(hall, numberOfAvailableSeats);
+                hallService.update(hall);
+            }
+            TransactionManagerWrapper.commit();
+            LOGGER.info("Order submit success");
+            return order;
+        } catch (SQLException e) {
 
-        Order order = Order.builder()
-                .state(State.getByNameIgnoringCase("NEW"))
-                .session(session)
-                .numberOfSeats(seats)
-                .user(user)
-                .price(100).build();
-        if (create(order)) {
-            hall = hallService.changeHallNumberOfAvailableSeats(hall, numberOfAvailableSeats);
-            hallDao.update(hall);
+            try {
+                TransactionManagerWrapper.rollback();
+                LOGGER.info("Transaction rollback");
+                throw new RuntimeException("Transaction rollback");
+            } catch (SQLException ex) {
+                throw new RuntimeException("Not rollback transaction");
+            }
+
         }
-        return order;
     }
 
     @Override
@@ -66,12 +91,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean create(Order entity) throws SaveOrderException,  EntityAlreadyExistException {
+    public boolean create(Order entity) throws SaveOrderException, EntityAlreadyExistException {
         return orderDao.create(entity);
     }
 
     @Override
-    public boolean update(Order entity) throws  EntityAlreadyExistException {
+    public boolean update(Order entity) throws EntityAlreadyExistException {
         return orderDao.update(entity);
     }
 
@@ -86,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findAllBySessionId(Integer id)  {
+    public List<Order> findAllBySessionId(Integer id) {
         return orderDao.findAllBySessionId(id);
     }
 

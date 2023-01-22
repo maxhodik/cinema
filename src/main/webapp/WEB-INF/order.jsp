@@ -16,7 +16,7 @@
  <head>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-              <a class="navbar-brand"href="/cinema"> <fmt:message key="button.schedule"/></a>
+              <a class="navbar-brand"href="${pageContext.request.contextPath}/schedule"> <fmt:message key="button.schedule"/></a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -28,9 +28,7 @@
                   <li class="nav-item">
                      <a class="nav-link active" aria-current="page"  href="${pageContext.request.contextPath}/register"><fmt:message key="button.registration"/></a>
                    </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                  </li>
+
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                      <fmt:message key="label.language"/>
@@ -40,28 +38,16 @@
                            <li><a class="dropdown-item" href=<my:lang value="ua"/>><fmt:message key="label.lang.ua"/></a></li>
                          </ul>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link disabled" href="?lang=en" tabindex="-1" aria-disabled="true">Disabled</a>
-                  </li>
-                </ul>
-                <form>
-                 <class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <fmt:message key="label.language"/>
-                       </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href=<my:lang value="en"/>><fmt:message key="label.lang.en"/></a></li>
-                            <li><a class="dropdown-item" href=<my:lang value="ua"/>><fmt:message key="label.lang.ua"/></a></li>
-                       </ul>
-                </form>
+                 </ul>
+
               </div>
             </div>
           </nav>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cinema</title>
     </head>
-     <h1>"${param}"</h1>
-            <h1>"${requestScope.queryString}"</h1>
+     <!--<h1>"${param}"</h1>
+            <h1>"${requestScope.queryString}"</h1> --!>
 <body>
 
 <c:if test="${sessionScope.exception == true}">
@@ -70,12 +56,14 @@
 <c:remove var="exception" scope="session"/>
 
 <c:if test="${errors}">
-    <p>Not Valid</p>
+   <label class="alert alert-info"> <fmt:message key="alert.order.form.not.valid"/></label>
+    <c:remove var="errors" scope="session"/>
 </c:if>
 <c:if test="${noPlaces == true}">
     <label class="alert alert-info"> <fmt:message key="alert.no.place"/></label>
+     <c:remove var="noPlaces" scope="session"/>
 </c:if>
-<div class="container">
+<div class="container col-3">
 
 <div class="form-group">
 <label for="Date"><fmt:message key="label.date"/>: ${sessionDto.date} </label>
@@ -87,7 +75,7 @@
 <label for="Movie"> <fmt:message key="label.movie"/>: ${sessionDto.movieName} </label>
 <br>
 <label for="Number of tickets"> <fmt:message key="label.seats"/>: </label>
-<br>
+
 
 <form method="post" action="${pageContext.request.contextPath}/order">
   <div class="value-button" id="decrease" onclick="decreaseValue()" value="Decrease Value"></div>
@@ -103,6 +91,7 @@
 
 <button>  <a href="${pageContext.request.contextPath}/schedule" class="btn btn-danger"> <fmt:message key="button.cancel"/>  </a>
 
+</div>
 </div>
 </div>
 
