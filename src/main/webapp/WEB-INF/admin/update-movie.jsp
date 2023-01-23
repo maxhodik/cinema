@@ -15,7 +15,8 @@
 <c:import url="head-admin.jsp"/>
 
 <body>
-<img src="/picture/cinema.jpg" class="figure-img img-fluid rounded">
+<img src='<c:url value="/picture/cinema.jpg"></c:url>' />
+<img src="${pageContext.request.contextPath}/picture/cinema.jpg" class="figure-img img-fluid rounded">
 <div class="container col-3">
 <h1><fmt:message key="label.update_movie"/></h1><br/>
 

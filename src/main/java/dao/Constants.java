@@ -4,7 +4,7 @@ public class Constants {
     public static final String FIND_ALL_USERS = "SELECT * FROM mydb.users";
 
     public static final String FIND_USERS_BY_ID = "SELECT * FROM mydb.users WHERE id =?";
-    public static final String FIND_USERS_BY_LOGIN = "SELECT * FROM mydb.users WHERE login =?";
+    public static final String FIND_USER_BY_LOGIN = "SELECT * FROM mydb.users WHERE login =?";
     public static final String FIND_ALL_USERS_BY_ROLE = "SELECT * FROM mydb.users WHERE role =?";
     public static final String DELETE_USERS_BY_LOGIN = "DELETE FROM mydb.users WHERE login =?";
     public static final String INSERT_INTO_USERS = "INSERT INTO `mydb`.`users`(`login`, `password`, `role`) VALUES (?, ?, ?)";

@@ -10,12 +10,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.stubbing.OngoingStubbing;
 import persistance.ConnectionWrapper;
 import persistance.TransactionManagerWrapper;
 
 import java.sql.*;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -143,13 +141,74 @@ class SqlUserDaoTest {
         assertNotNull(rs);
         assertEquals(EXPECTED_USER, actual.get(0));
     }
-//     try (PreparedStatement preparedStatement = prepareMocks(dataSource)) {
-//        ResultSet resultSet = mock(ResultSet.class);
-//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-//        prepareResultSet(resultSet);
-//        List<User> users = userDAO.getAll();
-//        assertEquals(ONE, users.size());
-//        assertEquals(getTestUser(), users.get(0));
+
+
+    @Test
+    void findAllByRole() throws SQLException {
+        ResultSet rs = mock(ResultSet.class);
+        when(con.prepareStatement(Constants.FIND_ALL_USERS_BY_ROLE)).thenReturn(stmt);
+        UserMapper mapper = mock(UserMapper.class);
+        when(stmt.executeQuery()).thenReturn(rs);
+        prepareResultSet(rs);
+        when(mapper.extractFromResultSet(rs)).thenReturn(EXPECTED_USER);
+        List<User> actual = userDao.findAllByRole(Role.USER);
+        assertEquals(1, actual.size());
+        assertNotNull(rs);
+        assertEquals(EXPECTED_USER, actual.get(0));
+    }
+
+    @Test
+    void findAllByRoleException() throws SQLException {
+        when(con.prepareStatement(Constants.FIND_ALL_USERS_BY_ROLE)).thenReturn(stmt);
+        when(stmt.executeQuery()).thenThrow(RuntimeException.class);
+        Assertions.assertThrows(RuntimeException.class, () ->
+                userDao.findAllByRole(Role.USER));
+    }
+
+    @Test
+    void findEntityById() throws SQLException {
+        ResultSet rs = mock(ResultSet.class);
+        when(con.prepareStatement(Constants.FIND_USERS_BY_ID)).thenReturn(stmt);
+        UserMapper mapper = mock(UserMapper.class);
+        when(stmt.executeQuery()).thenReturn(rs);
+        prepareResultSet(rs);
+        when(mapper.extractFromResultSet(rs)).thenReturn(EXPECTED_USER);
+        User actual = userDao.findEntityById(0);
+        assertNotNull(rs);
+        assertEquals(EXPECTED_USER, actual);
+    }
+
+    @Test
+    void findEntityByIdException() throws SQLException {
+        when(con.prepareStatement(Constants.FIND_USERS_BY_ID)).thenReturn(stmt);
+        when(stmt.executeQuery()).thenThrow(RuntimeException.class);
+        Assertions.assertThrows(RuntimeException.class, () ->
+                userDao.findEntityById(0));
+    }
+
+    @Test
+    void findEntityByLogin() throws SQLException {
+        ResultSet rs = mock(ResultSet.class);
+        when(con.prepareStatement(Constants.FIND_USER_BY_LOGIN)).thenReturn(stmt);
+        UserMapper mapper = mock(UserMapper.class);
+        when(stmt.executeQuery()).thenReturn(rs);
+        prepareResultSet(rs);
+        when(mapper.extractFromResultSet(rs)).thenReturn(EXPECTED_USER);
+        User actual = userDao.findEntityByLogin("test");
+        assertNotNull(rs);
+        assertEquals(EXPECTED_USER, actual);
+    }
+
+    @Test
+    void findEntityByLoginException() throws SQLException {
+        when(con.prepareStatement(Constants.FIND_USER_BY_LOGIN)).thenReturn(stmt);
+        when(stmt.executeQuery()).thenThrow(RuntimeException.class);
+        Assertions.assertThrows(RuntimeException.class, () ->
+                userDao.findEntityByLogin("test"));
+    }
+
+
+
 
     private static void prepareResultSet(ResultSet resultSet) throws SQLException {
         when(resultSet.next()).thenReturn(true).thenReturn(false);
@@ -157,23 +216,5 @@ class SqlUserDaoTest {
         when(resultSet.getString("login")).thenReturn("test");
         when(resultSet.getString("password")).thenReturn("password");
         when(resultSet.getString("role")).thenReturn(String.valueOf(Role.USER));
-    }
-
-//    @Test
-//    void findAllByRole() throws SQLException {
-//        List<User> users=null;
-//        when(con.prepareStatement(anyString())).thenReturn(stmt);
-//        ResultSet resultSet = mock(ResultSet.class);
-//        when(stmt.executeQuery()).thenReturn(resultSet);
-//        List<User> actual = userDao.findAllByRole(Role.USER);
-//        assertEquals(1, actual.size());
-//        assertEquals(USER, actual.get(0));
-//    }
-
-    private static User resultSetMapper(ResultSet rs) throws SQLException {
-        return User.builder().id(rs.getInt(0))
-                .login(rs.getString("login"))
-                .password(rs.getString("password"))
-                .role(Role.getByNameIgnoringCase(rs.getString("role"))).build();
     }
 }

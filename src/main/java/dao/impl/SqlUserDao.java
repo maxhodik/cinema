@@ -1,15 +1,12 @@
 package dao.impl;
 
-import exceptions.DBException;
 import dao.UserDao;
 import dao.maper.ObjectMapper;
 import dao.maper.UserMapper;
 import dao.Constants;
 import entities.Role;
 import entities.User;
-import exceptions.DBConnectionException;
 import exceptions.EntityAlreadyExistException;
-import persistance.ConnectionPoolHolder;
 import persistance.ConnectionWrapper;
 import persistance.TransactionManagerWrapper;
 
@@ -75,7 +72,7 @@ public class SqlUserDao implements UserDao {
     public User findEntityByLogin(String login)  {
 
         try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
-             PreparedStatement stmt = con.prepareStatement(Constants.FIND_USERS_BY_LOGIN);) {
+             PreparedStatement stmt = con.prepareStatement(Constants.FIND_USER_BY_LOGIN);) {
             stmt.setString(1, login);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {

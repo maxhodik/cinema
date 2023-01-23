@@ -33,7 +33,7 @@ public class SqlHallDao implements HallDao {
                 halls.add(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Users not found", e);
+            throw new RuntimeException("Hall not found", e);
         }
         return halls;
     }

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class Session {
     private int id;
@@ -49,6 +50,18 @@ public class Session {
                 .toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Session session = (Session) o;
+        return id == session.id && Objects.equals(movie, session.movie) && Objects.equals(hall, session.hall) && Objects.equals(date, session.date) && Objects.equals(time, session.time) && status == session.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, movie, hall, date, time, status);
+    }
 
     public int getId() {
         return id;

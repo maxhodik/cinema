@@ -18,6 +18,12 @@
 </c:if>
 
 <fmt:setBundle basename="message"/>
+
+<figure class="text-center">
+    <img src="${pageContext.request.contextPath}/picture/cinema.jpg"/>
+</figure>
+
+
 <h1>404</h1>
 <a aria-pressed="true" class="btn button" role="button" href="${pageContext.request.contextPath}/index.jsp"> <fmt:message
         key="button.main"/></a

@@ -115,6 +115,9 @@ public class SqlMovieDao implements MovieDao {
                 stmt.setString(1, entity.getName());
                 if (stmt.executeUpdate() != 0) {
                     con.commit();
+                }else {
+                    con.rollback();
+                    return false;
                 }
             }
         } catch (SQLException e) {
@@ -154,7 +157,7 @@ public class SqlMovieDao implements MovieDao {
             return stmt.executeUpdate() != 0;
 
         } catch (SQLIntegrityConstraintViolationException ex) {
-            throw new EntityAlreadyExistException("Movie already exists, name " + entity.getName(), ex);
+            throw new EntityAlreadyExistException("Movie already exists, name: " + entity.getName(), ex);
         } catch (SQLException e) {
             throw new RuntimeException("Exception in DB", e);
         }
