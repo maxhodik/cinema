@@ -23,10 +23,6 @@ public class ScheduleDeleteCommand extends MultipleMethodCommand {
 
     @Override
     protected String performPost(HttpServletRequest request) {
-//        int id = Integer.parseInt(request.getParameter("id"));
-//        Session entityById = scheduleService.findEntityById(id);
-//        scheduleService.delete(entityById);
-//        return "redirect:schedule?admin=true";
         int id = Integer.parseInt(request.getParameter("id"));
         Session session = scheduleService.findEntityById(id);
         scheduleService.updateStatus(session);

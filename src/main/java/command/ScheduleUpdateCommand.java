@@ -37,7 +37,8 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
         Status status = scheduleService.findEntityById(id).getStatus();
         if (status.equals(Status.CANCELED)) {
             request.setAttribute("cantUpdate", true);
-            LOGGER.info("Can't update. This session canceled");
+//            LOGGER.info("dasdas", id);
+            LOGGER.info(String.format("Cannot update session %s cause status is canceled", id));
             return "/WEB-INF/admin/unsuccess-update-session.jsp";
         }
         int numberOfSoldSeats = scheduleService.findEntityById(id).getHall().getNumberOfSoldSeats();
@@ -45,7 +46,7 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
             request.setAttribute("cantEdit", true);
             LOGGER.info("You have tickets sold on this session");
             return "/WEB-INF/admin/unsuccess-update-session.jsp";
-                }
+        }
         SessionDto sessionDto = scheduleService.getSessionDto(id);
         request.setAttribute("sessionDto", sessionDto);
         List<String> movieDtoList = getMovieDtoList();
@@ -63,7 +64,7 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
         SessionForm sessionForm = new SessionForm(sessionId, sessionDate, sessionTime, movieName, capacity);
         if (sessionValidator.validate(sessionForm)) {
             request.getSession().setAttribute("errors", true);
-           return "redirect:admin/update-session?id="+sessionId;
+            return "redirect:admin/update-session?id=" + sessionId;
         }
 
         int id = Integer.parseInt(sessionId);
@@ -86,11 +87,11 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
             LOGGER.info("Can't update. This session canceled");
             throw new IllegalArgumentException();
         }
-    int numberSeats= Integer.parseInt(capacity);
-    SessionDto sessionDto = new SessionDto(id, movieName, date, time, status, numberSeats);
+        int numberSeats = Integer.parseInt(capacity);
+        SessionDto sessionDto = new SessionDto(id, movieName, date, time, status, numberSeats);
         scheduleService.update(sessionDto);
-        return"redirect:schedule";
-}
+        return "redirect:schedule";
+    }
 
     private List<String> getMovieDtoList() {
         List<Movie> movies = movieService.findAll();

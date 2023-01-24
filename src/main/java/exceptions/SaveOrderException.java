@@ -7,4 +7,7 @@ public class SaveOrderException extends RuntimeException {
         super(message);
     }
 
+    public SaveOrderException(String message) {
+        super(message);
+    }
 }

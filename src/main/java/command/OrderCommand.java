@@ -54,30 +54,30 @@ public class OrderCommand extends MultipleMethodCommand {
     @Override
     public String performPost(HttpServletRequest request) {
         //todo redirect
-        int id = Integer.parseInt(request.getParameter("id"));
+        int sessionId = Integer.parseInt(request.getParameter("id"));
         String seats = (request.getParameter("seats"));
         OrderForm orderForm = new OrderForm(seats);
         if (orderValidator.validate(orderForm)) {
             LOGGER.info("Order form not valid");
             request.getSession().setAttribute("errors", true);
-            return "redirect:order?id="+id;
+            return "redirect:order?id="+sessionId;
         }
         String userLogin = (String) request.getSession().getAttribute("name");
         int numberOfSeats = Integer.parseInt(seats);
         Order order;
         try {
-            order = orderService.submitOrder(id, numberOfSeats, userLogin);
-//            if (order == null) {
-//                return "WEB-INF/order.jsp";
-//            }
+            order = orderService.submitOrder(sessionId, numberOfSeats, userLogin);
+
         } catch (NotEnoughAvailableSeats | EntityAlreadyExistException e) {
             LOGGER.info("Not enough available seats");
             request.getSession().setAttribute("noPlaces", true);
-            return "redirect:order?id="+id;
+            return "redirect:order?id="+sessionId;
         }
-        request.setAttribute("sessionDto", scheduleService.getSessionDto(id));
-        request.setAttribute("orderDto", orderService.getOrderDto(order));
-        return "WEB-INF/ticket.jsp";
+//        request.setAttribute("sessionDto", scheduleService.getSessionDto(sessionId));
+//        request.setAttribute("orderDto", orderService.getOrderDto(order));
+        int orderId= order.getId();
+       return "redirect:ticket?id="+orderId;
+
     }
 
 

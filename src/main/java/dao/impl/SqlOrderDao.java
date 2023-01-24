@@ -7,6 +7,8 @@ import entities.*;
 import exceptions.DBConnectionException;
 import exceptions.DBException;
 import exceptions.SaveOrderException;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import persistance.ConnectionPoolHolder;
 import persistance.ConnectionWrapper;
 import persistance.TransactionManagerWrapper;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SqlOrderDao implements OrderDao {
+    private static final Logger LOGGER = LogManager.getLogger(SqlOrderDao.class);
     private ObjectMapper<Order> mapper;
     private ObjectMapper<Session> sessionMapper;
     private ObjectMapper<User> userMapper;
@@ -139,6 +142,37 @@ public class SqlOrderDao implements OrderDao {
             throw new RuntimeException("Cannot save order to database cause", e);
         }
         return true;
+    }
+
+    @Override
+    public Order createAndReturnWithId(Order entity) {
+        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();) {
+            try (PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_ORDER, Statement.RETURN_GENERATED_KEYS);) {
+                con.setAutoCommit(false);
+                stmt.setString(1, String.valueOf(entity.getState()));
+                stmt.setInt(2, entity.getNumberOfSeats());
+                stmt.setInt(3, entity.getPrice());
+                stmt.setInt(4, entity.getUser().getId());
+                stmt.setInt(5, entity.getSession().getId());
+                stmt.executeUpdate();
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        entity.setId(generatedKeys.getInt(1));
+                        con.commit();
+                        return entity;
+                    } else {
+                        con.rollback();
+                        LOGGER.info("Transaction rollback. Cannot save order to database cause");
+                        throw new SaveOrderException("Transaction rollback. Cannot save order to database cause");
+                    }
+                }
+            } catch (SQLException e) {
+                con.rollback();
+                throw new RuntimeException("Exception in DB", e);
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException("Exception in DB", ex);
+        }
     }
 
     @Override

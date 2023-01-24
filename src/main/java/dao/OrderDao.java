@@ -9,4 +9,5 @@ public interface OrderDao extends GenericDao<Integer, Order> {
 
     List<Order> findAllBySessionId(Integer id);
     Order findEntityById(Integer id);
+    Order createAndReturnWithId(Order entity);
 }

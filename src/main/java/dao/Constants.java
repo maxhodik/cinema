@@ -31,7 +31,8 @@ public class Constants {
     public static final String INSERT_INTO_SESSIONS = "INSERT INTO sessions (id, `date`, movie_id, hall_id, `time`) VALUES (default,?,?,?,?)";
     public static final String UPDATE_SESSIONS = "UPDATE `mydb`.`sessions` SET `date` = ? , `movie_id` = ? , `hall_id` = ?, `time` = ?, `status` = ? WHERE `id` =?";
     public static final String FIND_ALL_ORDERS = "SELECT * FROM mydb.orders;";
-    public static final String FIND_ORDER_BY_ID = "SELECT * FROM orders WHERE id =?";
+    public static final String FIND_ORDER_BY_ID = "SELECT * FROM orders join users on user_id=users.id join sessions on sessions_id=sessions.id join movies on movie_id=movies.id join halls on hall_id=halls.id WHERE orders.id =?";
+
     public static final String FIND_SESSION_BY_ID = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id WHERE sessions.id=?";
     public static final String DELETE_ORDER_BY_ID = "DELETE FROM orders where id=?";
     public static final String INSERT_INTO_ORDER = "INSERT INTO `mydb`.`orders` (`id`,`state`,`number_of_seats`,`price`,`user_id`,`sessions_id`)VALUES(default,?,?,?,?,?)";

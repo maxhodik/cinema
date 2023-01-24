@@ -1,5 +1,6 @@
 package dao;
 
+import entities.Order;
 import exceptions.DBException;
 import exceptions.DuplicateDBException;
 import exceptions.EntityAlreadyExistException;
@@ -23,6 +24,7 @@ public interface GenericDao<K extends Number, T> {
    abstract boolean create(T entity) throws  EntityAlreadyExistException;
 
    abstract boolean update(T entity) throws  EntityAlreadyExistException;
+
 
 
 }

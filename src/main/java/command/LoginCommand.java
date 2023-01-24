@@ -25,10 +25,7 @@ public class LoginCommand extends MultipleMethodCommand {
 
     @Override
     public String performPost(HttpServletRequest request) {
-        if (request.getSession().getAttribute("name")!=null){
-            request.getSession().setAttribute("name", null);
-            request.getSession().setAttribute("pass", null);
-        }
+        request.getSession().invalidate();
         String name = request.getParameter("name");
         String password = request.getParameter("pass");
         try {
@@ -41,7 +38,6 @@ public class LoginCommand extends MultipleMethodCommand {
         }
         User user = userService.findEntityByLogin(name);
         request.getSession().setAttribute("name", user.getLogin());
-        request.getSession().setAttribute("pass", user.getPassword());
         request.getSession().setAttribute("role", user.getRole());
         request.getSession().setAttribute("success", true);
         LOGGER.info("User logged success role: " + user.getRole());

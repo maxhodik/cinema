@@ -15,7 +15,6 @@ public class ExceptionHandler {
     private String requestType;
 
 
-
     public ExceptionHandler(Exception exception, String page) {
         this.exception = exception;
         this.page = page;
@@ -32,13 +31,13 @@ public class ExceptionHandler {
 
     public String handling(HttpServletRequest request) {
 
-            LOGGER.info(exception.getMessage());
-            request.getSession().setAttribute("exception", true);
-            if (requestType.equals("redirect")) {
-                return "redirect:" + page;
-            }
-            return page;
-}
+        LOGGER.info(exception.getMessage());
+        request.getSession().setAttribute("exception", true);
+        if (requestType.equals("redirect")) {
+            return "redirect:" + page;
+        }
+        return page;
+    }
 }
 
 

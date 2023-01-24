@@ -45,7 +45,16 @@
             </div>
           </nav>
         <title>Cinema</title>
+       <style type="text/css">
+          body{
+
+          background-image: url(https://phonoteka.org/uploads/posts/2022-01/1642994024_51-phonoteka-org-p-kino-fon-dlya-prezentatsii-57.jpg)
+
+        }
+        </style>
+
 </head>
+
 <body>
 
 <h2>

@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
                     .numberOfSeats(seats)
                     .user(user)
                     .price(100).build();
-            if (create(order)) {
+            if (createAndReturnWithId(order)!=null) {
                 hall = hallService.changeHallNumberOfAvailableSeats(hall, numberOfAvailableSeats);
                 hallService.update(hall);
             }
@@ -93,6 +93,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean create(Order entity) throws SaveOrderException, EntityAlreadyExistException {
         return orderDao.create(entity);
+    }
+
+    @Override
+    public Order createAndReturnWithId(Order entity) {
+        return orderDao.createAndReturnWithId(entity);
     }
 
     @Override

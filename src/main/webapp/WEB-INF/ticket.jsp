@@ -12,6 +12,10 @@
 <fmt:setBundle basename="message"/>
 
 <html lang="${param.lang}">
+ <style type="text/css">
+          body{
+          background-image: urlhttps://phonoteka.org/uploads/posts/2022-01/1642993993_8-phonoteka-org-p-kino-fon-dlya-prezentatsii-8.png)
+</style>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
