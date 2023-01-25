@@ -30,8 +30,9 @@ public class SessionFormValidator implements Validator<SessionForm> {
         int capacity = Integer.parseInt(form.getCapacity());
         LocalDate date = LocalDate.parse(form.getSessionDate());
         LocalTime time = LocalTime.parse(form.getSessionTime());
-        LocalDate currentDate = LocalDate.now();
+//        LocalDate currentDate = LocalDate.now();
         LocalDateTime currentDataTime = LocalDateTime.now();
+        LocalDate currentDate = LocalDate.from(currentDataTime);
         LocalDateTime formDataTime = LocalDateTime.of(date, time);
         if (currentDataTime.isAfter(formDataTime)) {
             return true;

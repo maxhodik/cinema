@@ -14,7 +14,7 @@
 <html lang="${param.lang}">
  <style type="text/css">
           body{
-          background-image: urlhttps://phonoteka.org/uploads/posts/2022-01/1642993993_8-phonoteka-org-p-kino-fon-dlya-prezentatsii-8.png)
+          background-image: url(https://phonoteka.org/uploads/posts/2022-01/1642994019_18-phonoteka-org-p-kino-fon-dlya-prezentatsii-20.jpg)
 </style>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -47,8 +47,8 @@
 
 
 <body>
+<div class="container col-3" >
 
-<div class="container">
 
 <div class="form-group">
 <label for="Login"><fmt:message key="label.login"/>: ${orderDto.login}</label>
@@ -70,6 +70,5 @@
 
 </div>
 </div>
-
 </body>
 </html>

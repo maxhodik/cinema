@@ -46,6 +46,11 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cinema</title>
     </head>
+    <html lang="${param.lang}">
+     <style type="text/css">
+              body{
+              background-image: url(https://phonoteka.org/uploads/posts/2022-01/1642994019_18-phonoteka-org-p-kino-fon-dlya-prezentatsii-20.jpg)
+    </style>
      <!--<h1>"${param}"</h1>
             <h1>"${requestScope.queryString}"</h1> --!>
 <body>

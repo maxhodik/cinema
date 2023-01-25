@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ScheduleUpdateCommand extends MultipleMethodCommand {
-    private static final Logger LOGGER = LogManager.getLogger(MovieCommand.class);
+    private static final Logger LOGGER = LogManager.getLogger(ScheduleUpdateCommand.class);
     private ScheduleService scheduleService;
     private MovieService movieService;
     private HallService hallService;
@@ -37,14 +37,13 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
         Status status = scheduleService.findEntityById(id).getStatus();
         if (status.equals(Status.CANCELED)) {
             request.setAttribute("cantUpdate", true);
-//            LOGGER.info("dasdas", id);
             LOGGER.info(String.format("Cannot update session %s cause status is canceled", id));
             return "/WEB-INF/admin/unsuccess-update-session.jsp";
         }
         int numberOfSoldSeats = scheduleService.findEntityById(id).getHall().getNumberOfSoldSeats();
         if (numberOfSoldSeats > 0) {
             request.setAttribute("cantEdit", true);
-            LOGGER.info("You have tickets sold on this session");
+            LOGGER.info(String.format("You have tickets sold on this session %s", id));
             return "/WEB-INF/admin/unsuccess-update-session.jsp";
         }
         SessionDto sessionDto = scheduleService.getSessionDto(id);
@@ -66,11 +65,9 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
             request.getSession().setAttribute("errors", true);
             return "redirect:admin/update-session?id=" + sessionId;
         }
-
         int id = Integer.parseInt(sessionId);
         LocalDate date = LocalDate.parse(sessionDate);
         LocalTime time = LocalTime.parse(sessionTime);
-
         if (movieService.findEntityByName(movieName) == null) {
             request.setAttribute("movieDoesntExist", true);
             LOGGER.info("Can't update this session this movie name doesn't exist");
@@ -78,7 +75,6 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
         }
         int numberOfSoldSeats = scheduleService.findEntityById(id).getHall().getNumberOfSoldSeats();
         if (numberOfSoldSeats > 0) {
-            //todo message
             LOGGER.info("You have  tickets sold on this session");
             request.setAttribute("message", numberOfSoldSeats);
         }
@@ -90,6 +86,7 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
         int numberSeats = Integer.parseInt(capacity);
         SessionDto sessionDto = new SessionDto(id, movieName, date, time, status, numberSeats);
         scheduleService.update(sessionDto);
+        LOGGER.info(String.format("Session %s updated", id));
         return "redirect:schedule";
     }
 

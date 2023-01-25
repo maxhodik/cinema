@@ -187,6 +187,7 @@ public class SqlOrderDao implements OrderDao {
             stmt.setInt(6, entity.getId());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
+            LOGGER.error("Exception in db", e);
             throw new RuntimeException("Exception in DB", e);
         }
     }

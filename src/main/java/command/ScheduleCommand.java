@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static command.Operation.*;
 
@@ -41,6 +42,8 @@ public class ScheduleCommand extends MultipleMethodCommand {
         String orderBy = request.getParameter("orderBy");
         String[] select = request.getParameterValues("number_available_seats");
         String[] status = request.getParameterValues("status");
+        String[] movies = request.getParameterValues("movie");
+        addFilterIfNeeded(movies, filters, "movie", IN);
         String[] dateTime = null;
         if (request.getSession().getAttribute("role") != Role.ADMIN) {
             dateTime = new String[]{String.valueOf(LocalDateTime.now())};
@@ -63,7 +66,9 @@ public class ScheduleCommand extends MultipleMethodCommand {
             String limits = setLimits(request);
 
         List<SessionAdminDto> sessionDtoList = scheduleService.findAllFilterByAndOrderBy(filters, orderBy, limits);
+        List<String> movieDtoList = getMovieDtoList(sessionDtoList);
         request.setAttribute("sessionAdminDto", sessionDtoList);
+        request.setAttribute("movieDto", movieDtoList);
         if (request.getSession().getAttribute("role") == Role.ADMIN) {
             return "WEB-INF/admin/schedule-admin.jsp";
         }
@@ -93,6 +98,13 @@ public class ScheduleCommand extends MultipleMethodCommand {
         Optional<Filter> filterByColumn = filters.stream().filter(filter -> filter.getColumn().equals(columnName)).findFirst();
         filterByColumn.ifPresent(filter -> filter.setValues(List.of(filterValues)));
     }
+    private static List<String> getMovieDtoList(List<SessionAdminDto> sessionDtoList) {
+        List<String> movieDtoList = sessionDtoList.stream().map(x -> x.getMovieName())
+                .distinct()
+                .collect(Collectors.toList());
+        return movieDtoList;
+    }
+
 
     private String setLimits(HttpServletRequest request) {
         String offset = request.getParameter("offset");

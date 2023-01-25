@@ -62,7 +62,11 @@
                        <title>Cinema</title>
                    </head>
 </head>
-
+<html lang="${param.lang}">
+ <style type="text/css">
+          body{
+          background-image: url(https://phonoteka.org/uploads/posts/2022-01/1642994019_18-phonoteka-org-p-kino-fon-dlya-prezentatsii-20.jpg)
+</style>
 <body>
 
 <div class="container col-3">
