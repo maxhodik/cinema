@@ -11,8 +11,8 @@ public interface HallService {
     Hall findEntityById(Integer id) ;
      boolean delete(Hall entity);
      boolean create(Hall entity) throws EntityAlreadyExistException;
-    boolean update(Hall entity) throws  EntityAlreadyExistException;
-    Hall changeHallCapacity(Hall hallToChange, int newCapacity) throws  EntityAlreadyExistException;
+    boolean update(Hall entity) throws EntityAlreadyExistException;
+    Hall changeHallCapacity(Hall hallToChange, int newCapacity) throws EntityAlreadyExistException;
     Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats) throws EntityAlreadyExistException;
 
     Hall createWithCapacity(int seatsCapacity) ;

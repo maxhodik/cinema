@@ -1,20 +1,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page isELIgnored="false" %>
-<%@ taglib prefix="my" uri = "../tags/lang.tld"%>
-<c:if test="${not empty param.lang}">
-    <fmt:setLocale value="${param.lang}" scope="session"/>
-</c:if>
+  <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+      <%@ page isELIgnored="false" %>
+        <%@ taglib prefix="my" uri="../tags/lang.tld" %>
+          <c:if test="${not empty param.lang}">
+            <fmt:setLocale value="${param.lang}" scope="session" />
+          </c:if>
 
-<fmt:setBundle basename="message"/>
+          <fmt:setBundle basename="message" />
 
-<html lang="${param.lang}">
+          <html lang="${param.lang}">
 
-<head>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-        <!-- <h1>"${param}"</h1>
+          <head>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+              <div class="container-fluid">
+                <!-- <h1>"${param}"</h1>
             <h1>"${requestScope.queryString}"</h1> --!>
               <a class="navbar-brand"href="/cinema"> <fmt:message key="label.mainPage"/></a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

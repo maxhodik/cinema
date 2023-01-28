@@ -1,5 +1,7 @@
 package exceptions;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 public class EntityAlreadyExistException extends Exception {
     public EntityAlreadyExistException() {
     }
@@ -11,8 +13,8 @@ public class EntityAlreadyExistException extends Exception {
     public EntityAlreadyExistException(String message, Throwable cause) {
         super(message, cause);
     }
-    public EntityAlreadyExistException(String message, Throwable cause, int code) {
-        super(message, cause);
-    }
 
+    public EntityAlreadyExistException(SQLIntegrityConstraintViolationException ex) {
+
+    }
 }

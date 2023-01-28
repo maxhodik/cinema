@@ -20,8 +20,8 @@ public class PasswordEncoderService {
                 sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
             }return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.warn("Password encode error");
-            throw new PasswordEncodeException("Password encode error");
+            LOGGER.warn("Password encode error",e);
+            throw new PasswordEncodeException(e);
         }
     }
 }

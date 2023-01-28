@@ -104,18 +104,18 @@ public class MovieServiceImpl implements MovieService {
     }
 
 
-    private String getSqlColumn(String columnName) {
-        String sqlColumn = null;
-        try {
-            if (columnName != null) {
-                ResourceBundle bundle = ResourceBundle.getBundle("mapping");
-                sqlColumn = bundle.getString(columnName);
-            }
-        } catch (MissingResourceException e) {
-            return null;
-        }
-        return sqlColumn;
-    }
+//    private String getSqlColumn(String columnName) {
+//        String sqlColumn = null;
+//        try {
+//            if (columnName != null) {
+//                ResourceBundle bundle = ResourceBundle.getBundle("mapping");
+//                sqlColumn = bundle.getString(columnName);
+//            }
+//        } catch (MissingResourceException e) {
+//            return null;
+//        }
+//        return sqlColumn;
+//    }
 
     public int getNumberOfRecords() {
         int numberOfRecords;

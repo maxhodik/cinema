@@ -1,5 +1,7 @@
 package web.form;
 
+import java.util.Objects;
+
 public class UserForm {
     String login;
     String password;
@@ -23,5 +25,18 @@ public class UserForm {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserForm userForm = (UserForm) o;
+        return Objects.equals(login, userForm.login) && Objects.equals(password, userForm.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(login, password);
     }
 }

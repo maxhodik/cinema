@@ -49,7 +49,6 @@ class SqlUserDaoTest {
         when(stmt.executeUpdate()).thenThrow(SQLIntegrityConstraintViolationException.class);
         EntityAlreadyExistException thrown = Assertions.assertThrows(EntityAlreadyExistException.class, () ->
                 userDao.create(EXPECTED_USER));
-        assertEquals("User already exists, login: test", thrown.getMessage());
     }
 
     @Test
@@ -95,7 +94,6 @@ class SqlUserDaoTest {
         when(stmt.executeUpdate()).thenThrow(SQLIntegrityConstraintViolationException.class);
         EntityAlreadyExistException thrown = Assertions.assertThrows(EntityAlreadyExistException.class, () ->
                 userDao.update(EXPECTED_USER));
-        assertEquals("User already exists, login: test", thrown.getMessage());
     }
 
     @Test

@@ -30,7 +30,6 @@ public class LoginCommand extends MultipleMethodCommand {
         String password = request.getParameter("pass");
         try {
             userService.login(name, password);
-
         } catch (UserNotFoundException e) {
             ExceptionHandler handler = new ExceptionHandler(e, "login","redirect");
             LOGGER.info("User not found with name=" + name);
@@ -43,8 +42,6 @@ public class LoginCommand extends MultipleMethodCommand {
         LOGGER.info("User logged success role: " + user.getRole());
         return "redirect:index.jsp";
     }
-
-
 }
 
 

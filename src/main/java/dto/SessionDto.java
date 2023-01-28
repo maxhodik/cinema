@@ -1,10 +1,12 @@
 package dto;
 
 import entities.Status;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class SessionDto {
     private int id;
@@ -79,5 +81,31 @@ public class SessionDto {
 
     public void setTime(LocalTime time) {
         this.time = time;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SessionDto that = (SessionDto) o;
+        return id == that.id && numberOfSeats == that.numberOfSeats && Objects.equals(movieName, that.movieName) && Objects.equals(date, that.date) && Objects.equals(time, that.time) && status == that.status && dayOfWeek == that.dayOfWeek;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, movieName, date, time, status, numberOfSeats, dayOfWeek);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("movieName", movieName)
+                .append("date", date)
+                .append("time", time)
+                .append("status", status)
+                .append("numberOfSeats", numberOfSeats)
+                .append("dayOfWeek", dayOfWeek)
+                .toString();
     }
 }

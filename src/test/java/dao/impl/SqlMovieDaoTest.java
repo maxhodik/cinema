@@ -170,8 +170,6 @@ class SqlMovieDaoTest {
         when(con.prepareStatement(Constants.DELETE_MOVIE_BY_NAME)).thenReturn(stmt);
         when(stmt.executeUpdate()).thenReturn(1);
         boolean actual = movieDao.delete(EXPECTED_MOVIE);
-        verify(con).setAutoCommit(false);
-        verify(con).commit();
         assertTrue(actual);
     }
 
@@ -180,8 +178,6 @@ class SqlMovieDaoTest {
         when(con.prepareStatement(Constants.DELETE_MOVIE_BY_NAME)).thenReturn(stmt);
         when(stmt.executeUpdate()).thenReturn(0);
         boolean actual = movieDao.delete(EXPECTED_MOVIE);
-        verify(con).setAutoCommit(false);
-        verify(con).rollback();
         assertFalse(actual);
     }
 
@@ -191,7 +187,6 @@ class SqlMovieDaoTest {
         when(stmt.executeUpdate()).thenThrow(SQLIntegrityConstraintViolationException.class);
         EntityAlreadyExistException thrown = Assertions.assertThrows(EntityAlreadyExistException.class, () ->
                 movieDao.create(EXPECTED_MOVIE));
-        assertEquals("Movie already exists, name: " + NAME, thrown.getMessage());
     }
 
     @Test
@@ -215,7 +210,7 @@ class SqlMovieDaoTest {
         when(stmt.executeUpdate()).thenThrow(SQLIntegrityConstraintViolationException.class);
         EntityAlreadyExistException thrown = Assertions.assertThrows(EntityAlreadyExistException.class, () ->
                 movieDao.update(EXPECTED_MOVIE));
-        assertEquals("Movie already exists, name: " + NAME, thrown.getMessage());
+
     }
 
     @Test

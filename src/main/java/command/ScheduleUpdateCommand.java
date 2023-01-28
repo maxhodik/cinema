@@ -5,10 +5,13 @@ import entities.Movie;
 import entities.Status;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import service.HallService;
 import service.MovieService;
 import service.ScheduleService;
+import web.form.IdForm;
 import web.form.SessionForm;
+import web.form.validation.IdValidator;
 import web.form.validation.SessionFormValidator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,34 +26,44 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
     private MovieService movieService;
     private HallService hallService;
     private SessionFormValidator sessionValidator;
+    private IdValidator idValidator;
 
-    public ScheduleUpdateCommand(ScheduleService scheduleService, MovieService movieService, HallService hallService, SessionFormValidator sessionValidator) {
+    public ScheduleUpdateCommand(ScheduleService scheduleService, MovieService movieService, HallService hallService,
+                                 SessionFormValidator sessionValidator, IdValidator idValidator) {
         this.scheduleService = scheduleService;
         this.movieService = movieService;
         this.hallService = hallService;
         this.sessionValidator = sessionValidator;
+        this.idValidator=idValidator;
     }
 
     @Override
     protected String performGet(HttpServletRequest request) {
-        int id = Integer.parseInt(request.getParameter("id"));
+        int id = getId(request);
         Status status = scheduleService.findEntityById(id).getStatus();
         if (status.equals(Status.CANCELED)) {
             request.setAttribute("cantUpdate", true);
             LOGGER.info(String.format("Cannot update session %s cause status is canceled", id));
             return "/WEB-INF/admin/unsuccess-update-session.jsp";
         }
-        int numberOfSoldSeats = scheduleService.findEntityById(id).getHall().getNumberOfSoldSeats();
-        if (numberOfSoldSeats > 0) {
-            request.setAttribute("cantEdit", true);
-            LOGGER.info(String.format("You have tickets sold on this session %s", id));
-            return "/WEB-INF/admin/unsuccess-update-session.jsp";
-        }
+        String x = IsSoldTickets(request, id);
+        if (x != null) return x;
         SessionDto sessionDto = scheduleService.getSessionDto(id);
         request.setAttribute("sessionDto", sessionDto);
         List<String> movieDtoList = getMovieDtoList();
         request.setAttribute("movieDto", movieDtoList);
         return "/WEB-INF/admin/update-session.jsp";
+    }
+
+    private int getId(HttpServletRequest request) {
+        String sessionId = request.getParameter("id");
+        IdForm idForm  = new IdForm(sessionId);
+        if (idValidator.validate(idForm)){
+            LOGGER.error("Illegal movie id");
+            throw new IllegalArgumentException();
+        }
+        int id= Integer.parseInt(sessionId);
+        return id;
     }
 
     @Override
@@ -73,14 +86,11 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
             LOGGER.info("Can't update this session this movie name doesn't exist");
             return "/WEB-INF/admin/update-session.jsp";
         }
-        int numberOfSoldSeats = scheduleService.findEntityById(id).getHall().getNumberOfSoldSeats();
-        if (numberOfSoldSeats > 0) {
-            LOGGER.info("You have  tickets sold on this session");
-            request.setAttribute("message", numberOfSoldSeats);
-        }
+        String x = IsSoldTickets(request, id);
+        if (x != null) return x;
         Status status = scheduleService.findEntityById(id).getStatus();
         if (status.equals(Status.CANCELED)) {
-            LOGGER.info("Can't update. This session canceled");
+            LOGGER.error("Can't update. This session canceled");
             throw new IllegalArgumentException();
         }
         int numberSeats = Integer.parseInt(capacity);
@@ -88,6 +98,17 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
         scheduleService.update(sessionDto);
         LOGGER.info(String.format("Session %s updated", id));
         return "redirect:schedule";
+    }
+
+    @Nullable
+    private String IsSoldTickets(HttpServletRequest request, int id) {
+        int numberOfSoldSeats = scheduleService.findEntityById(id).getHall().getNumberOfSoldSeats();
+        if (numberOfSoldSeats > 0) {
+            request.setAttribute("cantEdit", true);
+            LOGGER.info(String.format("You have tickets sold on this session %s", id));
+            return "/WEB-INF/admin/unsuccess-update-session.jsp";
+        }
+        return null;
     }
 
     private List<String> getMovieDtoList() {

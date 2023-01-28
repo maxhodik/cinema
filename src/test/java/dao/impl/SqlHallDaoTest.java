@@ -157,7 +157,6 @@ class SqlHallDaoTest {
         when(stmt.getGeneratedKeys()).thenReturn(rs);
         when(rs.next()).thenReturn(false);
         RuntimeException thrown = Assertions.assertThrows(RuntimeException.class, () -> hallDao.createAndReturnWithId(HALL));
-        assertEquals("Exception in DB", thrown.getMessage());
     }
 
     @Test

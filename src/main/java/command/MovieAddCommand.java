@@ -1,6 +1,5 @@
 package command;
 
-import exceptions.DBException;
 import exceptions.EntityAlreadyExistException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

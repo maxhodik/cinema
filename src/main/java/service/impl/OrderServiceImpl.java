@@ -3,8 +3,6 @@ package service.impl;
 import command.ScheduleCommand;
 import dao.HallDao;
 import dao.OrderDao;
-import dao.SessionDao;
-import dao.UserDao;
 import dto.OrderDto;
 import entities.*;
 import exceptions.EntityAlreadyExistException;
@@ -65,7 +63,7 @@ public class OrderServiceImpl implements OrderService {
                     .numberOfSeats(seats)
                     .user(user)
                     .price(100).build();
-            if (createAndReturnWithId(order)!=null) {
+            if (createAndReturnWithId(order) != null) {
                 hall = hallService.changeHallNumberOfAvailableSeats(hall, numberOfAvailableSeats);
                 hallService.update(hall);
             }
@@ -76,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
 
             try {
                 TransactionManagerWrapper.rollback();
-                LOGGER.info("Transaction rollback");
+                LOGGER.info("Transaction rollback", e);
                 throw new RuntimeException("Transaction rollback");
             } catch (SQLException ex) {
                 throw new RuntimeException("Not rollback transaction");

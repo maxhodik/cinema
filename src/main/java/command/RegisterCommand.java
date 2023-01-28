@@ -18,7 +18,7 @@ public class RegisterCommand extends MultipleMethodCommand {
 
     private UserService userService;
     private Validator<UserForm> userFormValidator;
-    public int exceptionCode;
+
 
     public RegisterCommand(UserService userService, Validator<UserForm> userFormValidator) {
         this.userService = userService;

@@ -1,23 +1,28 @@
 package dao.impl;
 
+import dao.Constants;
 import dao.MovieDao;
 import dao.maper.MovieMapper;
 import dao.maper.ObjectMapper;
-import dao.Constants;
 import entities.Movie;
-import exceptions.DAOException;
-import exceptions.DBConnectionException;
 import exceptions.DBException;
 import exceptions.EntityAlreadyExistException;
-import persistance.ConnectionPoolHolder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import persistance.ConnectionWrapper;
 import persistance.TransactionManagerWrapper;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class SqlMovieDao implements MovieDao {
+    private static final Logger LOGGER = LogManager.getLogger(SqlMovieDao.class);
+
     ObjectMapper<Movie> mapper;
 
     @Override
@@ -32,7 +37,8 @@ public class SqlMovieDao implements MovieDao {
                 movies.add(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Movie not found", e);
+            LOGGER.error("Movie not found", e);
+            throw new DBException(e);
         }
         return movies;
     }
@@ -49,7 +55,8 @@ public class SqlMovieDao implements MovieDao {
                 movies.add(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Movies not found", e);
+            LOGGER.error("Movies not found", e);
+            throw new DBException(e);
         }
         return movies;
     }
@@ -66,7 +73,8 @@ public class SqlMovieDao implements MovieDao {
                 movies.add(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Movies not found", e);
+            LOGGER.error("Movies not found", e);
+            throw new DBException(e);
         }
         return movies;
     }
@@ -82,7 +90,8 @@ public class SqlMovieDao implements MovieDao {
             mapper = new MovieMapper();
             return mapper.extractFromResultSet(rs);
         } catch (SQLException e) {
-            throw new RuntimeException("Movies not found", e);
+            LOGGER.error("Movies not found", e);
+            throw new DBException(e);
         }
     }
 
@@ -99,37 +108,25 @@ public class SqlMovieDao implements MovieDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Movie not found", e);
+            LOGGER.error("Movies not found", e);
+            throw new DBException(e);
         }
         return null;
     }
 
 
     public boolean delete(Movie entity) {
-        ConnectionWrapper con = null;
-        try {
-            con = TransactionManagerWrapper.getConnection();
-            try (PreparedStatement stmt = con.prepareStatement(Constants.DELETE_MOVIE_BY_NAME);) {
-
-                con.setAutoCommit(false);
+        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+            PreparedStatement stmt = con.prepareStatement(Constants.DELETE_MOVIE_BY_NAME);){
                 stmt.setString(1, entity.getName());
                 if (stmt.executeUpdate() != 0) {
-                    con.commit();
-                }else {
-                    con.rollback();
-                    return false;
+                    return true;
                 }
             }
-        } catch (SQLException e) {
-            try {
-                assert con != null;
-                con.rollback();
-            } catch (SQLException ex) {
-                throw new RuntimeException("Failed delete", ex);
-            }
-            throw new RuntimeException("Failed delete", e);
-        }
-        return true;
+         catch (SQLException e) {
+            LOGGER.error("Failed delete", e);
+            throw new DBException("Failed delete", e);
+        }return false;
     }
 
 
@@ -140,9 +137,11 @@ public class SqlMovieDao implements MovieDao {
             stmt.setString(1, entity.getName());
             return stmt.executeUpdate() != 0;
         } catch (SQLIntegrityConstraintViolationException ex) {
-            throw new EntityAlreadyExistException("Movie already exists, name: " + entity.getName(), ex);
+            LOGGER.info("Movie already exists, name: " + entity.getName(), ex);
+            throw new EntityAlreadyExistException(ex);
         } catch (SQLException e) {
-            throw new RuntimeException("Exception in DB", e);
+            LOGGER.error("Exception in DB", e);
+            throw new DBException(e);
         }
 
     }
@@ -155,11 +154,12 @@ public class SqlMovieDao implements MovieDao {
             stmt.setString(1, entity.getName());
             stmt.setInt(2, entity.getId());
             return stmt.executeUpdate() != 0;
-
         } catch (SQLIntegrityConstraintViolationException ex) {
-            throw new EntityAlreadyExistException("Movie already exists, name: " + entity.getName(), ex);
+            LOGGER.info("Movie already exists, name: " + entity.getName(), ex);
+            throw new EntityAlreadyExistException(ex);
         } catch (SQLException e) {
-            throw new RuntimeException("Exception in DB", e);
+            LOGGER.error("Exception in DB", e);
+            throw new DBException(e);
         }
 
     }
@@ -175,7 +175,8 @@ public class SqlMovieDao implements MovieDao {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Exception in DB", e);
+            LOGGER.error("Exception in DB", e);
+            throw new DBException(e);
         }
         return numberOfRecords;
     }

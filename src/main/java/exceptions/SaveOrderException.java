@@ -10,4 +10,8 @@ public class SaveOrderException extends RuntimeException {
     public SaveOrderException(String message) {
         super(message);
     }
+
+    public SaveOrderException(SQLException e) {
+
+    }
 }

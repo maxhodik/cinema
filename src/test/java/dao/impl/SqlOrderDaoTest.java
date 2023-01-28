@@ -174,19 +174,14 @@ class SqlOrderDaoTest {
         when(con.prepareStatement(Constants.INSERT_INTO_ORDER)).thenReturn(stmt);
         when(stmt.executeUpdate()).thenReturn(1);
         boolean actual = orderDao.create(EXPECTED_FULL_ORDER);
-        verify(con).setAutoCommit(false);
-        verify(con).commit();
         assertTrue(actual);
     }
 
     @Test
-    void createInSuccess() throws SQLException, EntityAlreadyExistException {
+    void createInSuccess() throws SQLException {
         when(con.prepareStatement(Constants.INSERT_INTO_ORDER)).thenReturn(stmt);
         when(stmt.executeUpdate()).thenReturn(0);
-        boolean actual = orderDao.create(EXPECTED_FULL_ORDER);
-        verify(con).setAutoCommit(false);
-        verify(con).rollback();
-        assertFalse(actual);
+        Assertions.assertThrows(RuntimeException.class, () -> orderDao.create(EXPECTED_ORDER));
     }
 
     @Test

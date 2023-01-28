@@ -21,6 +21,9 @@ public interface Validator<T> {
     default boolean numberParamValid(int param, int minValue, int maxValue) {
         return param < minValue || param > maxValue;
     }
+    default boolean idNumberParamValid (int param, int minValue){
+        return param < minValue;
+    }
     default boolean dataValidate (LocalDate start, LocalDate end){
         return end.isBefore(start);
     }

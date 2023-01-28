@@ -33,7 +33,8 @@ public class SqlHallDao implements HallDao {
                 halls.add(mapper.extractFromResultSet(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Hall not found", e);
+            LOGGER.error("Hall not found", e);
+            throw new DBException(e);
         }
         return halls;
     }
@@ -51,7 +52,8 @@ public class SqlHallDao implements HallDao {
             return mapper.extractFromResultSet(rs);
 
         } catch (SQLException e) {
-            throw new RuntimeException("Users not found", e);
+            LOGGER.error("Hall not found", e);
+            throw new DBException(e);
         }
     }
 
@@ -64,7 +66,8 @@ public class SqlHallDao implements HallDao {
             stmt.setInt(1, entity.getId());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Failed delete", e);
+            LOGGER.error("Failed delete", e);
+            throw new DBException(e);
         }
     }
 
@@ -79,7 +82,8 @@ public class SqlHallDao implements HallDao {
             stmt.setBigDecimal(4, entity.getAttendance());
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Creating  hall failed", e);
+            LOGGER.error("Creating  hall failed", e);
+            throw new DBException(e);
         }
 
     }
@@ -100,12 +104,14 @@ public class SqlHallDao implements HallDao {
                     entity.setId(generatedKeys.getInt(1));
                     return entity;
                 } else {
+                    LOGGER.error("Creating  hall failed, no ID obtained.");
                     throw new SQLException("Creating  hall failed, no ID obtained.");
                 }
             }
-    } catch (SQLException e) {
-        throw new RuntimeException("Exception in DB", e);
-    }
+        } catch (SQLException e) {
+            LOGGER.error("Exception in DB", e);
+            throw new DBException(e);
+        }
 
     }
 
@@ -122,12 +128,11 @@ public class SqlHallDao implements HallDao {
             stmt.setInt(5, entity.getId());
             return stmt.executeUpdate() != 0;
 
-        }catch (SQLException e) {
-            throw new RuntimeException("Exception in DB", e);
+        } catch (SQLException e) {
+            LOGGER.error("Exception in DB", e);
+            throw new DBException(e);
         }
-
     }
-
 
 
 }

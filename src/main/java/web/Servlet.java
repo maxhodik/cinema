@@ -38,22 +38,24 @@ public class Servlet extends HttpServlet {
         ScheduleCommand scheduleCommand = new ScheduleCommand(scheduleService, paginate);
         MovieFormValidator movieValidator = new MovieFormValidator();
         SessionFormValidator sessionValidator = new SessionFormValidator();
+        IdValidator idValidator= new IdValidator();
 
         commands.put("register", new RegisterCommand(userService, new UserFormValidator()));
         commands.put("login", new LoginCommand(userService));
         commands.put("schedule", scheduleCommand);
         commands.put("order", new OrderCommand(new OrderServiceImpl(orderDao,
-                hallService, scheduleService, userService), scheduleService, userService, new OrderFormValidator()));
+                hallService, scheduleService, userService), scheduleService, userService, new OrderValidator(),idValidator));
         commands.put("admin/movie", new MovieCommand(movieService, paginate));
-        commands.put("admin/movie/delete", new MovieDeleteCommand(movieService));
-        commands.put("admin/movie/update-movie", new MovieUpdateCommand(movieService, movieValidator));
+        commands.put("admin/movie/delete", new MovieDeleteCommand(movieService, idValidator));
+        commands.put("admin/movie/update-movie", new MovieUpdateCommand(movieService, movieValidator,idValidator));
         commands.put("admin/movie/add-movie", new MovieAddCommand(movieService, movieValidator));
         commands.put("schedule/delete", new ScheduleDeleteCommand(scheduleService));
         commands.put("admin/add-session", new ScheduleAddCommand(scheduleService, movieService, hallService, sessionValidator));
-        commands.put("admin/update-session", new ScheduleUpdateCommand(scheduleService, movieService, hallService, sessionValidator));
+        commands.put("admin/update-session", new ScheduleUpdateCommand(scheduleService, movieService, hallService,
+                sessionValidator, idValidator));
         commands.put("admin/analise", new AnaliseCommand(scheduleService, movieService, hallService, new AnaliseFormValidator(), paginate));
         commands.put("logout", new LogOutCommand());
-        commands.put("ticket", new TicketCommand(orderService, scheduleService));
+        commands.put("ticket", new TicketCommand(orderService, scheduleService, idValidator));
 
     }
 

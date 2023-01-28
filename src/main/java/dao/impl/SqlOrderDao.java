@@ -50,7 +50,8 @@ public class SqlOrderDao implements OrderDao {
                 orders.add(order);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Orders not found", e);
+            LOGGER.error("Orders not found", e);
+            throw new DBException(e);
         }
         return orders;
     }
@@ -74,7 +75,8 @@ public class SqlOrderDao implements OrderDao {
             order.setUser(userMapper.extractFromResultSet(rs));
             return order;
         } catch (SQLException e) {
-            throw new RuntimeException("Orders not found", e);
+            LOGGER.error("Orders not found", e);
+            throw new DBException(e);
 
         }
     }
@@ -99,7 +101,8 @@ public class SqlOrderDao implements OrderDao {
             }
             return orders;
         } catch (SQLException e) {
-            throw new RuntimeException("Orders not found", e);
+            LOGGER.error("Orders not found", e);
+            throw new DBException(e);
 
         }
     }
@@ -110,68 +113,53 @@ public class SqlOrderDao implements OrderDao {
              PreparedStatement stmt = con.prepareStatement(Constants.DELETE_ORDER_BY_ID);) {
             stmt.setInt(1, entity.getId());
             return stmt.executeUpdate() != 0;
-
         } catch (SQLException e) {
-            throw new RuntimeException("Failed delete", e);
+            LOGGER.error("Failed delete", e);
+            throw new DBException(e);
         }
     }
 
     @Override
-    public boolean create(Order entity) throws SaveOrderException {
+    public boolean create(Order entity) {
+        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+             PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_ORDER);) {
+            stmt.setString(1, String.valueOf(entity.getState()));
+            stmt.setInt(2, entity.getNumberOfSeats());
+            stmt.setInt(3, entity.getPrice());
+            stmt.setInt(4, entity.getUser().getId());
+            stmt.setInt(5, entity.getSession().getId());
 
-        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();) {
-            try (PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_ORDER);) {
-                con.setAutoCommit(false);
-                stmt.setString(1, String.valueOf(entity.getState()));
-                stmt.setInt(2, entity.getNumberOfSeats());
-                stmt.setInt(3, entity.getPrice());
-                stmt.setInt(4, entity.getUser().getId());
-                stmt.setInt(5, entity.getSession().getId());
-
-                if (stmt.executeUpdate() != 0) {
-                    con.commit();
-                } else {
-                    con.rollback();
-                    return false;
-                }
-            } catch (SQLException e) {
-                con.rollback();
-                throw new SaveOrderException("Transaction rollback. Cannot save order to database cause", e);
+            if (stmt.executeUpdate() == 0) {
+                throw new SaveOrderException("Order not created");
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot save order to database cause", e);
+            LOGGER.error("Cannot save order to database cause", e);
+            throw new SaveOrderException(e);
         }
         return true;
     }
 
     @Override
     public Order createAndReturnWithId(Order entity) {
-        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();) {
-            try (PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_ORDER, Statement.RETURN_GENERATED_KEYS);) {
-                con.setAutoCommit(false);
-                stmt.setString(1, String.valueOf(entity.getState()));
-                stmt.setInt(2, entity.getNumberOfSeats());
-                stmt.setInt(3, entity.getPrice());
-                stmt.setInt(4, entity.getUser().getId());
-                stmt.setInt(5, entity.getSession().getId());
-                stmt.executeUpdate();
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        entity.setId(generatedKeys.getInt(1));
-                        con.commit();
-                        return entity;
-                    } else {
-                        con.rollback();
-                        LOGGER.info("Transaction rollback. Cannot save order to database cause");
-                        throw new SaveOrderException("Transaction rollback. Cannot save order to database cause");
-                    }
+        try (ConnectionWrapper con = TransactionManagerWrapper.getConnection();
+             PreparedStatement stmt = con.prepareStatement(Constants.INSERT_INTO_ORDER, Statement.RETURN_GENERATED_KEYS);) {
+            stmt.setString(1, String.valueOf(entity.getState()));
+            stmt.setInt(2, entity.getNumberOfSeats());
+            stmt.setInt(3, entity.getPrice());
+            stmt.setInt(4, entity.getUser().getId());
+            stmt.setInt(5, entity.getSession().getId());
+            stmt.executeUpdate();
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    entity.setId(generatedKeys.getInt(1));
+                    return entity;
+                } else {
+                    throw new SaveOrderException("Key not generated for order");
                 }
-            } catch (SQLException e) {
-                con.rollback();
-                throw new RuntimeException("Exception in DB", e);
             }
-        } catch (SQLException ex) {
-            throw new RuntimeException("Exception in DB", ex);
+        } catch (SQLException e) {
+            LOGGER.error("Exception in DB", e);
+            throw new DBException(e);
         }
     }
 
@@ -188,7 +176,7 @@ public class SqlOrderDao implements OrderDao {
             return stmt.executeUpdate() != 0;
         } catch (SQLException e) {
             LOGGER.error("Exception in db", e);
-            throw new RuntimeException("Exception in DB", e);
+            throw new DBException(e);
         }
     }
 }

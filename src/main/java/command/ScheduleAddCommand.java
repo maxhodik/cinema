@@ -52,7 +52,7 @@ public class ScheduleAddCommand extends MultipleMethodCommand {
         SessionForm sessionForm = new SessionForm(sessionId, sessionDate, sessionTime, movieName, capacity);
         if (sessionValidator.validate(sessionForm)) {
             LOGGER.info("Session form not valid");
-            request.setAttribute("errors", true);
+            request.getSession().setAttribute("errors", true);
             return "redirect:admin/add-session";
         }
         int id = Integer.parseInt(sessionId);

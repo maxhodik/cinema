@@ -45,6 +45,8 @@ public class MovieCommand extends MultipleMethodCommand {
         String records = request.getParameter("records");
         if (offset != null && records != null) {
             return " LIMIT " + records + " OFFSET " + offset;
-        } else return " LIMIT 5 OFFSET 0";
+        } else {
+            return " LIMIT 5 OFFSET 0";
+        }
     }
 }

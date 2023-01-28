@@ -4,6 +4,8 @@ import dao.HallDao;
 import entities.Hall;
 import exceptions.DBException;
 import exceptions.EntityAlreadyExistException;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import persistance.TransactionManager;
 import service.HallService;
 
@@ -12,6 +14,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 public class HallServiceImpl implements HallService {
+    private static final Logger LOGGER = LogManager.getLogger(HallService.class);
     private HallDao hallDao;
     private TransactionManager transaction;
 
@@ -40,17 +43,16 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public boolean update(Hall entity) throws  EntityAlreadyExistException {
+    public boolean update(Hall entity) throws EntityAlreadyExistException {
         return hallDao.update(entity);
     }
 
     @Override
-    public Hall changeHallCapacity(Hall hallToChange, int newCapacity) throws  EntityAlreadyExistException {
+    public Hall changeHallCapacity(Hall hallToChange, int newCapacity) throws EntityAlreadyExistException {
         int numberOfSoldSeats = hallToChange.getNumberOfSoldSeats();
         int numberOfAvailableSeats = newCapacity - numberOfSoldSeats;
         BigDecimal attendance = new BigDecimal((float) numberOfSoldSeats / newCapacity * 100);
         attendance = attendance.setScale(2, RoundingMode.HALF_UP);
-        // todo calculate hall params based on new capacity
         Hall hall = Hall.builder()
                 .id(hallToChange.getId())
                 .numberSeats(newCapacity)
@@ -64,10 +66,8 @@ public class HallServiceImpl implements HallService {
     public Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats) throws EntityAlreadyExistException {
         int capacity = hallToChange.getCapacity();
         int numberOfSoldSeats = capacity - newAvailableSeats;
-
         BigDecimal attendance = new BigDecimal((float) numberOfSoldSeats / capacity * 100);
         attendance = attendance.setScale(2, RoundingMode.HALF_UP);
-        // todo calculate hall params based on new capacity
         Hall hall = Hall.builder()
                 .id(hallToChange.getId())
                 .numberSeats(capacity)
@@ -78,7 +78,6 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    //todo check exceptions
     public Hall createWithCapacity(int seatsCapacity)  {
         Hall hall = Hall.builder().numberSeats(seatsCapacity).numberAvailableSeats(seatsCapacity).build();
         hall = hallDao.createAndReturnWithId(hall);

@@ -9,6 +9,7 @@ import dto.SessionAdminDto;
 import dto.SessionDto;
 import entities.*;
 import exceptions.EntityAlreadyExistException;
+import exceptions.TransactionException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import persistance.TransactionManagerWrapper;
@@ -28,7 +29,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class ScheduleServiceImpl implements ScheduleService {
-    private static final Logger LOGGER = LogManager.getLogger(ScheduleCommand.class);
+    private static final Logger LOGGER = LogManager.getLogger(ScheduleServiceImpl.class);
     private final SessionDao sessionDao;
     private final HallService hallService;
     private final MovieService movieService;
@@ -55,21 +56,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         String sqlFilters = convertFiltersToSqlQuery(filters);
         String sqlColumn = getSqlColumn(orderBy);
         sessions = sessionDao.findAllFilterByAvailableViewing(sqlFilters, sqlColumn, limits);
-//        }
         List<SessionAdminDto> sessionAdminDtoList = getSessionAdminDtoList(sessions);
-//        // 1-получаем фактори
-//        // 2-получаем из фактори стратегию по ордеру
-//        // 3-соритируем по выбранной стратегии
-//        // 4 - возвращаем сотрированный лист
-//        if (orderBy == null) {
-//            return sessionAdminDtoList;
-//        }
-//        Factory factory = new FactoryImpl();
-//        SortStrategy strategy = factory.defineStrategy(orderBy);
-//        if (strategy == null) {
-//            return sessionAdminDtoList;
-//        }
-//        return strategy.sort(sessionAdminDtoList);
         return sessionAdminDtoList;
     }
 
@@ -84,7 +71,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         return sessionAdminDtoList;
     }
-@Override
+
+    @Override
     public boolean findByMovie(String name) {
         return sessionDao.findByMovie(name);
     }
@@ -156,13 +144,8 @@ public class ScheduleServiceImpl implements ScheduleService {
         String sqlColumn = null;
         try {
             if (columnName != null) {
-                //todo map (map passed columnName to table name otherwise throw error)
                 ResourceBundle bundle = ResourceBundle.getBundle("mapping");
                 sqlColumn = bundle.getString(columnName);
-//                if (sqlColumn == null) {
-//                    sqlColumn = default
-                // Or
-                // throw exc
             }
         } catch (MissingResourceException e) {
             return null;
@@ -208,15 +191,17 @@ public class ScheduleServiceImpl implements ScheduleService {
                 orderService.update(updetedOrder);
             }
             TransactionManagerWrapper.commit();
+            LOGGER.info(String.format("Successful update session with id= %s and orders status", session.getId()));
             return true;
-        } catch (EntityAlreadyExistException | SQLException e) {
-            LOGGER.info("Update session and order status failed");
+        } catch (SQLException | EntityAlreadyExistException e) {
+            LOGGER.error("Update session and orders status failed", e);
             try {
                 TransactionManagerWrapper.rollback();
-                LOGGER.info("Transaction rollback");
-                throw new RuntimeException("Can't update session and oder status");
+                LOGGER.error("Transaction rollback");
+                throw new TransactionException("Can't update session and oder status");
             } catch (SQLException ex) {
-                throw new RuntimeException("Rollback failed");
+                LOGGER.error("Transaction rollback failed", ex);
+                throw new TransactionException(ex);
             }
 
         }
@@ -225,8 +210,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public boolean update(SessionDto sessionDto) {
-
-        // todo check orders. If bought tickets > new capacity --> throw error
         try {
             TransactionManagerWrapper.startTransaction();
             int sessionDtoId = sessionDto.getId();
@@ -234,21 +217,21 @@ public class ScheduleServiceImpl implements ScheduleService {
             String movieName = sessionDto.getMovieName();
             int numberOfSeats = sessionDto.getNumberOfSeats();
             Hall hall = session.getHall();
-//        hall = getHall(sessionDtoId, numberOfSeats, hall);
-            Hall updatedHall = hallService.changeHallCapacity(hall, numberOfSeats);
-            //   hallDao.update(hall);
+            hallService.changeHallCapacity(hall, numberOfSeats);
             //todo validate movie name
             Movie movie = movieService.findEntityByName(movieName);
             session = buildSession(sessionDto, hall, movie);
             boolean update = sessionDao.update(session);
             TransactionManagerWrapper.commit();
+            LOGGER.info(String.format("Successful update session(id=%s)  and hall in transaction", sessionDtoId));
             return update;
         } catch (SQLException | EntityAlreadyExistException e) {
-            e.printStackTrace();
+            LOGGER.error("Update session and hall status failed", e);
             try {
                 TransactionManagerWrapper.rollback();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                LOGGER.error("Transaction rollback failed", ex);
+                throw new TransactionException(ex);
             }
             return false;
         }
@@ -265,19 +248,19 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .build();
     }
 
-    private Hall getHall(int sessionDtoId, int numberOfSeats, Hall hall) {
-        List<Order> entityBySessionId = orderService.findAllBySessionId(sessionDtoId);
-        int numberOfSoldSeats = 0;
-        for (Order orders : entityBySessionId) {
-            numberOfSoldSeats += orders.getNumberOfSeats();
-        }
-        hall = Hall.builder()
-                .id(hall.getId())
-                .numberAvailableSeats(numberOfSeats - numberOfSoldSeats)
-                .numberSeats(numberOfSeats)
-                .build();
-        return hall;
-    }
+//    private Hall getHall(int sessionDtoId, int numberOfSeats, Hall hall) {
+//        List<Order> entityBySessionId = orderService.findAllBySessionId(sessionDtoId);
+//        int numberOfSoldSeats = 0;
+//        for (Order orders : entityBySessionId) {
+//            numberOfSoldSeats += orders.getNumberOfSeats();
+//        }
+//        hall = Hall.builder()
+//                .id(hall.getId())
+//                .numberAvailableSeats(numberOfSeats - numberOfSoldSeats)
+//                .numberSeats(numberOfSeats)
+//                .build();
+//        return hall;
+//    }
 
     @Override
     public boolean create(SessionDto sessionDto) {
@@ -290,13 +273,15 @@ public class ScheduleServiceImpl implements ScheduleService {
             Session session = buildSession(sessionDto, hall, movie);
             boolean create = sessionDao.create(session);
             TransactionManagerWrapper.commit();
+            LOGGER.info("Successful create session and hall in transaction");
             return create;
         } catch (SQLException | EntityAlreadyExistException e) {
-            e.printStackTrace();
+            LOGGER.error("Create session and hall failed", e);
             try {
                 TransactionManagerWrapper.rollback();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                LOGGER.error("Transaction rollback failed", ex);
+                throw new TransactionException(ex);
             }
         }
         return false;
@@ -334,7 +319,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                     attendance,
                     s.getStatus());
             sessionAdminDto.setDayOfWeek(s.getDate().getDayOfWeek());
-
             sessionDtoList.add(sessionAdminDto);
         }
         return sessionDtoList;
@@ -342,9 +326,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public int getNumberOfRecords(List<Filter> filters) {
-
         String sqlFilters = convertFiltersToSqlQuery(filters);
-
         int numberOfRecords;
         numberOfRecords = sessionDao.getNumberOfRecords(sqlFilters);
         return numberOfRecords;

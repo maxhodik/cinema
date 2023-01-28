@@ -4,8 +4,6 @@ import dao.MovieDao;
 import dao.SessionDao;
 import dto.MovieDto;
 import entities.Movie;
-import entities.User;
-import exceptions.DBException;
 import exceptions.EntityAlreadyExistException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,11 +19,11 @@ import static org.mockito.Mockito.times;
 
 class MovieServiceImplTest {
     private final static String NAME = "test";
-    private final static String ORDER_BY = "OrderBy";
+    private final static String ORDER_BY = "id";
     private final static String LIMIT = "Limit";
     private final static Movie EXPECTED_MOVIE = new Movie.Builder().id(0).name("test").build();
     private final static MovieDto EXPECTED_MOVIE_DTO = new MovieDto(0, "test");
-    private final static List<MovieDto> movieDtos = List.of(EXPECTED_MOVIE_DTO);
+    private final static List<MovieDto> MOVIE_DTOS = List.of(EXPECTED_MOVIE_DTO);
     private MovieDao movieDao = mock(MovieDao.class);
     private SessionDao sessionDao= mock(SessionDao.class);
     private MovieServiceImpl movieService = new MovieServiceImpl(movieDao, sessionDao);
@@ -62,7 +60,7 @@ class MovieServiceImplTest {
         List<MovieDto> actual = movieService.findAllSortedByWithLimit(ORDER_BY, LIMIT);
         verify(movieDao).findAllSortedBy(ORDER_BY, LIMIT);
         verifyNoMoreInteractions(movieDao);
-        assertEquals(movieDtos, actual);
+        assertEquals(MOVIE_DTOS, actual);
     }
     @Test
     void findAllSortedByWithLimitTrowException() {
@@ -81,7 +79,7 @@ class MovieServiceImplTest {
         List<MovieDto> actual = movieService.findAllOrderBy(ORDER_BY);
         verify(movieDao).findAllOrderBy(ORDER_BY);
         verifyNoMoreInteractions(movieDao);
-        assertEquals(movieDtos, actual);
+        assertEquals(MOVIE_DTOS, actual);
     }
 
     @Test

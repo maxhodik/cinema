@@ -2,7 +2,7 @@ package web.form.validation;
 
 import web.form.OrderForm;
 
-public class OrderFormValidator implements Validator<OrderForm> {
+public class OrderValidator implements Validator<OrderForm> {
 
     private static final String REGEX_NUMBER = "[1-9]{1}[0-9]*";
 

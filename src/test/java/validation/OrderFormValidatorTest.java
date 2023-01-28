@@ -1,13 +1,10 @@
 package validation;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import web.form.OrderForm;
-import web.form.UserForm;
-import web.form.validation.OrderFormValidator;
+import web.form.validation.OrderValidator;
 import web.form.validation.Validator;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class OrderFormValidatorTest {
-    Validator<OrderForm> validator = new OrderFormValidator();
+    Validator<OrderForm> validator = new OrderValidator();
     OrderForm form;
 
 

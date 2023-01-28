@@ -80,9 +80,7 @@ public class AnaliseCommand extends MultipleMethodCommand {
         String[] times = request.getParameterValues("time");
         addFilterIfNeeded(times, filters, "time", BETWEEN);
         String orderBy = request.getParameter("orderBy");
-        //todo string validation
         AnaliseForm analiseForm = new AnaliseForm(dates, times, movies, statuses, days);
-
         if (analiseValidator.validate(analiseForm)) {
             request.setAttribute("errors", true);
             return "/WEB-INF/admin/analise.jsp";
@@ -94,12 +92,6 @@ public class AnaliseCommand extends MultipleMethodCommand {
         String limits = setLimits(request);
         List<SessionAdminDto> sessionDtoList = scheduleService.findAllFilterByAndOrderBy(filters, orderBy, limits);
         List<SessionAdminDto> sessionDtoListAll = scheduleService.findAllFilterBy(filters);
-//            List<Session> allSortedSessions;
-//        if (web.filters.size() != 0) {
-//        } else {
-//            allSortedSessions = scheduleService.findAllOrderBy(orderBy);
-//        }
-//        List<SessionAdminDto> sessionDtoList = scheduleService.getSessionAdminDtoList(allSortedSessions);
         List<String> movieDtoList = getMovieDtoList(sessionDtoListAll);
         request.setAttribute("sessionAdminDto", sessionDtoList);
         request.setAttribute("movieDto", movieDtoList);
@@ -114,10 +106,6 @@ public class AnaliseCommand extends MultipleMethodCommand {
     }
 
     private void addFilterIfNeeded(String[] filterValues, List<Filter> filters, String columnName, Operation operation) {
-        // 1 find filter by column in existed filters
-        // 2 if exist
-        //    replace on filterValues
-        //    otherwise add filterValues
 
         if (filterValues != null) {
 
