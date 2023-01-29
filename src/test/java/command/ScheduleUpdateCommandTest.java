@@ -156,7 +156,7 @@ class ScheduleUpdateCommandTest {
         String path = scheduleUpdateCommand.performPost(request);
         //then
         verify(request).setAttribute("movieDoesntExist", true);
-        assertEquals("/WEB-INF/admin/update-session.jsp", path);
+        assertEquals("redirect:admin/update-session?id=0", path);
     }
 
     @Test

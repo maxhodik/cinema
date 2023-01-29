@@ -84,7 +84,7 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
         if (movieService.findEntityByName(movieName) == null) {
             request.setAttribute("movieDoesntExist", true);
             LOGGER.info("Can't update this session this movie name doesn't exist");
-            return "/WEB-INF/admin/update-session.jsp";
+            return "redirect:admin/update-session?id=" + sessionId;
         }
         String x = IsSoldTickets(request, id);
         if (x != null) return x;

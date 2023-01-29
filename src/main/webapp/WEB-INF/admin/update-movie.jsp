@@ -16,6 +16,7 @@
                 <fmt:setBundle basename="message" />
 
                 <html lang="${param.lang}">
+
                 <c:import url="head-admin.jsp" />
 
                 <body>
@@ -29,10 +30,12 @@
                             </label>
                         </c:if>
                         <c:remove var="exception" scope="session" />
-                        <c:if test="${errors}">
-                            <p>Not Valid</p>
-                            ${movie.id}=id
-                        </c:if>
+                           <c:if test="${errors}">
+                            <label class="alert alert-info">
+                                  <fmt:message key="alert.session.form.not.valid" />
+                             </label>
+                              <c:remove var="errors" scope="session" />
+                          </c:if>
                         <h2> ${movie.name}</h2>
                         <form method="post" action="${pageContext.request.contextPath}/admin/movie/update-movie">
                             <label for="name">

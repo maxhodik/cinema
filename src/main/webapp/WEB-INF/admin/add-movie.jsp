@@ -32,7 +32,9 @@
                         <c:remove var="exception" scope="session" />
 
                         <c:if test="${errors}">
-                            <p>movie_name_not_valid</p>
+                            <label class="alert alert-info">
+                               <fmt:message key="alert.session.form.not.valid" />
+                            </label>
                         </c:if>
                         <form method="post" action="${pageContext.request.contextPath}/admin/movie/add-movie">
                             <label for="name">

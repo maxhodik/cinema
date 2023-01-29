@@ -32,7 +32,7 @@ class MovieUpdateCommandTest {
 
     private final MovieFormValidator movieFormValidator = mock(MovieFormValidator.class);
 
-
+    private final HttpSession httpSession = mock(HttpSession.class);
     private final MovieService movieService = mock(MovieService.class);
     private final IdValidator idValidator = mock(IdValidator.class);
 
@@ -88,6 +88,7 @@ class MovieUpdateCommandTest {
     @Test
     void performPostMovieWrong() throws EntityAlreadyExistException {
         //given
+        when(request.getSession()).thenReturn(httpSession);
         when(request.getParameter("name")).thenReturn(NAME);
         when(request.getParameter("id")).thenReturn(ID);
         when(idValidator.validate(any())).thenReturn(false);
@@ -96,25 +97,26 @@ class MovieUpdateCommandTest {
         when(movieService.findEntityById(Integer.parseInt(ID))).thenReturn(EXPECTED_MOVIE);
         //when
         String path = movieUpdateCommand.performPost(request);
-        verify(request).setAttribute("errors", true);
+        verify(httpSession).setAttribute("errors", true);
         //then
-        assertEquals("/WEB-INF/admin/update-movie.jsp", path);
+        assertEquals("redirect:admin/movie/update-movie?id=0", path);
     }
 
     @Test
     void performPostException() throws EntityAlreadyExistException {
         //given
+        when(request.getSession()).thenReturn(httpSession);
         when(request.getParameter("name")).thenReturn(NAME);
         when(request.getParameter("id")).thenReturn(ID);
         when(idValidator.validate(any())).thenReturn(false);
-        when(movieFormValidator.validate(any())).thenReturn(true);
+        when(movieFormValidator.validate(any())).thenReturn(false);
         when(movieService.update(EXPECTED_MOVIE)).thenThrow(EntityAlreadyExistException.class);
-
+        when(movieService.findEntityById(Integer.parseInt(ID))).thenReturn(EXPECTED_MOVIE);
         //when
         String path = movieUpdateCommand.performPost(request);
 
         //then
-        assertEquals("/WEB-INF/admin/update-movie.jsp", path);
+        assertEquals("redirect:admin/movie/update-movie?id=0", path);
     }
 
 }

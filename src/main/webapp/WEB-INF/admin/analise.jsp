@@ -16,7 +16,12 @@
 
         <html lang="${param.lang}">
         <c:import url="head-admin.jsp" />
-
+       <c:if test="${errors}">
+              <label class="alert alert-info">
+                <fmt:message key="alert.session.form.not.valid" />
+              </label>
+               <c:remove var="errors" scope="session" />
+       </c:if>
         <body>
 
           <div>
@@ -95,7 +100,7 @@
                                   <c:choose>
                                     <c:when test="${schedule.isEmpty()}">
                                       <h2>
-                                        <fmt:message key="alert.orders.list.is.empty" />
+                                        <fmt:message key="alert.schedule.list.is.empty" />
                                       </h2>
                                     </c:when>
                                     <c:otherwise>
@@ -210,10 +215,10 @@
 
               <tbody>
                 <c:choose>
-                  <c:when test="${schedule.isEmpty()}">
-                    <h2>
-                      <fmt:message key="alert.orders.list.is.empty" />
-                    </h2>
+                  <c:when test="${sessionAdminDto.isEmpty()}">
+                     <label class="alert alert-info">
+                      <fmt:message key="alert.schedule.list.is.empty" />
+                    </label>
                   </c:when>
                   <c:otherwise>
                     <c:forEach var="sessionAdminDto" items="${sessionAdminDto}">

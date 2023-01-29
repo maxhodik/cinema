@@ -37,7 +37,7 @@
                       <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                        <c:choose>
                                        <c:when test="${schedule.isEmpty()}">
-                                       <h2><fmt:message key="alert.orders.list.is.empty"/></h2>
+                                       <h2><fmt:message key="alert.schedule.list.is.empty"/></h2>
                                          </c:when>
                                        <c:otherwise>
                                        <c:forEach var="movieDto" items="${movieDto}">
@@ -72,13 +72,11 @@
                              <c:set var="orderByDate" value="orderBy=date"/>
                              <c:set var="orderByTime" value="orderBy=time"/>
                              <c:set var="orderByMovie" value="orderBy=movie"/>
-                             <c:set var="orderBySoldSeats" value="orderBy=number_sold_seats"/>
                              <c:set var="orderBySeats" value="orderBy=number_available_seats"/>
                              <c:set var="limits" value="&offset=0&records=${records}"/>
                                 <li><a class="dropdown-item" href="${base.concat(orderByDate).concat(limits)}"> <fmt:message key="label.date"/></a></li>
                                 <li><a class="dropdown-item" href="${base.concat(orderByTime).concat(limits)}"> <fmt:message key="label.time"/></a></li>
                                 <li><a class="dropdown-item" href="${base.concat(orderByMovie).concat(limits)}"> <fmt:message key="label.movie"/></a></li>
-                                <li><a class="dropdown-item" href="${base.concat(orderBySoldSeats).concat(limits)}"> <fmt:message key="label.sold_seats"/></a></li>
                                 <li><a class="dropdown-item" href="${base.concat(orderBySeats).concat(limits)}"> <fmt:message key="label.available_seats"/></a><li>
         </ul>
           </thead>
@@ -112,7 +110,7 @@
     <tbody>
     <c:choose>
         <c:when test="${sessionAdminDto.isEmpty()}">
-            <h2><fmt:message key="alert.orders.list.is.empty"/></h2>
+            <h2><fmt:message key="alert.list.is.empty"/></h2>
         </c:when>
         <c:otherwise>
             <c:forEach var="sessionAdminDto" items="${sessionAdminDto}">

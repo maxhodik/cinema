@@ -7,9 +7,11 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
           crossorigin="anonymous"></script>
-
-        <c:if test="${not empty param.lang}">
+     <!--   <c:if test="${not empty param.lang}">
           <fmt:setLocale value="${param.lang}" scope="session" />
+        </c:if> --!>
+         <c:if test="${not empty lang}">
+          <fmt:setLocale value="${lang}" scope="session" />
         </c:if>
 
         <fmt:setBundle basename="message" />

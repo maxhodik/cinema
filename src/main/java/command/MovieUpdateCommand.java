@@ -52,16 +52,17 @@ public class MovieUpdateCommand extends MultipleMethodCommand {
         String name = request.getParameter("name");
         MovieForm movieForm = new MovieForm(name);
         if (movieValidator.validate(movieForm)) {
-            request.setAttribute("errors", true);
+            request.getSession().setAttribute("errors", true);
             LOGGER.info("Movie not valid");
-            return "/WEB-INF/admin/update-movie.jsp";
+            return "redirect:admin/movie/update-movie?id="+ id;
+
         }
         Movie movie = movieService.findEntityById(id);
         movie.setName(name);
         try {
             movieService.update(movie);
         } catch (EntityAlreadyExistException e) {
-            ExceptionHandler handler = new ExceptionHandler(e, "/WEB-INF/admin/update-movie.jsp");
+            ExceptionHandler handler = new ExceptionHandler(e, "admin/movie/update-movie?id="+ id, "redirect");
             LOGGER.info("Movie already exist with name=" + name);
             return handler.handling(request);
         }
