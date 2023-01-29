@@ -49,7 +49,7 @@ public class Servlet extends HttpServlet {
         commands.put("admin/movie/delete", new MovieDeleteCommand(movieService, idValidator));
         commands.put("admin/movie/update-movie", new MovieUpdateCommand(movieService, movieValidator,idValidator));
         commands.put("admin/movie/add-movie", new MovieAddCommand(movieService, movieValidator));
-        commands.put("schedule/delete", new ScheduleDeleteCommand(scheduleService));
+        commands.put("schedule/delete", new ScheduleDeleteCommand(scheduleService, idValidator));
         commands.put("admin/add-session", new ScheduleAddCommand(scheduleService, movieService, hallService, sessionValidator));
         commands.put("admin/update-session", new ScheduleUpdateCommand(scheduleService, movieService, hallService,
                 sessionValidator, idValidator));

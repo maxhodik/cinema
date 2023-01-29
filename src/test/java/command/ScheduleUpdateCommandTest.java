@@ -29,19 +29,14 @@ import static org.mockito.Mockito.*;
 class ScheduleUpdateCommandTest {
     private final static LocalTime TIME = LocalTime.parse("09:00");
     private final static LocalDate DATE = LocalDate.parse("2023-02-02");
-    private static final List<String> FILER_VALUES = List.of("test");
-    private static final Filter FILTER = new Filter("movies.name", FILER_VALUES, Operation.IN);
-    private static final List<Filter> FILTERS = List.of(FILTER);
-    private static final String LIMIT = " LIMIT 5 OFFSET 0";
-    private static final Status STATUS = Status.ACTIVE;
+
+
+
     private static final boolean TRUE = true;
-    private static final String[] AVAILABLE_SEATS = {"true"};
-    private static final String[] STATUSES = {"ACTIVE"};
+
     private static final String ID = "0";
 
-    private static final String[] MOVIE_DTOS = {"test"};
     private static final List<String> MOVIE_NAMES = List.of("test");
-    private final static User USER = User.builder().id(0).login("test").password("password").role(Role.USER).build();
     private final static Movie EXPECTED_MOVIE = new Movie.Builder().id(0).name("test").build();
     private final static List<Movie> MOVIES = List.of(EXPECTED_MOVIE);
     private static final Hall HALL = Hall.builder()
@@ -49,36 +44,17 @@ class ScheduleUpdateCommandTest {
             .numberSeats(100)
             .numberAvailableSeats(90)
             .numberOfSoldSeats(10).attendance(BigDecimal.valueOf(10.00)).build();
-    private final static Session SESSION = Session.builder().id(0).hall(HALL)
-            .movie(EXPECTED_MOVIE)
-            .time(TIME)
-            .data(DATE)
-            .status(Status.ACTIVE)
-            .dayOfWeek(DayOfWeek.THURSDAY)
-            .build();
 
     private static final SessionDto SESSION_DTO = new SessionDto(0, EXPECTED_MOVIE.getName(),
             DATE, TIME, Status.ACTIVE, HALL.getNumberAvailableSeats());
-    private static final SessionAdminDto SESSION_ADMIN_DTO = new SessionAdminDto(0, EXPECTED_MOVIE.getName(),
-            DATE, TIME, HALL.getNumberAvailableSeats(),
-            HALL.getNumberOfSoldSeats(),
-            HALL.getCapacity(),
-            HALL.getAttendance(),
-            Status.ACTIVE);
-    private static final List<SessionAdminDto> SESSION_ADMIN_DTO_LIST = List.of(SESSION_ADMIN_DTO);
 
-    private final static MovieDto EXPECTED_MOVIE_DTO = new MovieDto(0, "test");
 
-    private final static List<MovieDto> MOVIE_DTO_LIST = List.of(EXPECTED_MOVIE_DTO);
-    private final static String ORDER_BY = "date";
     private final ScheduleService scheduleService = mock(ScheduleService.class);
     private final MovieService movieService = mock(MovieService.class);
     private final HallService hallService = mock(HallService.class);
     private final IdValidator idValidator = mock(IdValidator.class);
     private final SessionFormValidator sessionValidator = mock(SessionFormValidator.class);
 
-
-    private final Pagination pagination = mock(Pagination.class);
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final Session session = mock(Session.class);
     private final Hall hall = mock(Hall.class);

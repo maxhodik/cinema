@@ -38,9 +38,7 @@ public class AnaliseCommand extends MultipleMethodCommand {
 
     @Override
     public String performGet(HttpServletRequest request) {
-
         String orderBy = request.getParameter("orderBy");
-        String admin = request.getParameter("admin");
         String[] select = request.getParameterValues("number_available_seats");
         List<Filter> filters = new ArrayList<>();
         filters = (List<Filter>) request.getSession().getAttribute("filters");
