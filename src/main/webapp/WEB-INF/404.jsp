@@ -12,13 +12,16 @@
 
 <fmt:setBundle basename="message"/>
 
-<figure class="text-center">
-    <img src="${pageContext.request.contextPath}/picture/cinema.jpg"/>
-</figure>
+ <style type="text/css">
+            body {
+
+              background-image: url(https://phonoteka.org/uploads/posts/2022-01/1642994024_51-phonoteka-org-p-kino-fon-dlya-prezentatsii-57.jpg)
+            }
+          </style>
 
 
 <h1>404</h1>
-<a aria-pressed="true" class="btn button" role="button" href="${pageContext.request.contextPath}/index.jsp"> <fmt:message
-        key="button.main"/></a
+<a aria-pressed="true" class="btn button" role="button" href="${pageContext.request.contextPath}/index.jsp">
+<fmt:message key="button.main"/></a
 </body>
 </html>

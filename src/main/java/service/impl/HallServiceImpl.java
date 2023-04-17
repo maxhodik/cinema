@@ -2,11 +2,9 @@ package service.impl;
 
 import dao.HallDao;
 import entities.Hall;
-import exceptions.DBException;
 import exceptions.EntityAlreadyExistException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import persistance.TransactionManager;
 import service.HallService;
 
 import java.math.BigDecimal;
@@ -16,7 +14,7 @@ import java.util.List;
 public class HallServiceImpl implements HallService {
     private static final Logger LOGGER = LogManager.getLogger(HallService.class);
     private HallDao hallDao;
-    private TransactionManager transaction;
+
 
     public HallServiceImpl(HallDao hallDao) {
         this.hallDao = hallDao;

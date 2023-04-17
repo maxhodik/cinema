@@ -1,18 +1,15 @@
 package service.impl;
 
 import dao.HallDao;
-import dao.impl.SqlHallDao;
 import entities.Hall;
 import exceptions.EntityAlreadyExistException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import persistance.TransactionManager;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

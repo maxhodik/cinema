@@ -10,7 +10,6 @@ public class Constants {
     public static final String INSERT_INTO_USERS = "INSERT INTO `mydb`.`users`(`login`, `password`, `role`) VALUES (?, ?, ?)";
     public static final String UPDATE_USER = "UPDATE `mydb`.`users` SET `login` =?, `password` = ?, `role` = ? WHERE `id` = ?";
 
-    public static final String FIND_ALL_MOVIES = "SELECT * FROM mydb.movies";
     public static final String FIND_ALL_HALLS = "SELECT * FROM mydb.halls";
 
     public static final String FIND_MOVIE_BY_NAME = "SELECT * FROM mydb.movies WHERE name=?";
@@ -18,11 +17,8 @@ public class Constants {
     public static final String INSERT_INTO_MOVIES = "INSERT INTO `mydb`.`movies` (`id`,`name`) VALUES (default,?)";
     public static final String UPDATE_MOVIE = "UPDATE movies set name= ? where id=?";
     public static final String FIND_ALL_SESSIONS_SORTED_BY_NUMBER_OF_SEATS = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id order by number_available_seats;";
-    public static final String FIND_ALL_SESSIONS_SORTED_BY_MOVIE_TITLE = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id order by name;";
-    public static final String FIND_ALL_SESSIONS_SORTED_BY_DATE = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id order by date";
     public static final String FIND_ALL_SESSIONS_FILTER_BY_SORTED_BY = "SELECT * FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id";
     public static final String COUNT_ALL_SESSIONS_FILTER_BY_SORTED_BY = "SELECT COUNT(*) FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id";
-    public static final String FIND_ALL_SESSIONS = "SELECT *  FROM mydb.sessions left join movies on movie_id=movies.id left join halls on hall_id= halls.id";
     public static final String DELETE_SESSION_BY_ID = "DELETE FROM sessions WHERE id =?";
     public static final String INSERT_INTO_HALLS = "INSERT INTO `mydb`.`halls`(`id`,`number_seats`,`number_available_seats`, `number_sold_seats`, `attendance`) VALUES(default,?,?,?,?);";
     public static final String FIND_MOVIE_BY_ID = "SELECT * FROM mydb.movies where id =?";

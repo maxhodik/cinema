@@ -9,15 +9,15 @@ import java.util.List;
 
 public interface GenericDao<K extends Number, T> {
 
-    abstract List<T> findAll();
+    List<T> findAll();
 
-    abstract T findEntityById(K id);
+    T findEntityById(K id);
 
-    abstract boolean delete(T entity);
+    boolean delete(T entity);
 
-   abstract boolean create(T entity) throws  EntityAlreadyExistException;
+   boolean create(T entity) throws  EntityAlreadyExistException;
 
-   abstract boolean update(T entity) throws  EntityAlreadyExistException;
+   boolean update(T entity) throws  EntityAlreadyExistException;
 
 
 

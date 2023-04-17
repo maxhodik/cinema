@@ -95,7 +95,6 @@ public class Hall {
         private int capacity;
         private int numberAvailableSeats;
         private int numberOfSoldSeats;
-
         private BigDecimal attendance;
 
         public Builder id(int id) {
@@ -105,7 +104,6 @@ public class Hall {
 
         public Builder numberSeats(int capacity) {
             this.capacity = capacity;
-
             return this;
         }
 
@@ -116,12 +114,10 @@ public class Hall {
 
         public Builder numberOfSoldSeats(int numberOfSoldSeats) {
             this.numberOfSoldSeats = numberOfSoldSeats;
-            ;
             return this;
         }
 
         public Builder attendance(BigDecimal attendance) {
-
             this.attendance = attendance;
             return this;
         }

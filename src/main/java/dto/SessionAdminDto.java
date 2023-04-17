@@ -144,7 +144,7 @@ public class SessionAdminDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(status, id, movieName, date, time, numberOfAvailableSeats, numberOfSoldSeats, dayOfWeek, capacity, attendance);
+        return Objects.hash(status, id, movieName, date, time, numberOfAvailableSeats, numberOfSoldSeats, capacity, attendance);
     }
 
     @Override

@@ -24,7 +24,7 @@ public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = LogManager.getLogger(ScheduleCommand.class);
     private OrderDao orderDao;
-    private HallDao hallDao;
+
     private HallService hallService;
     private ScheduleService scheduleService;
     private UserService userService;
