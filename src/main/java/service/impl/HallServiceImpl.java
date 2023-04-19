@@ -49,14 +49,7 @@ public class HallServiceImpl implements HallService {
     public Hall changeHallCapacity(Hall hallToChange, int newCapacity) throws EntityAlreadyExistException {
         int numberOfSoldSeats = hallToChange.getNumberOfSoldSeats();
         int numberOfAvailableSeats = newCapacity - numberOfSoldSeats;
-        BigDecimal attendance = new BigDecimal((float) numberOfSoldSeats / newCapacity * 100);
-        attendance = attendance.setScale(2, RoundingMode.HALF_UP);
-        Hall hall = Hall.builder()
-                .id(hallToChange.getId())
-                .numberSeats(newCapacity)
-                .numberAvailableSeats(numberOfAvailableSeats)
-                .numberOfSoldSeats(numberOfSoldSeats).attendance(attendance).build();
-        hallDao.update(hall);
+        Hall hall = getHall(hallToChange, numberOfAvailableSeats, newCapacity, numberOfSoldSeats);
         return hall;
     }
 
@@ -64,6 +57,11 @@ public class HallServiceImpl implements HallService {
     public Hall changeHallNumberOfAvailableSeats(Hall hallToChange, int newAvailableSeats) throws EntityAlreadyExistException {
         int capacity = hallToChange.getCapacity();
         int numberOfSoldSeats = capacity - newAvailableSeats;
+        Hall hall = getHall(hallToChange, newAvailableSeats, capacity, numberOfSoldSeats);
+        return hall;
+    }
+
+    private Hall getHall(Hall hallToChange, int newAvailableSeats, int capacity, int numberOfSoldSeats) throws EntityAlreadyExistException {
         BigDecimal attendance = new BigDecimal((float) numberOfSoldSeats / capacity * 100);
         attendance = attendance.setScale(2, RoundingMode.HALF_UP);
         Hall hall = Hall.builder()
