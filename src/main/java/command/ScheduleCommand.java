@@ -48,17 +48,13 @@ public class ScheduleCommand extends MultipleMethodCommand {
         String[] dateTime = null;
         if (request.getSession().getAttribute("role") != Role.ADMIN) {
             dateTime = new String[]{String.valueOf(LocalDateTime.now())};
-            // todo data time filter
             select = new String[]{"true"};
             status = new String[]{Status.ACTIVE.name()};
         }
 
         addFilterIfNeeded(status, filters, "status", IN);
         addFilterIfNeeded(dateTime, filters, "datetime", MORE);
-        //todo why not addFilterIfNeeded?
-        if (select != null && select.length != 0) {
-            filters.add(new Filter("number_available_seats", List.of(select), IS));
-        }
+        addFilterIfNeeded(select,filters,"number_available_seats", IS);
         request.getSession().setAttribute("filters", filters);
         int numberOfRecords = 0;
 
@@ -83,8 +79,6 @@ public class ScheduleCommand extends MultipleMethodCommand {
 
     private void addFilterIfNeeded(String[] filterValues, List<Filter> filters, String columnName, Operation operation) {
         if (filterValues != null) {
-
-            // todo recheck if this for needed
             for (String d : filterValues) {
                 if (d.isEmpty()) {
                     return;

@@ -39,12 +39,8 @@ public class AnaliseCommand extends MultipleMethodCommand {
     @Override
     public String performGet(HttpServletRequest request) {
         String orderBy = request.getParameter("orderBy");
-        String[] select = request.getParameterValues("number_available_seats");
         List<Filter> filters = new ArrayList<>();
         filters = (List<Filter>) request.getSession().getAttribute("filters");
-        if (select != null && select.length != 0) {
-            filters.add(new Filter("number_available_seats", List.of(select), IS));
-        }
         int numberOfRecords = 0;
         numberOfRecords = scheduleService.getNumberOfRecords(filters);
         pagination.paginate(numberOfRecords, request);
@@ -104,13 +100,9 @@ public class AnaliseCommand extends MultipleMethodCommand {
     }
 
     private void addFilterIfNeeded(String[] filterValues, List<Filter> filters, String columnName, Operation operation) {
-
         if (filterValues != null) {
-
-            // todo recheck if this for needed
             for (String d : filterValues) {
                 if (d.isEmpty()) {
-
                     return;
                 }
             }

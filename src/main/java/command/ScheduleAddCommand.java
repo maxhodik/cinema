@@ -60,7 +60,6 @@ public class ScheduleAddCommand extends MultipleMethodCommand {
         LocalTime time = LocalTime.parse(sessionTime);
         int numberOfSeats = Integer.parseInt(capacity);
         Status status = ACTIVE;
-
         int SessionDtoId = -1;
         SessionDto sessionDto = new SessionDto(SessionDtoId, movieName, date, time, status, numberOfSeats);
         scheduleService.create(sessionDto);
