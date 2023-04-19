@@ -4,9 +4,7 @@ package service;
 import dto.Filter;
 import dto.SessionAdminDto;
 import dto.SessionDto;
-import entities.Role;
 import entities.Session;
-import exceptions.DBException;
 
 
 import java.util.List;
@@ -25,7 +23,7 @@ public interface ScheduleService {
     Session findEntityById(Integer id) ;
     boolean delete(Session entity) ;
     boolean update(SessionDto sessionDto);
-    boolean updateStatus (Session session);
+    boolean canceledSession(Session session);
     boolean create(SessionDto sessionDto) ;
     SessionDto getSessionDto(int id) ;
     List<SessionAdminDto> getSessionAdminDtoList(List<Session> allSortedSessions);

@@ -26,4 +26,5 @@ public interface OrderService {
 
     Order findEntityById(Integer id);
 
+    Boolean canceledOrder(Integer id) throws EntityAlreadyExistException;
 }

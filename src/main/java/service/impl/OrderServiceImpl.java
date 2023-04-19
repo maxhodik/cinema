@@ -122,4 +122,18 @@ public class OrderServiceImpl implements OrderService {
     public Order findEntityById(Integer id) {
         return orderDao.findEntityById(id);
     }
+
+    @Override
+    public Boolean canceledOrder(Integer id) throws EntityAlreadyExistException {
+        List<Order> orders = findAllBySessionId(id);
+        for (Order o : orders) {
+            Order updatedOrder = o;
+            updatedOrder.setState(State.CANCELED);
+
+            update(updatedOrder);
+
+        }
+        return true;
+
+    }
 }

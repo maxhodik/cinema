@@ -164,32 +164,17 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public boolean updateStatus(Session session) {
+    public boolean canceledSession(Session session) {
 
-        Session updatedSession = Session.builder()
-                .id(session.getId())
-                .data(session.getDate())
-                .time(session.getTime())
-                .movie(session.getMovie())
-                .hall(session.getHall())
-                .status(Status.CANCELED)
-                .build();
+
+        Session updatedSession= session;
+        updatedSession.setStatus(Status.CANCELED);
         try {
             TransactionManagerWrapper.startTransaction();
 
             sessionDao.update(updatedSession);
-            List<Order> orders = orderService.findAllBySessionId(updatedSession.getId());
-            for (Order o : orders) {
-                Order updatedOrder = Order.builder()
-                        .id(o.getId())
-                        .user(o.getUser())
-                        .session(o.getSession())
-                        .price(o.getPrice())
-                        .numberOfSeats(o.getNumberOfSeats())
-                        .state(State.CANCELED)
-                        .build();
-                orderService.update(updatedOrder);
-            }
+            orderService.canceledOrder(updatedSession.getId());
+
             TransactionManagerWrapper.commit();
             LOGGER.info(String.format("Successful update session with id= %s and orders status", session.getId()));
             return true;
