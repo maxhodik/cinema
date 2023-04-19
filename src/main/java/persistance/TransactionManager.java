@@ -11,7 +11,7 @@ public class TransactionManager {
 
     private static final Logger LOG = Logger.getLogger(TransactionManager.class);
 
-    private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal();
+    private static ThreadLocal<Connection> connectionThreadLocal = new ThreadLocal<>();
 
     public static Connection getConnection() {
         Connection connection = connectionThreadLocal.get();

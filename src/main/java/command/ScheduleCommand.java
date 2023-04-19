@@ -35,6 +35,7 @@ public class ScheduleCommand extends MultipleMethodCommand {
         if (isResetParam != null && isResetParam.equals("true")) {
             request.getSession().setAttribute("filters", null);
         }
+
         List<Filter> filters = (List<Filter>) request.getSession().getAttribute("filters");
         if (filters == null || filters.isEmpty()) {
             filters = new ArrayList<>();

@@ -13,7 +13,5 @@ public interface MovieDao extends GenericDao<Integer, Movie> {
     List<Movie> findAllSortedBy(String orderBy, String limits) ;
     int getNumberOfRecords() ;
 
-   boolean create(Movie entity) throws  EntityAlreadyExistException;
 
-   boolean update(Movie entity) throws  EntityAlreadyExistException;
 }

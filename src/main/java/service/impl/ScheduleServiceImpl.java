@@ -180,7 +180,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             sessionDao.update(updatedSession);
             List<Order> orders = orderService.findAllBySessionId(updatedSession.getId());
             for (Order o : orders) {
-                Order updetedOrder = Order.builder()
+                Order updatedOrder = Order.builder()
                         .id(o.getId())
                         .user(o.getUser())
                         .session(o.getSession())
@@ -188,7 +188,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                         .numberOfSeats(o.getNumberOfSeats())
                         .state(State.CANCELED)
                         .build();
-                orderService.update(updetedOrder);
+                orderService.update(updatedOrder);
             }
             TransactionManagerWrapper.commit();
             LOGGER.info(String.format("Successful update session with id= %s and orders status", session.getId()));
@@ -210,15 +210,14 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public boolean update(SessionDto sessionDto) {
+        int sessionDtoId = sessionDto.getId();
+        String movieName = sessionDto.getMovieName();
+        int numberOfSeats = sessionDto.getNumberOfSeats();
         try {
             TransactionManagerWrapper.startTransaction();
-            int sessionDtoId = sessionDto.getId();
             Session session = sessionDao.findEntityById(sessionDtoId);
-            String movieName = sessionDto.getMovieName();
-            int numberOfSeats = sessionDto.getNumberOfSeats();
             Hall hall = session.getHall();
             hallService.changeHallCapacity(hall, numberOfSeats);
-            //todo validate movie name
             Movie movie = movieService.findEntityByName(movieName);
             session = buildSession(sessionDto, hall, movie);
             boolean update = sessionDao.update(session);
@@ -248,19 +247,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .build();
     }
 
-//    private Hall getHall(int sessionDtoId, int numberOfSeats, Hall hall) {
-//        List<Order> entityBySessionId = orderService.findAllBySessionId(sessionDtoId);
-//        int numberOfSoldSeats = 0;
-//        for (Order orders : entityBySessionId) {
-//            numberOfSoldSeats += orders.getNumberOfSeats();
-//        }
-//        hall = Hall.builder()
-//                .id(hall.getId())
-//                .numberAvailableSeats(numberOfSeats - numberOfSoldSeats)
-//                .numberSeats(numberOfSeats)
-//                .build();
-//        return hall;
-//    }
 
     @Override
     public boolean create(SessionDto sessionDto) {

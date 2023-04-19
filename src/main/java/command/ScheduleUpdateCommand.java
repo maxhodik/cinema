@@ -34,7 +34,7 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
         this.movieService = movieService;
         this.hallService = hallService;
         this.sessionValidator = sessionValidator;
-        this.idValidator=idValidator;
+        this.idValidator = idValidator;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
             LOGGER.info(String.format("Cannot update session %s cause status is canceled", id));
             return "/WEB-INF/admin/unsuccess-update-session.jsp";
         }
-        String x = IsSoldTickets(request, id);
+        String x = isSoldTickets(request, id);
         if (x != null) return x;
         SessionDto sessionDto = scheduleService.getSessionDto(id);
         request.setAttribute("sessionDto", sessionDto);
@@ -57,12 +57,12 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
 
     private int getId(HttpServletRequest request) {
         String sessionId = request.getParameter("id");
-        IdForm idForm  = new IdForm(sessionId);
-        if (idValidator.validate(idForm)){
+        IdForm idForm = new IdForm(sessionId);
+        if (idValidator.validate(idForm)) {
             LOGGER.error("Illegal movie id");
             throw new IllegalArgumentException();
         }
-        int id= Integer.parseInt(sessionId);
+        int id = Integer.parseInt(sessionId);
         return id;
     }
 
@@ -86,7 +86,7 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
             LOGGER.info("Can't update this session this movie name doesn't exist");
             return "redirect:admin/update-session?id=" + sessionId;
         }
-        String x = IsSoldTickets(request, id);
+        String x = isSoldTickets(request, id);
         if (x != null) return x;
         Status status = scheduleService.findEntityById(id).getStatus();
         if (status.equals(Status.CANCELED)) {
@@ -101,7 +101,7 @@ public class ScheduleUpdateCommand extends MultipleMethodCommand {
     }
 
     @Nullable
-    private String IsSoldTickets(HttpServletRequest request, int id) {
+    private String isSoldTickets(HttpServletRequest request, int id) {
         int numberOfSoldSeats = scheduleService.findEntityById(id).getHall().getNumberOfSoldSeats();
         if (numberOfSoldSeats > 0) {
             request.setAttribute("cantEdit", true);
