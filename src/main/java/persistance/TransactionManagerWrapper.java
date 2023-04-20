@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 
 public class TransactionManagerWrapper {
-    private static final Logger LOG = Logger.getLogger(TransactionManager.class);
+    private static final Logger LOG = Logger.getLogger(TransactionManagerWrapper.class);
 
     private static ThreadLocal<ConnectionWrapper> th = new ThreadLocal<>();
 
