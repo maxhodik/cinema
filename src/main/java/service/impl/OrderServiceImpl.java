@@ -24,6 +24,7 @@ public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = LogManager.getLogger(ScheduleCommand.class);
     private OrderDao orderDao;
+    private int price;
 
     private HallService hallService;
     private ScheduleService scheduleService;
@@ -62,7 +63,7 @@ public class OrderServiceImpl implements OrderService {
                     .session(session)
                     .numberOfSeats(seats)
                     .user(user)
-                    .price(100).build();
+                    .price(Integer.parseInt("price")).build();
             if (createAndReturnWithId(order) != null) {
                 hall = hallService.changeHallNumberOfAvailableSeats(hall, numberOfAvailableSeats);
                 hallService.update(hall);
