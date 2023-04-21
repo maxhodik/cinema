@@ -116,7 +116,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                     }
                 case MORE:
                     if (column.equals("datetime")) {
-                        queryBuilder.append("CONCAT(date, '', time) >").append(value);
+                        queryBuilder.append("CONCAT(date, 'T', time) >").append(value);
                     }
             }
         }
